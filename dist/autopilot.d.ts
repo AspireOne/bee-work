@@ -1,0 +1,32 @@
+import { Bee } from "./bee.js";
+import { Controls } from "./controls.js";
+export declare class Autopilot {
+    private static readonly delta;
+    private static readonly maxDelay;
+    private static readonly minDelay;
+    private static readonly possibleKeysX;
+    private static readonly possibleKeysY;
+    private currDelayX;
+    private currDelayY;
+    private elapsedToDelayX;
+    private currPressedKeyX;
+    private currPressedKeyY;
+    private elapsedToDelayY;
+    private id;
+    private playerPosCheckOffset;
+    readonly player: Bee;
+    running: boolean;
+    private controls;
+    constructor(bee: Bee, controls: Controls);
+    start(): void;
+    stop(): void;
+    private updateX;
+    private resetX;
+    private isXOutOfBounds;
+    private isYOutOfBounds;
+    private executeNewX;
+    private updateY;
+    private resetY;
+    private executeNewY;
+    private getRandomDelay;
+}
