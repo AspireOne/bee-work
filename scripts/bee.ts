@@ -6,7 +6,7 @@ import {Acceleration, WayX} from "./pilotUtils.js";
 export class Bee {
     public currY = 0;
     public currX = 0;
-    public element: HTMLElement;
+    public bee: HTMLElement;
     public maxSpeed = 7;
     public deltaTime = 8;
     public accelerationData = new Acceleration();
@@ -18,18 +18,22 @@ export class Bee {
     private scale = 0;
     private controls: Controls;
 
-    constructor(element: HTMLElement, controls: Controls) {
+    constructor(bee: HTMLElement, controls: Controls) {
         this.controls = controls;
-        this.element = element;
-        this.scale = parseInt(element.style.transform.replace(/\D/g, ""));
+        this.bee = bee;
+        this.scale = parseInt(bee.style.transform.replace(/\D/g, ""));
 
-        this.element.style.top = getAvailableHeight() - this.element.offsetHeight + "px";
-        this.element.style.left = "0px";
-        this.element.onclick = () => {
-            let text = document.getElementById("js-rect-text") as HTMLElement;
+        this.bee.style.top = getAvailableHeight() - this.bee.offsetHeight + "px";
+        this.bee.style.left = getAvailableWidth()/2 - this.bee.offsetWidth + "px";
+        this.bee.style.visibility = "visible";
+        this.bee.onclick = () => {
+            let text = document.getElementById("bee-text") as HTMLElement;
+            if (text.innerHTML !== "")
+                return;
+
             text.innerHTML = "Bzzzzz";
-            text.style.left = element.style.left;
-            text.style.top = parseInt(element.style.top) - 40 + "px";
+            text.style.left = bee.style.left;
+            text.style.top = parseInt(bee.style.top) - 40 + "px";
             setTimeout(() => text.innerHTML = "", 1500);
         }
     }
@@ -53,8 +57,8 @@ export class Bee {
         this.currY = newY;
         this.currX = newX;
 
-        this.element.style.top = newY + "px";
-        this.element.style.left = newX + "px";
+        this.bee.style.top = newY + "px";
+        this.bee.style.left = newX + "px";
 
         this.flipElementIfShould();
 
@@ -73,14 +77,14 @@ export class Bee {
             scale = 1;
 
         if (scale !== 0 && scale !== this.scale) {
-            this.element.style.setProperty("transform", "scaleX(" + scale + ")");
+            this.bee.style.setProperty("transform", "scaleX(" + scale + ")");
             this.scale = scale;
         }
     }
 
     private calculateNewX(): number {
-        const currPosX = parseInt(this.element.style.left);
-        const width = this.element.offsetWidth;
+        const currPosX = parseInt(this.bee.style.left);
+        const width = this.bee.offsetWidth;
         const maxX = getAvailableWidth() - width;
         const getUpdatedWay = (): WayX => {
             if (this.accelerationData.currAccelerationX > 0)
@@ -124,8 +128,8 @@ export class Bee {
     }
 
     private calculateNewY(): number {
-        const currPosY = parseInt(this.element.style.top);
-        const height = this.element.offsetHeight;
+        const currPosY = parseInt(this.bee.style.top);
+        const height = this.bee.offsetHeight;
         const maxY = getAvailableHeight() - height;
 
         let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed ? -this.accelerationData.acceleration : this.accelerationData.acceleration);

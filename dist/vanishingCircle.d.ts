@@ -5,9 +5,9 @@ export declare class VanishingCircle {
     readonly x: string;
     readonly y: string;
     readonly initialOpacity: number;
-    readonly width: string;
+    readonly width: number;
     readonly hue: number;
-    private static originalCircle;
+    private static baseElement;
     private static readonly delta;
     private elapsed;
     private prevOpacity;
@@ -18,6 +18,7 @@ export declare class VanishingCircle {
     constructor(x: number, y: number, vanishIn?: number, size?: number, initialOpacity?: number, hue?: number);
     static runLoop(): void;
     private createClone;
+    private createBaseCircleElement;
     show(): void;
     updateVanish(): void;
 }

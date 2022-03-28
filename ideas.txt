@@ -1,0 +1,4 @@
+- stars (as an atmosphere / motive)
+- particles that react with the bee
+- particles on portals
+- minigames (catching falling drops of honey, something time-based...)

@@ -3,7 +3,7 @@ import { Acceleration } from "./pilotUtils.js";
 export declare class Bee {
     currY: number;
     currX: number;
-    element: HTMLElement;
+    bee: HTMLElement;
     maxSpeed: number;
     deltaTime: number;
     accelerationData: Acceleration;
@@ -14,7 +14,7 @@ export declare class Bee {
     private circleFrequency;
     private scale;
     private controls;
-    constructor(element: HTMLElement, controls: Controls);
+    constructor(bee: HTMLElement, controls: Controls);
     start(): void;
     stop(): void;
     private frame;

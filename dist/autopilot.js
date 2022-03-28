@@ -45,18 +45,18 @@ export class Autopilot {
             this.controls.onKeyUp(this.currPressedKeyX);
     }
     isXOutOfBounds() {
-        const playerWidth = this.player.element.offsetWidth;
+        const playerWidth = this.player.bee.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
         return this.player.currX >= playerMaxX - this.playerPosCheckOffset || this.player.currX <= this.playerPosCheckOffset;
     }
     isYOutOfBounds() {
-        const playerHeight = this.player.element.offsetHeight;
+        const playerHeight = this.player.bee.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
         return this.player.currY >= playerMaxY - this.playerPosCheckOffset || this.player.currY <= this.playerPosCheckOffset;
     }
     executeNewX() {
         let key;
-        const playerWidth = this.player.element.offsetWidth;
+        const playerWidth = this.player.bee.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
         if (this.player.currX >= playerMaxX - this.playerPosCheckOffset)
             key = "a";
@@ -82,7 +82,7 @@ export class Autopilot {
     }
     executeNewY() {
         let key;
-        const playerHeight = this.player.element.offsetHeight;
+        const playerHeight = this.player.bee.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
         if (this.player.currY >= playerMaxY - this.playerPosCheckOffset)
             key = "w";

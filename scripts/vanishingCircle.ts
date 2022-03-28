@@ -5,9 +5,9 @@ export class VanishingCircle {
     public readonly x: string;
     public readonly y: string;
     public readonly initialOpacity: number;
-    public readonly width: string;
+    public readonly width: number;
     public readonly hue: number;
-    private static originalCircle: HTMLElement;
+    private static baseElement: HTMLImageElement;
     private static readonly delta = 20;
     private elapsed = 0;
     private prevOpacity: number;
@@ -26,7 +26,8 @@ export class VanishingCircle {
         this.y = y + "px";
         this.decreaseBy = initialOpacity / (vanishIn / VanishingCircle.delta);
         this.prevOpacity = initialOpacity;
-        this.width = size + "px";
+        this.width = size;
+
         this.clone = this.createClone();
     }
 
@@ -38,21 +39,28 @@ export class VanishingCircle {
     }
 
     private createClone() {
-        if (VanishingCircle.originalCircle === undefined)
-            VanishingCircle.originalCircle = document.getElementById("js-circle") as HTMLElement
+        if (VanishingCircle.baseElement === undefined)
+            VanishingCircle.baseElement = this.createBaseCircleElement();
 
-        let clone = VanishingCircle.originalCircle.cloneNode(true) as HTMLElement;
-
+        let clone = VanishingCircle.baseElement.cloneNode(true) as HTMLElement;
         Object.assign(clone.style, {
             left: this.x,
             top: this.y,
-            width: this.width,
-            display: "block",
+            width: this.width + "px",
+            height: this.width + "px",
             opacity: this.initialOpacity,
             filter: this.applyFilter ? `blur(3px) hue-rotate(${this.hue}deg)` : '',
         });
 
         return clone;
+    }
+
+    private createBaseCircleElement() {
+        const circle = new Image();
+        circle.classList.add("circle");
+        circle.src = "../resources/circle.png";
+
+        return circle;
     }
 
     public show() {

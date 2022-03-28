@@ -1,57 +1,72 @@
-import {Autopilot} from "./autopilot.js";
-import {Bee} from "./bee.js";
 import {ScreenSaverPilot} from "./screenSaverPilot.js";
-import {Controls} from "./controls.js";
+import {Autopilot} from "./autopilot.js";
+import {bee, beeElement, controls, modules, portals} from "./global.js";
+import {Bee} from "./bee";
+import {getAvailableHeight, getAvailableWidth, randomIntFromInterval} from "./utils.js";
 
-
-namespace Program {
-    let controls = new Controls();
-
+export namespace Playground {
+    let cyclingCircleColor: boolean = true;
+    let cycleUp: boolean = true;
+    let currValue = 0;
+    let portal: HTMLElement;
     let autopilotButtonTextSpan: HTMLElement;
     let autopilotButton: HTMLInputElement;
+
     let pilotOrderText: HTMLElement;
     let hueSlide: HTMLInputElement;
-    let circle: HTMLElement;
 
     let screenSaverPilot: ScreenSaverPilot;
     let autopilot: Autopilot;
-    let bee: Bee;
 
-    //#region event listeners.
-    document.addEventListener("DOMContentLoaded", _ => {
-        initElements();
-        addListenersToElements();
+    modules.push(() => run());
 
-        if (pilotOrderText !== null)
-            pilotOrderText.innerText = "1/3";
-
-        bee = new Bee(circle, controls);
-        screenSaverPilot = new ScreenSaverPilot(bee, controls);
-        autopilot = new Autopilot(bee, controls);
-        bee.start();
-
-        //setTimeout(() => window.location.replace("http://localhost:63342/bee-main/playground.html?_ijt=j10bok8nb763g23ebmqkghl0oh&_ij_reload=RELOAD_ON_SAVE"), 5000)
-    });
-
-    function initElements() {
-        circle = document.getElementById("js-rect") as HTMLElement;
+    function run() {
+        // Must initialize it here cuz typescript dumb.
         hueSlide = document.getElementById("hue-slide") as HTMLInputElement;
         autopilotButton = document.getElementById("autopilot-button") as HTMLInputElement;
         autopilotButtonTextSpan = document.getElementById("js-autopilot-button-text-span") as HTMLElement;
         pilotOrderText = document.getElementById("pilot-order") as HTMLElement;
+        portal = document.getElementById("portal") as HTMLElement;
+
+        addListenersToElements();
+
+        if (pilotOrderText)
+            pilotOrderText.innerText = "1/3";
+
+        screenSaverPilot = new ScreenSaverPilot(bee, controls);
+        autopilot = new Autopilot(bee, controls);
+        startGeneratingPortals();
     }
 
-    /*
-    // Adds circleVanishing effect to the cursor.
-    document.addEventListener('mousemove', e => {
-        const offset = 33;
-        new VanishingCircle(e.x - offset, e.y - offset, 700, 80, 1).show();
-    });
-    */
+    function startGeneratingPortals() {
+        portals.generateRandomPortal(5000);
+        setTimeout(() => {
+            startGeneratingPortals();
+        }, randomIntFromInterval(10000, 11000));
+    }
 
     function addListenersToElements() {
-        if (hueSlide !== null)
-            hueSlide.addEventListener("input", (e) => bee.circleHue = parseInt(hueSlide.value));
+        if (hueSlide !== null) {
+            hueSlide.addEventListener("input", (e) => {
+                cyclingCircleColor = false;
+                return bee.circleHue = parseInt(hueSlide.value);
+            });
+        }
+
+        const id = setInterval(() => {
+            if (!cyclingCircleColor) {
+                clearInterval(id);
+                return;
+            }
+
+            if (currValue >= 360)
+                cycleUp = false;
+            else if (currValue <= 0)
+                cycleUp = true;
+
+            hueSlide.value = (currValue += cycleUp ? 1 : -1) + "";
+            bee.circleHue = currValue;
+        }, 25);
 
         if (autopilotButton === null)
             return;
@@ -72,6 +87,7 @@ namespace Program {
             switch (autopilotButtonTextSpan.innerHTML) {
                 case autoPilotOff:
                     autopilotButtonTextSpan.innerHTML = majaBeeOn;
+                    portals.setTargetPortalsDisplay(false);
                     autopilot.start();
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "2/" + modes;
@@ -79,6 +95,7 @@ namespace Program {
                     break;
                 case majaBeeOn:
                     autopilotButtonTextSpan.innerHTML = screenSaverOn;
+                    portals.setTargetPortalsDisplay(false);
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.maxSpeed += majaBeeSpeedDecrease;
@@ -89,6 +106,7 @@ namespace Program {
                     break;
                 case screenSaverOn:
                     screenSaverPilot.stop();
+                    portals.setTargetPortalsDisplay(true);
                     bee.accelerationData.acceleration -= screenSaverAccelerationIncrease;
                     bee.maxSpeed += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;

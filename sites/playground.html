@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head class="unselectable">
+    <meta charset="utf-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="../styles/playground.css" type="text/css" media="all"/>
+    <title>ya like jazz?</title>
+    <script type="module" src="../dist/global.js"></script>
+    <script type="module" src="../dist/playground.js"></script>
+</head>
+<body>
+<div class="js-indicator" id="js-width-indicator"></div>
+<div class="js-indicator" id="js-height-indicator"></div>
+<canvas id="canvas"></canvas>
+
+<div id="portal-home" class="side-portal portal-left">
+    <p>Home</p>
+    <img src="../resources/portal.png" id="portal-home-img" target="../index.html"/>
+</div>
+
+<div id="action-center">
+    <div class="slidecontainer first" id ="hue-slide-container">
+        <p>change the color ;)</p>
+        <input type="range" min="0" max="360" value="0" class="slider first" id="hue-slide"/>
+    </div>
+    <button class="button second" id="autopilot-button"><span id="js-autopilot-button-text-span">Autopilot OFF</span></button>
+    <h2 id="pilot-order">0/0</h2>
+</div>
+
+<h1>Beeter</h1>
+<div class="center">
+    <h2>Use WASD & Shift</h2>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+.center {
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+}
+
+.portal {
+    position: absolute;
+    width: 8em;
+    height: 8em;
+}
+
+#canvas {
+    pointer-events: none;
+}
+
+.slider {
+    -webkit-appearance: none;
+    height: 15px;
+    border-radius: 5px;
+    background: #ffffff;
+    outline: none;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    width: 100%;
+}
+
+#action-center {
+    width: 100%;
+    border-bottom: 1px solid rgb(255, 115, 0, 0.2);
+    overflow: hidden;
+    /* add this to contain floated children */
+}
+
+.first {
+    float: left;
+}
+
+#autopilot-button {
+    padding: 0;
+    height: 2.5em;
+    width: 9em;
+    font-size: 1.5em;
+    outline: none;
+    margin: 3px 1em 0;
+}
+
+.second {
+    float: left;
+}
+
+.slidecontainer p {
+    text-align: center;
+    font-size: 1.2em;
+    margin: 0;
+    padding: 0 0 10px;
+}
+
+#hue-slide-container {
+    width: 50%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}

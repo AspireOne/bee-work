@@ -14,7 +14,7 @@ export class VanishingCircle {
         this.y = y + "px";
         this.decreaseBy = initialOpacity / (vanishIn / VanishingCircle.delta);
         this.prevOpacity = initialOpacity;
-        this.width = size + "px";
+        this.width = size;
         this.clone = this.createClone();
     }
     static runLoop() {
@@ -24,18 +24,24 @@ export class VanishingCircle {
         }, VanishingCircle.delta);
     }
     createClone() {
-        if (VanishingCircle.originalCircle === undefined)
-            VanishingCircle.originalCircle = document.getElementById("js-circle");
-        let clone = VanishingCircle.originalCircle.cloneNode(true);
+        if (VanishingCircle.baseElement === undefined)
+            VanishingCircle.baseElement = this.createBaseCircleElement();
+        let clone = VanishingCircle.baseElement.cloneNode(true);
         Object.assign(clone.style, {
             left: this.x,
             top: this.y,
-            width: this.width,
-            display: "block",
+            width: this.width + "px",
+            height: this.width + "px",
             opacity: this.initialOpacity,
             filter: this.applyFilter ? `blur(3px) hue-rotate(${this.hue}deg)` : '',
         });
         return clone;
+    }
+    createBaseCircleElement() {
+        const circle = new Image();
+        circle.classList.add("circle");
+        circle.src = "../resources/circle.png";
+        return circle;
     }
     show() {
         document.body.appendChild(this.clone);

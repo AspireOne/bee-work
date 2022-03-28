@@ -64,13 +64,13 @@ export class Autopilot {
     }
 
     private isXOutOfBounds(): boolean {
-        const playerWidth = this.player.element.offsetWidth;
+        const playerWidth = this.player.bee.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
         return this.player.currX >= playerMaxX - this.playerPosCheckOffset || this.player.currX <= this.playerPosCheckOffset;
     }
 
     private isYOutOfBounds(): boolean {
-        const playerHeight = this.player.element.offsetHeight;
+        const playerHeight = this.player.bee.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
         return this.player.currY >= playerMaxY - this.playerPosCheckOffset || this.player.currY <= this.playerPosCheckOffset;
     }
@@ -78,7 +78,7 @@ export class Autopilot {
     private executeNewX() {
         let key: string;
 
-        const playerWidth = this.player.element.offsetWidth;
+        const playerWidth = this.player.bee.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
 
         if (this.player.currX >= playerMaxX - this.playerPosCheckOffset)
@@ -110,7 +110,7 @@ export class Autopilot {
     private executeNewY() {
         let key: string;
 
-        const playerHeight = this.player.element.offsetHeight;
+        const playerHeight = this.player.bee.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
 
         if (this.player.currY >= playerMaxY - this.playerPosCheckOffset)

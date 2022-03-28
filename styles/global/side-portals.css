@@ -1,0 +1,30 @@
+.side-portal {
+    height: 50vh;
+    top: 25vh;
+    position: absolute;
+}
+
+.side-portal p {
+    top: 40%;
+    font-size: 2.5em;
+}
+
+.side-portal img {
+    width: 3em;
+    height: 100%;
+}
+
+.side-portal p {
+    font-family: 'Roboto', sans-serif;
+    position: absolute;
+    font-weight: 100;
+}
+
+.portal-left.side-portal {
+    right: 0;
+}
+
+.portal-right p {transform: rotate(-90deg) translateY(-0.5em);}
+.portal-left p {transform: rotate(90deg) translateY(2.6em);}
+.portal-down p {transform: translateY(-0.5em);}
+.portal-up p {transform: translateY(0.5em);}

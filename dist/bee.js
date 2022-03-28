@@ -3,7 +3,7 @@ import { getAvailableHeight, getAvailableWidth } from "./utils.js";
 import { Controls } from "./controls.js";
 import { Acceleration, WayX } from "./pilotUtils.js";
 export class Bee {
-    constructor(element, controls) {
+    constructor(bee, controls) {
         this.currY = 0;
         this.currX = 0;
         this.maxSpeed = 7;
@@ -16,15 +16,18 @@ export class Bee {
         this.circleFrequency = 9;
         this.scale = 0;
         this.controls = controls;
-        this.element = element;
-        this.scale = parseInt(element.style.transform.replace(/\D/g, ""));
-        this.element.style.top = getAvailableHeight() - this.element.offsetHeight + "px";
-        this.element.style.left = "0px";
-        this.element.onclick = () => {
-            let text = document.getElementById("js-rect-text");
+        this.bee = bee;
+        this.scale = parseInt(bee.style.transform.replace(/\D/g, ""));
+        this.bee.style.top = getAvailableHeight() - this.bee.offsetHeight + "px";
+        this.bee.style.left = getAvailableWidth() / 2 - this.bee.offsetWidth + "px";
+        this.bee.style.visibility = "visible";
+        this.bee.onclick = () => {
+            let text = document.getElementById("bee-text");
+            if (text.innerHTML !== "")
+                return;
             text.innerHTML = "Bzzzzz";
-            text.style.left = element.style.left;
-            text.style.top = parseInt(element.style.top) - 40 + "px";
+            text.style.left = bee.style.left;
+            text.style.top = parseInt(bee.style.top) - 40 + "px";
             setTimeout(() => text.innerHTML = "", 1500);
         };
     }
@@ -44,8 +47,8 @@ export class Bee {
         let newX = this.calculateNewX();
         this.currY = newY;
         this.currX = newX;
-        this.element.style.top = newY + "px";
-        this.element.style.left = newX + "px";
+        this.bee.style.top = newY + "px";
+        this.bee.style.left = newX + "px";
         this.flipElementIfShould();
         if ((this.timeFromLastCircle += this.deltaTime) >= this.circleFrequency) {
             this.timeFromLastCircle = 0;
@@ -59,13 +62,13 @@ export class Bee {
         else if (Controls.keys.left.downPressed)
             scale = 1;
         if (scale !== 0 && scale !== this.scale) {
-            this.element.style.setProperty("transform", "scaleX(" + scale + ")");
+            this.bee.style.setProperty("transform", "scaleX(" + scale + ")");
             this.scale = scale;
         }
     }
     calculateNewX() {
-        const currPosX = parseInt(this.element.style.left);
-        const width = this.element.offsetWidth;
+        const currPosX = parseInt(this.bee.style.left);
+        const width = this.bee.offsetWidth;
         const maxX = getAvailableWidth() - width;
         const getUpdatedWay = () => {
             if (this.accelerationData.currAccelerationX > 0)
@@ -103,8 +106,8 @@ export class Bee {
         return newPosX;
     }
     calculateNewY() {
-        const currPosY = parseInt(this.element.style.top);
-        const height = this.element.offsetHeight;
+        const currPosY = parseInt(this.bee.style.top);
+        const height = this.bee.offsetHeight;
         const maxY = getAvailableHeight() - height;
         let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed ? -this.accelerationData.acceleration : this.accelerationData.acceleration);
         let newPosY = currPosY + newAcceleration;

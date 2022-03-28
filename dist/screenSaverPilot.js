@@ -19,10 +19,10 @@ export class ScreenSaverPilot {
         this.controls.onKeyUp(Controls.keys.up.definition[0]);
     }
     frame() {
-        let elemX = parseInt(this.player.element.style.left.replace("px", ""));
-        let elemY = parseInt(this.player.element.style.top.replace("px", ""));
-        let maxX = getAvailableWidth() - this.player.element.clientWidth;
-        let maxY = getAvailableHeight() - this.player.element.clientHeight;
+        let elemX = parseInt(this.player.bee.style.left.replace("px", ""));
+        let elemY = parseInt(this.player.bee.style.top.replace("px", ""));
+        let maxX = getAvailableWidth() - this.player.bee.clientWidth;
+        let maxY = getAvailableHeight() - this.player.bee.clientHeight;
         if (elemX <= 0) {
             this.controls.onKeyUp(Controls.keys.left.definition[0]);
             this.controls.onKeyDown(Controls.keys.right.definition[0]);

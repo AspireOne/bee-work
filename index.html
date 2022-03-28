@@ -2,23 +2,33 @@
 <html lang="en">
 <head class="unselectable">
     <meta charset="utf-8">
-    <link href="https://fonts.googleapis.com/css?family=Muli%3A400%2C700%2C800&#038;ver=3.0.0" media="all" rel="stylesheet" type="text/css"/>
-    <link href="styles.css" media="all" rel="stylesheet" type="text/css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/global/global.css" type="text/css" media="all"/>
     <title>ya like jazz?</title>
-    <script type="module" src="dist/main.js"></script>
+    <script type="module" src="dist/global.js"></script>
 </head>
 
 <body>
 <div class="js-indicator" id="js-width-indicator"></div>
 <div class="js-indicator" id="js-height-indicator"></div>
+
 <div>
-    <p id="js-rect-text"></p>
-    <img class="unselectable" draggable="false" id="js-rect" src="bee.png"/>
+    <p id="bee-text"></p>
+    <img class="unselectable" draggable="false" id="bee" src="resources/bee.png"/>
 </div>
-<img id="js-circle" src="circle.png"/>
+
+<div id="portal-playground" class="side-portal portal-right">
+    <p>Playground</p>
+    <img src="resources/portal.png" id="portal-playground-img" target="sites/playground.html"/>
+</div>
+
+<div id="portal-network" class="side-portal portal-left">
+    <p>Network</p>
+    <img src="resources/portal.png" id="portal-network-img" target="sites/network.html"/>
+</div>
+
 <h1>Beeter</h1>
-<div class="center">
-    <h2>Use WASD & Shift</h2>
-</div>
 </body>
 </html>
