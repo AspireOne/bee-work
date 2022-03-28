@@ -1,8 +1,12 @@
 import {collides, getAvailableHeight, getAvailableWidth, randomIntFromInterval} from "./utils.js";
-import {canvas, ctx} from "./global.js";
 
 export class Portals {
-    checkIntervalMs = 100;
+    portalAnimation = {
+        step: 4,
+        speed: 10
+    }
+    outPortalDuration = 450;
+    checkInterval = 100;
     checkMoveThreshold = 25;
     lastBeeX;
     id = -1;
@@ -34,7 +38,7 @@ export class Portals {
                         window.location.replace(target);
                 }
             });
-        }, this.checkIntervalMs);
+        }, this.checkInterval);
     }
 
     public stopChecking() {
@@ -52,12 +56,14 @@ export class Portals {
         }
     }
 
-    public generateRandomPortal(timeout: number) {
-        const offset = 100;
-        const maxX = getAvailableWidth() - offset;
-        const minX = offset;
-        const maxY = getAvailableHeight() - offset;
-        const minY = offset;
+    public generateRandomPortal(timeout: number, canvas: HTMLCanvasElement) {
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        const locationOffset = 100;
+
+        const maxX = getAvailableWidth() - locationOffset;
+        const maxY = getAvailableHeight() - locationOffset;
+        const minX = locationOffset;
+        const minY = locationOffset;
 
         const y = randomIntFromInterval(minY, maxY);
         const x = randomIntFromInterval(minX, maxX);
@@ -65,26 +71,57 @@ export class Portals {
         const portY = randomIntFromInterval(minY, maxY);
         const portX = randomIntFromInterval(minX, maxX);
 
-        const portal = this.createPortal(x, y);
-        this.drawPoint(portX + 60, portY + 60);
-        
-        document.body.appendChild(portal);
-        this.portals.push([portal, () => {
-            portal.remove();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            this.bee.style.left = portX + "px";
-            this.bee.style.top = portY + "px";
-            const endPortal = this.createPortal(portX, portY);
-            document.body.appendChild(endPortal);
-            setTimeout(() => endPortal.remove(), 1000);
-        }]);
-        setTimeout(() => {
-            portal.remove();
+        this.drawPoint(portX, portY, canvas);
+        const portal = this.createPortal();
+        this.placePortal(portal, x, y);
+
+        const timeoutId = setTimeout(() => {
+            this.removePortal(portal);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }, timeout);
+
+        this.portals.push([portal, () => {
+            clearTimeout(timeoutId);
+            this.handlePortalTouched(portal, portX, portY, canvas);
+        }]);
     }
 
-    drawPoint(x: number, y:number) {
+    handlePortalTouched(portal: HTMLImageElement, portX: number, portY: number, canvas: HTMLCanvasElement) {
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+        this.removePortal(portal);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.bee.style.left = portX + "px";
+        this.bee.style.top = portY + "px";
+        const endPortal = this.createPortal();
+        this.placePortal(endPortal, portX, portY);
+        setTimeout(() => this.removePortal(endPortal), this.outPortalDuration);
+    }
+
+    removePortal(portal: HTMLImageElement) {
+        let width = portal.clientWidth;
+        let height = portal.clientHeight;
+
+        const id = setInterval(() => {
+            if (width > this.portalAnimation.step) {
+                portal.style.width = (width -= this.portalAnimation.step) + "px";
+                portal.style.left = (portal.getBoundingClientRect().left + this.portalAnimation.step / 2) + "px";
+            }
+            if (height > this.portalAnimation.step) {
+                portal.style.height = (height -= this.portalAnimation.step) + "px";
+                portal.style.top = (portal.getBoundingClientRect().top + this.portalAnimation.step / 2) + "px";
+            }
+
+            if (width <= this.portalAnimation.step && height <= this.portalAnimation.step) {
+                portal.remove();
+                clearInterval(id);
+                return;
+            }
+        }, this.portalAnimation.speed);
+    }
+
+    drawPoint(x: number, y:number, canvas: HTMLCanvasElement) {
+        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const radius = 15;
 
@@ -97,20 +134,48 @@ export class Portals {
         ctx.stroke();
     }
 
-    public createPortal(x: number, y: number) {
-        const portal = new Image();
-        portal.src = "../resources/portal.png",
-            portal.classList.add("portal");
+    public placePortal(portal: HTMLImageElement, x: number, y: number) {
         Object.assign(portal.style, {
             left: x + "px",
             top: y + "px",
         });
+        document.body.appendChild(portal);
+
+        const targetWidth = portal.clientWidth;
+        const targetHeight = portal.clientHeight;
+        let width = 0;
+        let height = 0;
+        portal.style.width = "0px";
+        portal.style.height = "0px";
+
+        const id = setInterval(() => {
+            if (width < targetWidth - this.portalAnimation.step) {
+                portal.style.width = (width += this.portalAnimation.step) + "px";
+                portal.style.left = (portal.getBoundingClientRect().left - this.portalAnimation.step / 2) + "px";
+            }
+            if (height < targetHeight - this.portalAnimation.step) {
+                portal.style.height = (height += this.portalAnimation.step) + "px";
+                portal.style.top = (portal.getBoundingClientRect().top - this.portalAnimation.step/2) + "px";
+            }
+
+            if (width >= targetWidth - (this.portalAnimation.step - 1) && height >= targetHeight - (this.portalAnimation.step - 1)) {
+                clearInterval(id);
+                return;
+            }
+        }, this.portalAnimation.speed);
+    }
+
+    public createPortal() {
+        const portal = new Image();
+        portal.src = "../resources/portal.png",
+            portal.classList.add("portal");
+
         return portal;
     }
 
-    public getPortalsFromDoc() {
+    public getSidePortalsFromDoc() {
         const portals = [];
-        for (let portalDiv of document.getElementsByClassName("portal"))
+        for (let portalDiv of document.getElementsByClassName("side-portal"))
             portals.push(portalDiv.getElementsByTagName('img')[0]);
         return portals;
     }

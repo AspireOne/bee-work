@@ -22,12 +22,29 @@
 </div>
 
 <div id="action-center">
-    <div class="slidecontainer first" id ="hue-slide-container">
+    <div id="hue-slider-div">
         <p>change the color ;)</p>
-        <input type="range" min="0" max="360" value="0" class="slider first" id="hue-slide"/>
+        <input type="range" min="0" max="360" value="0" class="slider" id="hue-slider"/>
     </div>
-    <button class="button second" id="autopilot-button"><span id="js-autopilot-button-text-span">Autopilot OFF</span></button>
-    <h2 id="pilot-order">0/0</h2>
+
+    <div id="pilot-button-div">
+        <button class="button" id="pilot-button">
+            <span id="js-pilot-button-text-span">
+                Autopilot OFF
+            </span>
+        </button>
+        <h2 id="pilot-order">0/0</h2>
+    </div>
+
+    <div id="settings-div">
+        <div class="setting">
+            <label for="delta">Delta time:</label>
+            <input type="number" id="delta" name="delta" min="2" max="20">
+        </div>
+        <div class="setting">
+
+        </div>
+    </div>
 </div>
 
 <h1>Beeter</h1>

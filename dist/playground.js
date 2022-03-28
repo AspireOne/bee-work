@@ -1,13 +1,20 @@
 import { ScreenSaverPilot } from "./screenSaverPilot.js";
 import { Autopilot } from "./autopilot.js";
 import { bee, controls, modules, portals } from "./global.js";
-import { randomIntFromInterval } from "./utils.js";
+import { getAvailableHeight, getAvailableWidth, randomIntFromInterval } from "./utils.js";
 export var Playground;
 (function (Playground) {
-    let cyclingCircleColor = true;
-    let cycleUp = true;
-    let currValue = 0;
-    let portal;
+    const colorCycling = {
+        cyclingCircleColor: true,
+        cycleUp: true,
+        currColorValue: 0,
+        updateFreq: 25
+    };
+    const portalGeneration = {
+        duration: 5000,
+        spawnDelayRange: [30000, 60000]
+    };
+    let canvas;
     let autopilotButtonTextSpan;
     let autopilotButton;
     let pilotOrderText;
@@ -17,11 +24,15 @@ export var Playground;
     modules.push(() => run());
     function run() {
         // Must initialize it here cuz typescript dumb.
-        hueSlide = document.getElementById("hue-slide");
-        autopilotButton = document.getElementById("autopilot-button");
-        autopilotButtonTextSpan = document.getElementById("js-autopilot-button-text-span");
+        hueSlide = document.getElementById("hue-slider");
+        autopilotButton = document.getElementById("pilot-button");
+        autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span");
         pilotOrderText = document.getElementById("pilot-order");
-        portal = document.getElementById("portal");
+        canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        ctx.canvas.width = getAvailableWidth();
+        ctx.canvas.height = getAvailableHeight();
+        canvas.style.position = "absolute";
         addListenersToElements();
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
@@ -30,29 +41,29 @@ export var Playground;
         startGeneratingPortals();
     }
     function startGeneratingPortals() {
-        portals.generateRandomPortal(5000);
+        portals.generateRandomPortal(portalGeneration.duration, canvas);
         setTimeout(() => {
             startGeneratingPortals();
-        }, randomIntFromInterval(10000, 11000));
+        }, randomIntFromInterval(portalGeneration.spawnDelayRange[0], portalGeneration.spawnDelayRange[1]));
     }
     function addListenersToElements() {
         if (hueSlide !== null) {
             hueSlide.addEventListener("input", (e) => {
-                cyclingCircleColor = false;
+                colorCycling.cyclingCircleColor = false;
                 return bee.circleHue = parseInt(hueSlide.value);
             });
         }
         const id = setInterval(() => {
-            if (!cyclingCircleColor) {
+            if (!colorCycling.cyclingCircleColor) {
                 clearInterval(id);
                 return;
             }
-            if (currValue >= 360)
-                cycleUp = false;
-            else if (currValue <= 0)
-                cycleUp = true;
-            hueSlide.value = (currValue += cycleUp ? 1 : -1) + "";
-            bee.circleHue = currValue;
+            if (colorCycling.currColorValue >= 360)
+                colorCycling.cycleUp = false;
+            else if (colorCycling.currColorValue <= 0)
+                colorCycling.cycleUp = true;
+            hueSlide.value = (colorCycling.currColorValue += colorCycling.cycleUp ? 1 : -1) + "";
+            bee.circleHue = colorCycling.currColorValue;
         }, 25);
         if (autopilotButton === null)
             return;
@@ -67,6 +78,7 @@ export var Playground;
             const screenSaverSpeedDecrease = 3;
             const majaBeeSpeedDecrease = 1;
             const modes = 3;
+            autopilotButtonTextSpan.innerHTML = autopilotButtonTextSpan.innerHTML.trim();
             switch (autopilotButtonTextSpan.innerHTML) {
                 case autoPilotOff:
                     autopilotButtonTextSpan.innerHTML = majaBeeOn;

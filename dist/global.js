@@ -1,10 +1,7 @@
 import { Bee } from "./bee.js";
 import { Controls } from "./controls.js";
 import { Portals } from "./portals.js";
-import { getAvailableHeight, getAvailableWidth } from "./utils.js";
 export let controls = new Controls();
-export let canvas;
-export let ctx;
 export let beeElement;
 export let bee;
 export let portals;
@@ -18,13 +15,8 @@ const beeElementHTML = `
 document.addEventListener("DOMContentLoaded", _ => {
     document.body.appendChild(htmlToElement(beeElementHTML));
     beeElement = document.getElementById("bee");
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-    ctx.canvas.width = getAvailableWidth();
-    ctx.canvas.height = getAvailableHeight();
-    canvas.style.position = "absolute";
     portals = new Portals(beeElement);
-    portals.getPortalsFromDoc().forEach(portal => portals.addPortal(portal, null));
+    portals.getSidePortalsFromDoc().forEach(portal => portals.addPortal(portal, null));
     portals.startChecking();
     bee = new Bee(beeElement, controls);
     bee.start();
