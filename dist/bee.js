@@ -4,16 +4,19 @@ import { Controls } from "./controls.js";
 import { Acceleration, WayX } from "./pilotUtils.js";
 export class Bee {
     constructor(bee, controls) {
-        this.currY = 0;
-        this.currX = 0;
+        this.currPos = { y: 0, x: 0 };
+        this.circle = {
+            duration: { default: 400, shift: 2000 },
+            frequency: 9,
+            size: 80,
+            hue: 0,
+            timeFromLast: 0
+        };
         this.maxSpeed = 7;
         this.deltaTime = 8;
         this.accelerationData = new Acceleration();
-        this.circleHue = 0;
-        this.id = null;
+        this.renderIntervalId = null;
         this.wayX = WayX.NONE;
-        this.timeFromLastCircle = 0;
-        this.circleFrequency = 9;
         this.scale = 0;
         this.controls = controls;
         this.bee = bee;
@@ -33,26 +36,26 @@ export class Bee {
     }
     start() {
         VanishingCircle.runLoop();
-        if (this.id === null)
-            this.id = setInterval(() => this.frame(), this.deltaTime);
+        if (this.renderIntervalId === null)
+            this.renderIntervalId = setInterval(() => this.frame(), this.deltaTime);
     }
     stop() {
-        if (this.id !== null) {
-            clearInterval(this.id);
-            this.id = null;
+        if (this.renderIntervalId !== null) {
+            clearInterval(this.renderIntervalId);
+            this.renderIntervalId = null;
         }
     }
     frame() {
         let newY = this.calculateNewY();
         let newX = this.calculateNewX();
-        this.currY = newY;
-        this.currX = newX;
+        this.currPos.y = newY;
+        this.currPos.x = newX;
         this.bee.style.top = newY + "px";
         this.bee.style.left = newX + "px";
         this.flipElementIfShould();
-        if ((this.timeFromLastCircle += this.deltaTime) >= this.circleFrequency) {
-            this.timeFromLastCircle = 0;
-            new VanishingCircle(newX, newY, Controls.keys.floss.downPressed ? 2000 : 400, 80, 1, this.circleHue).show();
+        if ((this.circle.timeFromLast += this.deltaTime) >= this.circle.frequency) {
+            this.circle.timeFromLast = 0;
+            new VanishingCircle(newX, newY, Controls.keys.floss.downPressed ? this.circle.duration.shift : this.circle.duration.default, this.circle.size, 1, this.circle.hue).show();
         }
     }
     flipElementIfShould() {
@@ -93,7 +96,7 @@ export class Bee {
                 newAcceleration += this.accelerationData.acceleration;
         }
         let newPosX = currPosX + newAcceleration;
-        this.accelerationData.currAccelerationX = this.correctAcceleration(newAcceleration);
+        this.accelerationData.currAccelerationX = this.getMaxSpeed(newAcceleration);
         this.wayX = updatedWay;
         if (newPosX < 0) {
             newPosX = 0;
@@ -109,9 +112,11 @@ export class Bee {
         const currPosY = parseInt(this.bee.style.top);
         const height = this.bee.offsetHeight;
         const maxY = getAvailableHeight() - height;
-        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed ? -this.accelerationData.acceleration : this.accelerationData.acceleration);
+        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed
+            ? -this.accelerationData.acceleration
+            : this.accelerationData.acceleration);
         let newPosY = currPosY + newAcceleration;
-        this.accelerationData.currAccelerationY = this.correctAcceleration(newAcceleration);
+        this.accelerationData.currAccelerationY = this.getMaxSpeed(newAcceleration);
         if (newPosY < 0) {
             newPosY = 0;
             this.accelerationData.currAccelerationY = 0;
@@ -122,7 +127,8 @@ export class Bee {
         }
         return newPosY;
     }
-    correctAcceleration(acceleration) {
+    // Acceleration is there to know if the player is going left or right.
+    getMaxSpeed(acceleration) {
         if (acceleration > this.maxSpeed)
             return this.maxSpeed;
         else if (acceleration < -this.maxSpeed)

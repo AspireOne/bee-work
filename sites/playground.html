@@ -38,11 +38,26 @@
 
     <div id="settings-div">
         <div class="setting">
-            <label for="delta">Delta time:</label>
-            <input type="number" id="delta" name="delta" min="2" max="20">
+            <p>Default range slider:</p>
+            <input type="range" min="1" max="100" value="50" style="width: 5em">
+            <!--<label for="delta">Delta time:</label>
+            <input type="number" id="delta" name="delta" min="2" max="20">-->
         </div>
         <div class="setting">
-
+            <label for="speed">Speed:</label>
+            <input type="number" id="speed" name="speed" min="3" max="100">
+        </div>
+        <div class="setting">
+            <label for="acceleration">Acceleration:</label>
+            <input type="number" id="acceleration" name="acceleratiom" min="0" max="1">
+        </div>
+        <div class="setting">
+            <label for="circle-duration">Circle duration:</label>
+            <input type="number" id="circle-duration" name="circle-duration (ms)" min="0" max="100">
+        </div>
+        <div class="setting">
+            <label for="circle-freq">Circle frequency:</label>
+            <input type="number" id="circle-freq" name="circle-freq" min="1" max="25">
         </div>
     </div>
 </div>

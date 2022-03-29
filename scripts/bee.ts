@@ -4,17 +4,22 @@ import {Controls} from "./controls.js";
 import {Acceleration, WayX} from "./pilotUtils.js";
 
 export class Bee {
-    public currY = 0;
-    public currX = 0;
-    public bee: HTMLElement;
+    public currPos = { y: 0, x: 0 }
+    public circle = {
+        duration: { default: 400, shift: 2000 },
+        frequency: 9,
+        size: 80,
+        hue: 0,
+        timeFromLast: 0
+    }
+
     public maxSpeed = 7;
     public deltaTime = 8;
+    public bee: HTMLElement;
     public accelerationData = new Acceleration();
-    public circleHue = 0;
-    private id: number | null = null;
+
+    private renderIntervalId: number | null = null;
     private wayX: WayX = WayX.NONE;
-    private timeFromLastCircle = 0;
-    private circleFrequency = 9;
     private scale = 0;
     private controls: Controls;
 
@@ -40,31 +45,33 @@ export class Bee {
 
     public start() {
         VanishingCircle.runLoop();
-        if (this.id === null)
-            this.id = setInterval(() => this.frame(), this.deltaTime);
+        if (this.renderIntervalId === null)
+            this.renderIntervalId = setInterval(() => this.frame(), this.deltaTime);
     }
 
     public stop() {
-        if (this.id !== null) {
-            clearInterval(this.id);
-            this.id = null;
+        if (this.renderIntervalId !== null) {
+            clearInterval(this.renderIntervalId);
+            this.renderIntervalId = null;
         }
     }
 
     private frame() {
         let newY = this.calculateNewY();
         let newX = this.calculateNewX();
-        this.currY = newY;
-        this.currX = newX;
+        this.currPos.y = newY;
+        this.currPos.x = newX;
 
         this.bee.style.top = newY + "px";
         this.bee.style.left = newX + "px";
 
         this.flipElementIfShould();
 
-        if ((this.timeFromLastCircle += this.deltaTime) >= this.circleFrequency) {
-            this.timeFromLastCircle = 0;
-            new VanishingCircle(newX, newY, Controls.keys.floss.downPressed ? 2000 : 400, 80, 1, this.circleHue).show();
+        if ((this.circle.timeFromLast += this.deltaTime) >= this.circle.frequency) {
+            this.circle.timeFromLast = 0;
+            new VanishingCircle(newX, newY,
+                Controls.keys.floss.downPressed ? this.circle.duration.shift : this.circle.duration.default,
+                this.circle.size, 1, this.circle.hue).show();
         }
     }
 
@@ -113,7 +120,7 @@ export class Bee {
 
         let newPosX = currPosX + newAcceleration;
 
-        this.accelerationData.currAccelerationX = this.correctAcceleration(newAcceleration);
+        this.accelerationData.currAccelerationX = this.getMaxSpeed(newAcceleration);
         this.wayX = updatedWay;
 
         if (newPosX < 0) {
@@ -132,10 +139,12 @@ export class Bee {
         const height = this.bee.offsetHeight;
         const maxY = getAvailableHeight() - height;
 
-        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed ? -this.accelerationData.acceleration : this.accelerationData.acceleration);
+        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed
+            ? -this.accelerationData.acceleration
+            : this.accelerationData.acceleration);
         let newPosY = currPosY + newAcceleration;
 
-        this.accelerationData.currAccelerationY = this.correctAcceleration(newAcceleration);
+        this.accelerationData.currAccelerationY = this.getMaxSpeed(newAcceleration);
 
         if (newPosY < 0) {
             newPosY = 0;
@@ -148,7 +157,8 @@ export class Bee {
         return newPosY;
     }
 
-    private correctAcceleration(acceleration: number): number {
+    // Acceleration is there to know if the player is going left or right.
+    private getMaxSpeed(acceleration: number): number {
         if (acceleration > this.maxSpeed)
             return this.maxSpeed;
         else if (acceleration < -this.maxSpeed)

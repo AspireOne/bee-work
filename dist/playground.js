@@ -12,7 +12,7 @@ export var Playground;
     };
     const portalGeneration = {
         duration: 5000,
-        spawnDelayRange: [30000, 60000]
+        spawnDelayRange: [10000, 30000]
     };
     let canvas;
     let autopilotButtonTextSpan;
@@ -50,7 +50,7 @@ export var Playground;
         if (hueSlide !== null) {
             hueSlide.addEventListener("input", (e) => {
                 colorCycling.cyclingCircleColor = false;
-                return bee.circleHue = parseInt(hueSlide.value);
+                return bee.circle.hue = parseInt(hueSlide.value);
             });
         }
         const id = setInterval(() => {
@@ -63,8 +63,8 @@ export var Playground;
             else if (colorCycling.currColorValue <= 0)
                 colorCycling.cycleUp = true;
             hueSlide.value = (colorCycling.currColorValue += colorCycling.cycleUp ? 1 : -1) + "";
-            bee.circleHue = colorCycling.currColorValue;
-        }, 25);
+            bee.circle.hue = colorCycling.currColorValue;
+        }, colorCycling.updateFreq);
         if (autopilotButton === null)
             return;
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
