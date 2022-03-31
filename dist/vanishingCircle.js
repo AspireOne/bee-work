@@ -3,7 +3,7 @@ export class VanishingCircle {
         this.disabled = false;
         this.elapsed = 0;
         this.applyFilter = true;
-        this.doNotApplyFilterThreshold = 1000;
+        this.doNotApplyFilterThreshold = 4005;
         this.vanishIn = vanishIn;
         /* I didn't find a way to apply the filter to a lot of circles simulatenously without making the website laggy, so we'll
          just disable it if there's too many circles. */
@@ -18,10 +18,18 @@ export class VanishingCircle {
         this.clone = this.createClone();
     }
     static runLoop() {
-        setInterval(() => {
+        if (this.intervalId !== null)
+            return;
+        this.intervalId = setInterval(() => {
             VanishingCircle.circles = VanishingCircle.circles.filter(item => !item.disabled);
             VanishingCircle.circles.forEach(circle => circle.updateVanish());
         }, VanishingCircle.delta);
+    }
+    static stopLoop() {
+        if (this.intervalId === null)
+            return;
+        clearInterval(this.intervalId);
+        this.intervalId = null;
     }
     createClone() {
         if (VanishingCircle.baseElement === undefined)
@@ -63,4 +71,5 @@ export class VanishingCircle {
 }
 VanishingCircle.circles = [];
 VanishingCircle.delta = 20;
+VanishingCircle.intervalId = null;
 //# sourceMappingURL=vanishingCircle.js.map

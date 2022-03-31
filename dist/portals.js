@@ -137,8 +137,9 @@ export class Portals {
     }
     createPortal() {
         const portal = new Image();
-        portal.src = "../resources/portal.png",
-            portal.classList.add("portal");
+        portal.src = "../resources/portal.png";
+        portal.classList.add("portal", "unselectable");
+        portal.onselectstart = () => false;
         return portal;
     }
     getSidePortalsFromDoc() {

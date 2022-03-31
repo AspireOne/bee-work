@@ -10,11 +10,12 @@ export class VanishingCircle {
     private static baseElement: HTMLImageElement;
     private static readonly delta = 20;
     private elapsed = 0;
+    private static intervalId: number | null = null;
     private prevOpacity: number;
     private readonly decreaseBy: number;
     private readonly clone: HTMLElement;
     private readonly applyFilter: boolean = true;
-    private readonly doNotApplyFilterThreshold = 1000;
+    private readonly doNotApplyFilterThreshold = 4005;
     public constructor(x: number, y: number, vanishIn = 400, size = 60, initialOpacity = 0.8, hue = 0) {
         this.vanishIn = vanishIn;
         /* I didn't find a way to apply the filter to a lot of circles simulatenously without making the website laggy, so we'll
@@ -32,10 +33,21 @@ export class VanishingCircle {
     }
 
     public static runLoop() {
-        setInterval(() => {
+        if (this.intervalId !== null)
+            return;
+
+        this.intervalId = setInterval(() => {
             VanishingCircle.circles = VanishingCircle.circles.filter(item => !item.disabled);
             VanishingCircle.circles.forEach(circle => circle.updateVanish());
         }, VanishingCircle.delta);
+    }
+
+    public static stopLoop() {
+        if (this.intervalId === null)
+            return;
+
+        clearInterval(this.intervalId as number);
+        this.intervalId = null;
     }
 
     private createClone() {

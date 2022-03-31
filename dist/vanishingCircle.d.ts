@@ -10,6 +10,7 @@ export declare class VanishingCircle {
     private static baseElement;
     private static readonly delta;
     private elapsed;
+    private static intervalId;
     private prevOpacity;
     private readonly decreaseBy;
     private readonly clone;
@@ -17,6 +18,7 @@ export declare class VanishingCircle {
     private readonly doNotApplyFilterThreshold;
     constructor(x: number, y: number, vanishIn?: number, size?: number, initialOpacity?: number, hue?: number);
     static runLoop(): void;
+    static stopLoop(): void;
     private createClone;
     private createBaseCircleElement;
     show(): void;

@@ -3,35 +3,99 @@ import {getAvailableHeight, getAvailableWidth} from "./utils.js";
 import {Controls} from "./controls.js";
 import {Acceleration, WayX} from "./pilotUtils.js";
 
+export interface modifiableProp {
+    value: number,
+    values: {
+        readonly default: number,
+        readonly min: number,
+        readonly max: number,
+    },
+}
+
 export class Bee {
     public currPos = { y: 0, x: 0 }
-    public circle = {
-        duration: { default: 400, shift: 2000 },
-        frequency: 9,
-        size: 80,
-        hue: 0,
-        timeFromLast: 0
+
+    public circleProps = {
+        durationNormal: {
+            value: 400,
+            values: {
+                default: 400,
+                min: 50,
+                max: 1000
+            }
+        },
+        durationShift: {
+            value: 2000,
+            values: {
+                default: 2000,
+                min: 50,
+                max: 4000
+            }
+        },
+        frequency: {
+            value: 9,
+            values: {
+                default: 9,
+                min: 7,
+                max: 15
+            }
+        },
+        size: {
+            value: 80,
+            values: {
+                default: 80,
+                min: 40,
+                max: 200
+            }
+        },
+        hue: {
+            value: 0,
+            values: {
+                default: 0,
+                min: 0,
+                max: 360
+            }
+        },
     }
 
-    public maxSpeed = 7;
-    public deltaTime = 8;
-    public bee: HTMLElement;
+    public props = {
+        maxSpeed: {
+            value: 7,
+            values: {
+                default: 7,
+                min: 2,
+                max: 25
+            }
+        },
+        deltaTime: {
+            value: 8,
+            values: {
+                default: 8,
+                min: 2,
+                max: 20
+            }
+        }
+    }
+
     public accelerationData = new Acceleration();
 
-    private renderIntervalId: number | null = null;
+    public element: HTMLElement;
+
+    private timeFromLastCircle = 0;
+    private updateIntervalId: number | null = null;
     private wayX: WayX = WayX.NONE;
     private scale = 0;
     private controls: Controls;
 
     constructor(bee: HTMLElement, controls: Controls) {
         this.controls = controls;
-        this.bee = bee;
+        this.element = bee;
         this.scale = parseInt(bee.style.transform.replace(/\D/g, ""));
 
-        this.bee.style.top = getAvailableHeight() - this.bee.offsetHeight + "px";
-        this.bee.style.left = getAvailableWidth()/2 - this.bee.offsetWidth + "px";
-        this.bee.style.visibility = "visible";
-        this.bee.onclick = () => {
+        this.element.style.top = getAvailableHeight() - this.element.offsetHeight + "px";
+        this.element.style.left = getAvailableWidth()/2 - this.element.offsetWidth + "px";
+        this.element.style.visibility = "visible";
+        this.element.onclick = () => {
             let text = document.getElementById("bee-text") as HTMLElement;
             if (text.innerHTML !== "")
                 return;
@@ -44,16 +108,20 @@ export class Bee {
     }
 
     public start() {
+        if (this.updateIntervalId !== null)
+            return;
+
         VanishingCircle.runLoop();
-        if (this.renderIntervalId === null)
-            this.renderIntervalId = setInterval(() => this.frame(), this.deltaTime);
+        this.updateIntervalId = setInterval(() => this.frame(), this.props.deltaTime.value);
     }
 
     public stop() {
-        if (this.renderIntervalId !== null) {
-            clearInterval(this.renderIntervalId);
-            this.renderIntervalId = null;
-        }
+        if (this.updateIntervalId === null)
+            return;
+
+        VanishingCircle.stopLoop();
+        clearInterval(this.updateIntervalId);
+        this.updateIntervalId = null;
     }
 
     private frame() {
@@ -62,16 +130,16 @@ export class Bee {
         this.currPos.y = newY;
         this.currPos.x = newX;
 
-        this.bee.style.top = newY + "px";
-        this.bee.style.left = newX + "px";
+        this.element.style.top = newY + "px";
+        this.element.style.left = newX + "px";
 
         this.flipElementIfShould();
 
-        if ((this.circle.timeFromLast += this.deltaTime) >= this.circle.frequency) {
-            this.circle.timeFromLast = 0;
+        if ((this.timeFromLastCircle += this.props.deltaTime.value) >= this.circleProps.frequency.value) {
+            this.timeFromLastCircle = 0;
             new VanishingCircle(newX, newY,
-                Controls.keys.floss.downPressed ? this.circle.duration.shift : this.circle.duration.default,
-                this.circle.size, 1, this.circle.hue).show();
+                Controls.keys.floss.downPressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
+                this.circleProps.size.value, 1, this.circleProps.hue.value).show();
         }
     }
 
@@ -84,14 +152,14 @@ export class Bee {
             scale = 1;
 
         if (scale !== 0 && scale !== this.scale) {
-            this.bee.style.setProperty("transform", "scaleX(" + scale + ")");
+            this.element.style.setProperty("transform", "scaleX(" + scale + ")");
             this.scale = scale;
         }
     }
 
     private calculateNewX(): number {
-        const currPosX = parseInt(this.bee.style.left);
-        const width = this.bee.offsetWidth;
+        const currPosX = parseInt(this.element.style.left);
+        const width = this.element.offsetWidth;
         const maxX = getAvailableWidth() - width;
         const getUpdatedWay = (): WayX => {
             if (this.accelerationData.currAccelerationX > 0)
@@ -135,8 +203,8 @@ export class Bee {
     }
 
     private calculateNewY(): number {
-        const currPosY = parseInt(this.bee.style.top);
-        const height = this.bee.offsetHeight;
+        const currPosY = parseInt(this.element.style.top);
+        const height = this.element.offsetHeight;
         const maxY = getAvailableHeight() - height;
 
         let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed
@@ -159,10 +227,10 @@ export class Bee {
 
     // Acceleration is there to know if the player is going left or right.
     private getMaxSpeed(acceleration: number): number {
-        if (acceleration > this.maxSpeed)
-            return this.maxSpeed;
-        else if (acceleration < -this.maxSpeed)
-            return -this.maxSpeed;
+        if (acceleration > this.props.maxSpeed.value)
+            return this.props.maxSpeed.value;
+        else if (acceleration < -this.props.maxSpeed.value)
+            return -this.props.maxSpeed.value;
 
         return acceleration;
     }

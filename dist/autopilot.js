@@ -32,8 +32,8 @@ export class Autopilot {
     }
     // This Y X duplication could be solved by a shared interface or abstract class (as a lot of other things) or what they use here lol, but who has the time for that.
     updateX() {
-        /* If the bee is out of bounds (too close to a wall), do not respect current
-         key delay and force an immediate update, which will make the bee fly out of it. */
+        /* If the element is out of bounds (too close to a wall), do not respect current
+         key delay and force an immediate update, which will make the element fly out of it. */
         if ((this.elapsedToDelayX += Autopilot.delta) >= this.currDelayX || this.isXOutOfBounds()) {
             this.resetX();
             this.executeNewX();
@@ -45,22 +45,22 @@ export class Autopilot {
             this.controls.onKeyUp(this.currPressedKeyX);
     }
     isXOutOfBounds() {
-        const playerWidth = this.player.bee.offsetWidth;
+        const playerWidth = this.player.element.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
-        return this.player.currX >= playerMaxX - this.playerPosCheckOffset || this.player.currX <= this.playerPosCheckOffset;
+        return this.player.currPos.x >= playerMaxX - this.playerPosCheckOffset || this.player.currPos.x <= this.playerPosCheckOffset;
     }
     isYOutOfBounds() {
-        const playerHeight = this.player.bee.offsetHeight;
+        const playerHeight = this.player.element.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
-        return this.player.currY >= playerMaxY - this.playerPosCheckOffset || this.player.currY <= this.playerPosCheckOffset;
+        return this.player.currPos.y >= playerMaxY - this.playerPosCheckOffset || this.player.currPos.y <= this.playerPosCheckOffset;
     }
     executeNewX() {
         let key;
-        const playerWidth = this.player.bee.offsetWidth;
+        const playerWidth = this.player.element.offsetWidth;
         const playerMaxX = getAvailableWidth() - playerWidth;
-        if (this.player.currX >= playerMaxX - this.playerPosCheckOffset)
+        if (this.player.currPos.x >= playerMaxX - this.playerPosCheckOffset)
             key = "a";
-        else if (this.player.currX <= this.playerPosCheckOffset)
+        else if (this.player.currPos.x <= this.playerPosCheckOffset)
             key = "d";
         else
             key = Autopilot.possibleKeysX[Math.floor(Math.random() * Autopilot.possibleKeysX.length)];
@@ -82,11 +82,11 @@ export class Autopilot {
     }
     executeNewY() {
         let key;
-        const playerHeight = this.player.bee.offsetHeight;
+        const playerHeight = this.player.element.offsetHeight;
         const playerMaxY = getAvailableHeight() - playerHeight;
-        if (this.player.currY >= playerMaxY - this.playerPosCheckOffset)
+        if (this.player.currPos.y >= playerMaxY - this.playerPosCheckOffset)
             key = "w";
-        else if (this.player.currY <= this.playerPosCheckOffset)
+        else if (this.player.currPos.y <= this.playerPosCheckOffset)
             key = "";
         else
             key = Autopilot.possibleKeysY[Math.floor(Math.random() * Autopilot.possibleKeysY.length)];

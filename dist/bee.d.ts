@@ -1,25 +1,82 @@
 import { Controls } from "./controls.js";
 import { Acceleration } from "./pilotUtils.js";
+export interface modifiableProp {
+    value: number;
+    values: {
+        readonly default: number;
+        readonly min: number;
+        readonly max: number;
+    };
+}
 export declare class Bee {
     currPos: {
         y: number;
         x: number;
     };
-    circle: {
-        duration: {
-            default: number;
-            shift: number;
+    circleProps: {
+        durationNormal: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
         };
-        frequency: number;
-        size: number;
-        hue: number;
-        timeFromLast: number;
+        durationShift: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+        frequency: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+        size: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+        hue: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
     };
-    maxSpeed: number;
-    deltaTime: number;
-    bee: HTMLElement;
+    props: {
+        maxSpeed: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+        deltaTime: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+    };
     accelerationData: Acceleration;
-    private renderIntervalId;
+    element: HTMLElement;
+    private timeFromLastCircle;
+    private updateIntervalId;
     private wayX;
     private scale;
     private controls;

@@ -9,6 +9,24 @@ export function collides(a, b) {
         ((a.x + a.width) < b.x) ||
         (a.x > (b.x + b.width)));
 }
+export function htmlToElement(html) {
+    const template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result.
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+export function addValueToSliders() {
+    const containers = document.getElementsByClassName("slider-container");
+    for (let i = 0; i < containers.length; i++) {
+        const container = containers[i];
+        const text = container.getElementsByTagName("span")[0];
+        const slider = container.getElementsByClassName("slider")[0];
+        if (!text || !slider)
+            continue;
+        slider.addEventListener("input", _ => text.innerText = slider.value);
+        text.innerText = slider.value;
+    }
+}
 export function getWindowWidth() {
     return Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, document.body.offsetWidth, document.documentElement.offsetWidth, document.documentElement.clientWidth);
 }
