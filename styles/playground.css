@@ -25,9 +25,19 @@
     width: 100%;
 }
 
+.small-slider {
+    width: 5em;
+}
+
+/* Make the thumb of a slider smaller. */
+.small-slider::-webkit-slider-thumb {
+    width: 1.3em;
+    height: 1.3em;
+}
+
 #action-center {
     width: 100%;
-    border-bottom: 1px solid rgb(255, 115, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 115, 0, 0.2);
     overflow: hidden;
     /* add this to contain floated children */
 }

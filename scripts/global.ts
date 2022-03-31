@@ -30,22 +30,31 @@ document.addEventListener("DOMContentLoaded", _ => {
     bee = new Bee(beeElement, controls);
     bee.start();
 
+    addValueToSliders();
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });
+
+function addValueToSliders() {
+    const containers = document.getElementsByClassName("slider-container");
+    for (let i = 0; i < containers.length; i++) {
+        const container = containers[i] as HTMLDivElement;
+        // Find child node with tag p and make text red.
+        const text = container.getElementsByTagName("span")[0] as HTMLParagraphElement;
+        const slider = container.getElementsByClassName("slider")[0] as HTMLInputElement;
+        if (!text || !slider)
+            continue;
+
+        slider.addEventListener("input", _ => text.innerText = slider.value);
+        text.innerText = slider.value;
+    }
+}
 
 function htmlToElement(html: string): HTMLElement {
     const template = document.createElement('template');
     html = html.trim(); // Never return a text node of whitespace as the result.
     template.innerHTML = html;
     return template.content.firstChild as HTMLElement;
-}
-
-function htmlToElements(html: string): HTMLElement[] {
-    const template = document.createElement('template');
-    html = html.trim(); // Never return a text node of whitespace as the result.
-    template.innerHTML = html;
-    return Array.from(template.content.childNodes).map(node => node as HTMLElement);
 }
 
 /*
