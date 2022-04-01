@@ -55,9 +55,9 @@ export class Portals {
         const x = randomIntFromInterval(minX, maxX);
         const portY = randomIntFromInterval(minY, maxY);
         const portX = randomIntFromInterval(minX, maxX);
-        this.drawPoint(portX, portY, canvas);
         const portal = this.createPortal();
         this.placePortal(portal, x, y);
+        this.drawPoint(portX, portY, canvas);
         const timeoutId = setTimeout(() => {
             this.removePortal(portal);
             ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -9,6 +9,12 @@ export function collides(a, b) {
         ((a.x + a.width) < b.x) ||
         (a.x > (b.x + b.width)));
 }
+export function isPointInsideRect(x, y, rect) {
+    return (x >= rect.x &&
+        x <= rect.x + rect.width &&
+        y >= rect.y &&
+        y <= rect.y + rect.height);
+}
 export function htmlToElement(html) {
     const template = document.createElement('template');
     html = html.trim(); // Never return a text node of whitespace as the result.

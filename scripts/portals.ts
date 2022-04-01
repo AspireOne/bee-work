@@ -1,4 +1,9 @@
-import {collides, getAvailableHeight, getAvailableWidth, randomIntFromInterval} from "./utils.js";
+import {
+    collides,
+    getAvailableHeight,
+    getAvailableWidth,
+    randomIntFromInterval
+} from "./utils.js";
 
 export class Portals {
     portalAnimation = {
@@ -71,9 +76,10 @@ export class Portals {
         const portY = randomIntFromInterval(minY, maxY);
         const portX = randomIntFromInterval(minX, maxX);
 
-        this.drawPoint(portX, portY, canvas);
         const portal = this.createPortal();
         this.placePortal(portal, x, y);
+
+        this.drawPoint(portX, portY, canvas);
 
         const timeoutId = setTimeout(() => {
             this.removePortal(portal);

@@ -6,10 +6,17 @@ import {getAvailableHeight, getAvailableWidth, htmlToElement, randomIntFromInter
 
 export namespace Playground {
     const colorCycling = {
-        cyclingCircleColor: true,
-        cycleUp: true,
+        cyclingUp: true,
         currColorValue: 0,
-        updateFreq: 25
+        intervalId: 0,
+        updateFreq: {
+            value: 25,
+            values: {
+                default: 25,
+                max: 50,
+                min: 1
+            }
+        }
     };
 
     const portalGeneration = {
@@ -24,6 +31,8 @@ export namespace Playground {
             sliderValue: HTMLSpanElement;
         }
     }
+
+    let cycleColorButt: HTMLElement;
 
     let autopilotButtonTextSpan: HTMLElement;
     let autopilotButton: HTMLInputElement;
@@ -42,18 +51,27 @@ export namespace Playground {
         autopilotButton = document.getElementById("pilot-button") as HTMLInputElement;
         autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span") as HTMLElement;
         pilotOrderText = document.getElementById("pilot-order") as HTMLElement;
+        cycleColorButt = document.getElementById("cycle-hue-button") as HTMLElement;
+
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
         const settingsDiv = document.getElementById("settings-div") as HTMLDivElement;
         const settingsMenuContainer = document.getElementById("settings-menu-container") as HTMLDivElement;
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
+        const cycleSpeedSlider = document.getElementById("cycle-speed-slider") as HTMLElement;
 
         ctx.canvas.width  = getAvailableWidth();
         ctx.canvas.height = getAvailableHeight();
         canvas.style.position = "absolute";
 
         addListenersToElements();
+        startCyclingColor();
         addSettings(settingsDiv);
+        addSetting(cycleSpeedSlider, colorCycling.updateFreq, "Cycle Speed", (value) => {
+            stopCyclingColor();
+            colorCycling.updateFreq.value = value;
+            startCyclingColor();
+        }, false);
         setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
 
         if (pilotOrderText)
@@ -67,11 +85,10 @@ export namespace Playground {
     function setUpSettingsMenu(menuContainer: HTMLDivElement, menuButton: HTMLElement) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
         menuButton.addEventListener("click", () => {
-            if (Number(menuContainer.style.bottom.replace("px", "")) < 0) {
+            if (parseInt(menuContainer.style.bottom.replace("px", "")) < 0)
                 menuContainer.style.bottom = "0px";
-            } else {
+            else
                 menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
-            }
         });
 
         menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
@@ -85,32 +102,36 @@ export namespace Playground {
     }
 
     function addListenersToElements() {
-        if (hueSlide !== null) {
-            hueSlide.addEventListener("input", (e) => {
-                colorCycling.cyclingCircleColor = false;
-                return bee.circleProps.hue.value = parseInt(hueSlide.value);
-            });
-        }
+        hueSlide.addEventListener("input", (e) => stopCyclingColor());
+        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
+        cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+    }
 
-        const id = setInterval(() => {
-            if (!colorCycling.cyclingCircleColor) {
-                clearInterval(id);
-                return;
-            }
-
-            if (colorCycling.currColorValue >= 360)
-                colorCycling.cycleUp = false;
-            else if (colorCycling.currColorValue <= 0)
-                colorCycling.cycleUp = true;
-
-            hueSlide.value = (colorCycling.currColorValue += colorCycling.cycleUp ? 1 : -1) + "";
-            bee.circleProps.hue.value = colorCycling.currColorValue;
-        }, colorCycling.updateFreq);
-
-        if (autopilotButton === null)
+    function startCyclingColor() {
+        if (colorCycling.intervalId)
             return;
 
-        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
+        colorCycling.currColorValue = Number(hueSlide.value.replace("px", ""));
+        cycleColorButt.classList.replace("off", "on");
+
+        colorCycling.intervalId = setInterval(() => {
+            if (colorCycling.currColorValue >= 360)
+                colorCycling.cyclingUp = false;
+            else if (colorCycling.currColorValue <= 0)
+                colorCycling.cyclingUp = true;
+
+            hueSlide.value = (colorCycling.currColorValue += colorCycling.cyclingUp ? 1 : -1) + "";
+            bee.circleProps.hue.value = colorCycling.currColorValue;
+        }, colorCycling.updateFreq.value);
+    }
+
+    function stopCyclingColor() {
+        if (!colorCycling.intervalId)
+            return;
+
+        clearInterval(colorCycling.intervalId);
+        colorCycling.intervalId = 0;
+        cycleColorButt.classList.replace("on", "off");
     }
 
     function addSettings(toElement: HTMLElement) {
@@ -123,22 +144,21 @@ export namespace Playground {
             }
         }
 
-        addSetting(toElement, "Delta", bee.props.deltaTime, (value) => {
+        addSetting(toElement, bee.props.deltaTime, "Delta", (value) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
         });
-        addSetting(toElement, "Acceleration", accelerationProps, (value) => bee.accelerationData.acceleration = value);
-        addSetting(toElement, "Speed", bee.props.maxSpeed);
-        addSetting(toElement, "Circle Duration", bee.circleProps.durationNormal);
-        addSetting(toElement, "Circle Duration Shift", bee.circleProps.durationShift);
-        addSetting(toElement, "Circle Frequency", bee.circleProps.frequency);
-        addSetting(toElement, "Circle Size", bee.circleProps.size);
-
+        addSetting(toElement, accelerationProps, "Acceleration", (value) => bee.accelerationData.acceleration = value);
+        addSetting(toElement, bee.props.maxSpeed, "Speed");
+        addSetting(toElement, bee.circleProps.durationNormal, "Circle Duration");
+        addSetting(toElement, bee.circleProps.durationShift, "Circle Duration Shift");
+        addSetting(toElement, bee.circleProps.frequency, "Circle Frequency");
+        addSetting(toElement, bee.circleProps.size, "Circle Size");
     }
 
-    function addSetting(toElement: HTMLElement, name: string, props: modifiableProp, onChange?: (value: number) => void) {
-        const setting = createSettingElement(name, props);
+    function addSetting(toElement: HTMLElement, props: modifiableProp, name?: string, onChange?: (value: number) => void, showValue: boolean = true) {
+        const setting = createSettingElement(props, showValue, name);
         toElement.appendChild(setting.element);
 
         setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, onChange));
@@ -154,17 +174,19 @@ export namespace Playground {
         console.log(setting.parts.slider.value);
     }
 
-    function createSettingElement(name: string, props: modifiableProp): setting {
+    function createSettingElement(props: modifiableProp, showValue: boolean, name?: string): setting {
         const settingDiv = htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
         const nameSpan = htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
         const sliderContainer = htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;
         const slider = htmlToElement(`<input class="slider small-slider" type="range" step="0.1" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`) as HTMLInputElement;
         const sliderValue = htmlToElement(`<span class="slider-value">${props.value}</span>`) as HTMLSpanElement;
 
-        settingDiv.appendChild(nameSpan);
+        if (name)
+            settingDiv.appendChild(nameSpan);
         settingDiv.appendChild(sliderContainer);
         sliderContainer.appendChild(slider);
-        sliderContainer.appendChild(sliderValue);
+        if (showValue)
+            sliderContainer.appendChild(sliderValue);
 
         return { element: settingDiv, parts: { slider, sliderValue } };
     }

@@ -26,7 +26,11 @@
 <div id="action-center">
     <div id="hue-slider-div">
         <p>change the color ;)</p>
-        <input type="range" min="0" max="360" value="0" class="slider" id="hue-slider"/>
+        <div id="hue-slider-container">
+            <input type="range" min="0" max="360" value="0" class="slider" id="hue-slider"/>
+            <ion-icon name="repeat-outline" id="cycle-hue-button" class="on"></ion-icon>
+            <span id="cycle-speed-slider"></span>
+        </div>
     </div>
 
     <div id="pilot-button-div">

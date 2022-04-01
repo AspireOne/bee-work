@@ -17,6 +17,56 @@
     width: 100%;
 }
 
+#cycle-hue-button.off {
+    color: #8c8c8c;
+}
+
+#cycle-hue-button.on {
+    color: #ff9e76;
+}
+
+#cycle-hue-button {
+    width: 4em;
+    height: 4em;
+    cursor: pointer;
+    margin-top: 1em;
+}
+
+#cycle-speed-slider .slider {width: 100%;}
+
+#cycle-speed-slider {
+    margin-bottom: 1.5em;
+}
+
+#hue-slider-container .setting {
+    margin-bottom: 6em;
+}
+
+#hue-slider-container {
+    display: flex;
+    justify-content: flex-start;
+    justify-content: center;
+    gap: 0.5em;
+    margin-bottom: -5em;
+}
+
+/*#cycle-hue-button:hover {color: #ffd5c1;}*/
+
+#hue-slider-div p {
+    font-size: 1.2em;
+    /* Othetwise there's a large space between the slider and it's title. */
+    margin: 2em 0 -2em 1em;
+    padding-bottom: 10px; /* So that there's some space between the slider and it's title. */
+}
+
+#hue-slider-div {
+    width: 30%; /* Otherwise it would be as small as possible. */
+}
+
+#hue-slider {
+    margin-top: 3.3em;
+}
+
 .small-slider {
     width: 5em;
     margin-right: 1em;
@@ -38,40 +88,17 @@
     align-items: center;
     gap: 1em;
 
-    border-bottom: 1px solid rgba(255, 115, 0, 0.2);
+    border-bottom: 1px solid purple;
     overflow: hidden;
-
-    border: 1px dashed purple;
 }
 
-#pilot-button-div {
-    border: 1px dashed orange;
-}
-#pilot-order {
-    font-size: 1.8em;
-}
+#pilot-order {font-size: 1.8em;}
 #pilot-button {
     padding: 0; /* So that the text inside is not offsetted. */
     height: 2.5em;
     width: 9em; /* So that the larger text that we add to it in js fit it. */
     font-size: 1.5em; /* So that the text inside is not huge. */
 }
-
-#hue-slider-div p {
-    text-align: center;
-    font-size: 1.2em;
-    margin: 0; /* Othetwise there's a large space between the slider and it's title. */
-    padding-bottom: 10px; /* So that there's some space between the slider and it's title. */
-}
-
-#hue-slider-div {
-    width: 30%; /* Otherwise it would be as small as possible. */
-    border: 1px dashed cyan;
-}
-
-/*#settings-div {
-    border: 1px dashed red;
-}*/
 
 .setting {
     margin: 1em 0;
@@ -87,8 +114,8 @@
 }
 
 #settings-menu-icon {
-    height: 3em;
-    width: 3em;
+    height: 4em;
+    width: 4em;
     cursor: pointer;
 }
 

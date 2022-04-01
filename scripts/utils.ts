@@ -14,6 +14,15 @@ export function collides(a: DOMRect, b: DOMRect) {
     );
 }
 
+export function isPointInsideRect(x: number, y: number, rect: DOMRect) {
+    return (
+        x >= rect.x &&
+        x <= rect.x + rect.width &&
+        y >= rect.y &&
+        y <= rect.y + rect.height
+    );
+}
+
 export function htmlToElement(html: string): HTMLElement {
     const template = document.createElement('template');
     html = html.trim(); // Never return a text node of whitespace as the result.
