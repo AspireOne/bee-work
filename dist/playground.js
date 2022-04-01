@@ -14,8 +14,6 @@ export var Playground;
         duration: 5000,
         spawnDelayRange: [10000, 30000]
     };
-    let canvas;
-    let settingsDiv;
     let autopilotButtonTextSpan;
     let autopilotButton;
     let screenSaverPilot;
@@ -29,24 +27,39 @@ export var Playground;
         autopilotButton = document.getElementById("pilot-button");
         autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span");
         pilotOrderText = document.getElementById("pilot-order");
-        canvas = document.getElementById("canvas");
-        settingsDiv = document.getElementById("settings-div");
+        const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
+        const settingsDiv = document.getElementById("settings-div");
+        const settingsMenuContainer = document.getElementById("settings-menu-container");
+        const settingsMenuIcon = document.getElementById("settings-menu-icon");
         ctx.canvas.width = getAvailableWidth();
         ctx.canvas.height = getAvailableHeight();
         canvas.style.position = "absolute";
         addListenersToElements();
-        addSettings();
+        addSettings(settingsDiv);
+        setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
-        startGeneratingPortals();
+        startGeneratingPortals(canvas);
     }
-    function startGeneratingPortals() {
+    function setUpSettingsMenu(menuContainer, menuButton) {
+        // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
+        menuButton.addEventListener("click", () => {
+            if (Number(menuContainer.style.bottom.replace("px", "")) < 0) {
+                menuContainer.style.bottom = "0px";
+            }
+            else {
+                menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+            }
+        });
+        menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
+    }
+    function startGeneratingPortals(canvas) {
         portals.generateRandomPortal(portalGeneration.duration, canvas);
         setTimeout(() => {
-            startGeneratingPortals();
+            startGeneratingPortals(canvas);
         }, randomIntFromInterval(portalGeneration.spawnDelayRange[0], portalGeneration.spawnDelayRange[1]));
     }
     function addListenersToElements() {
@@ -72,7 +85,7 @@ export var Playground;
             return;
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
     }
-    function addSettings() {
+    function addSettings(toElement) {
         const accelerationProps = {
             value: bee.accelerationData.acceleration,
             values: {
@@ -81,21 +94,21 @@ export var Playground;
                 min: 0.05
             }
         };
-        addSetting("Delta", bee.props.deltaTime, (value) => {
+        addSetting(toElement, "Delta", bee.props.deltaTime, (value) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
         });
-        addSetting("Acceleration", accelerationProps, (value) => bee.accelerationData.acceleration = value);
-        addSetting("Speed", bee.props.maxSpeed);
-        addSetting("Circle Duration", bee.circleProps.durationNormal);
-        addSetting("Circle Duration Shift", bee.circleProps.durationShift);
-        addSetting("Circle Frequency", bee.circleProps.frequency);
-        addSetting("Circle Size", bee.circleProps.size);
+        addSetting(toElement, "Acceleration", accelerationProps, (value) => bee.accelerationData.acceleration = value);
+        addSetting(toElement, "Speed", bee.props.maxSpeed);
+        addSetting(toElement, "Circle Duration", bee.circleProps.durationNormal);
+        addSetting(toElement, "Circle Duration Shift", bee.circleProps.durationShift);
+        addSetting(toElement, "Circle Frequency", bee.circleProps.frequency);
+        addSetting(toElement, "Circle Size", bee.circleProps.size);
     }
-    function addSetting(name, props, onChange) {
+    function addSetting(toElement, name, props, onChange) {
         const setting = createSettingElement(name, props);
-        settingsDiv.appendChild(setting.element);
+        toElement.appendChild(setting.element);
         setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, onChange));
     }
     function handleSettingValueChange(setting, props, onChange) {
@@ -108,7 +121,7 @@ export var Playground;
     }
     function createSettingElement(name, props) {
         const settingDiv = htmlToElement(`<div class="setting"></div>`);
-        const nameSpan = htmlToElement(`<span>${name}:</span>`);
+        const nameSpan = htmlToElement(`<span class="setting-name">${name}:</span>`);
         const sliderContainer = htmlToElement(`<span class="slider-container"></span>`);
         const slider = htmlToElement(`<input class="slider small-slider" type="range" step="0.1" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`);
         const sliderValue = htmlToElement(`<span class="slider-value">${props.value}</span>`);

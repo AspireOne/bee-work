@@ -2,8 +2,8 @@ export declare class VanishingCircle {
     private static circles;
     disabled: boolean;
     readonly vanishIn: number;
-    readonly x: string;
-    readonly y: string;
+    readonly x: number;
+    readonly y: number;
     readonly initialOpacity: number;
     readonly width: number;
     readonly hue: number;

@@ -25,9 +25,6 @@ export namespace Playground {
         }
     }
 
-    let canvas: HTMLCanvasElement;
-    let settingsDiv: HTMLDivElement;
-
     let autopilotButtonTextSpan: HTMLElement;
     let autopilotButton: HTMLInputElement;
 
@@ -45,29 +42,45 @@ export namespace Playground {
         autopilotButton = document.getElementById("pilot-button") as HTMLInputElement;
         autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span") as HTMLElement;
         pilotOrderText = document.getElementById("pilot-order") as HTMLElement;
-        canvas = document.getElementById("canvas") as HTMLCanvasElement;
-        settingsDiv = document.getElementById("settings-div") as HTMLDivElement;
+        const canvas = document.getElementById("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+        const settingsDiv = document.getElementById("settings-div") as HTMLDivElement;
+        const settingsMenuContainer = document.getElementById("settings-menu-container") as HTMLDivElement;
+        const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
 
         ctx.canvas.width  = getAvailableWidth();
         ctx.canvas.height = getAvailableHeight();
         canvas.style.position = "absolute";
 
         addListenersToElements();
-        addSettings();
+        addSettings(settingsDiv);
+        setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
 
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
 
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
-        startGeneratingPortals();
+        startGeneratingPortals(canvas);
     }
 
-    function startGeneratingPortals() {
+    function setUpSettingsMenu(menuContainer: HTMLDivElement, menuButton: HTMLElement) {
+        // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
+        menuButton.addEventListener("click", () => {
+            if (Number(menuContainer.style.bottom.replace("px", "")) < 0) {
+                menuContainer.style.bottom = "0px";
+            } else {
+                menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+            }
+        });
+
+        menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
+    }
+
+    function startGeneratingPortals(canvas: HTMLCanvasElement) {
         portals.generateRandomPortal(portalGeneration.duration, canvas);
         setTimeout(() => {
-            startGeneratingPortals();
+            startGeneratingPortals(canvas);
         }, randomIntFromInterval(portalGeneration.spawnDelayRange[0], portalGeneration.spawnDelayRange[1]));
     }
 
@@ -100,7 +113,7 @@ export namespace Playground {
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
     }
 
-    function addSettings() {
+    function addSettings(toElement: HTMLElement) {
         const accelerationProps: modifiableProp = {
             value: bee.accelerationData.acceleration,
             values: {
@@ -110,23 +123,23 @@ export namespace Playground {
             }
         }
 
-        addSetting("Delta", bee.props.deltaTime, (value) => {
+        addSetting(toElement, "Delta", bee.props.deltaTime, (value) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
         });
-        addSetting("Acceleration", accelerationProps, (value) => bee.accelerationData.acceleration = value);
-        addSetting("Speed", bee.props.maxSpeed);
-        addSetting("Circle Duration", bee.circleProps.durationNormal);
-        addSetting("Circle Duration Shift", bee.circleProps.durationShift);
-        addSetting("Circle Frequency", bee.circleProps.frequency);
-        addSetting("Circle Size", bee.circleProps.size);
+        addSetting(toElement, "Acceleration", accelerationProps, (value) => bee.accelerationData.acceleration = value);
+        addSetting(toElement, "Speed", bee.props.maxSpeed);
+        addSetting(toElement, "Circle Duration", bee.circleProps.durationNormal);
+        addSetting(toElement, "Circle Duration Shift", bee.circleProps.durationShift);
+        addSetting(toElement, "Circle Frequency", bee.circleProps.frequency);
+        addSetting(toElement, "Circle Size", bee.circleProps.size);
 
     }
 
-    function addSetting(name: string, props: modifiableProp, onChange?: (value: number) => void) {
+    function addSetting(toElement: HTMLElement, name: string, props: modifiableProp, onChange?: (value: number) => void) {
         const setting = createSettingElement(name, props);
-        settingsDiv.appendChild(setting.element);
+        toElement.appendChild(setting.element);
 
         setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, onChange));
     }
@@ -143,7 +156,7 @@ export namespace Playground {
 
     function createSettingElement(name: string, props: modifiableProp): setting {
         const settingDiv = htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
-        const nameSpan = htmlToElement(`<span>${name}:</span>`) as HTMLSpanElement;
+        const nameSpan = htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
         const sliderContainer = htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;
         const slider = htmlToElement(`<input class="slider small-slider" type="range" step="0.1" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`) as HTMLInputElement;
         const sliderValue = htmlToElement(`<span class="slider-value">${props.value}</span>`) as HTMLSpanElement;

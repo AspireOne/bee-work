@@ -2,8 +2,8 @@ export class VanishingCircle {
     private static circles: VanishingCircle[] = [];
     public disabled: boolean = false;
     public readonly vanishIn: number;
-    public readonly x: string;
-    public readonly y: string;
+    public readonly x: number;
+    public readonly y: number;
     public readonly initialOpacity: number;
     public readonly width: number;
     public readonly hue: number;
@@ -23,8 +23,8 @@ export class VanishingCircle {
         this.applyFilter = this.vanishIn < this.doNotApplyFilterThreshold;
         this.hue = hue;
         this.initialOpacity = initialOpacity;
-        this.x = x + "px";
-        this.y = y + "px";
+        this.x = x;
+        this.y = y;
         this.decreaseBy = initialOpacity / (vanishIn / VanishingCircle.delta);
         this.prevOpacity = initialOpacity;
         this.width = size;
@@ -54,10 +54,11 @@ export class VanishingCircle {
         if (VanishingCircle.baseElement === undefined)
             VanishingCircle.baseElement = this.createBaseCircleElement();
 
-        let clone = VanishingCircle.baseElement.cloneNode(true) as HTMLElement;
+        let clone = VanishingCircle.baseElement.cloneNode(false) as HTMLElement;
+        const offset = (this.width - 80) / 2;
         Object.assign(clone.style, {
-            left: this.x,
-            top: this.y,
+            left: this.x - offset + "px",
+            top: this.y - offset + "px",
             width: this.width + "px",
             height: this.width + "px",
             opacity: this.initialOpacity,

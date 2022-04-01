@@ -10,6 +10,8 @@
     <title>ya like jazz?</title>
     <script type="module" src="../dist/global.js"></script>
     <script type="module" src="../dist/playground.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </head>
 <body>
 <div class="js-indicator" id="js-width-indicator"></div>
@@ -29,20 +31,25 @@
 
     <div id="pilot-button-div">
         <button class="button" id="pilot-button">
-            <span id="js-pilot-button-text-span">
-                Autopilot OFF
-            </span>
+            <span id="js-pilot-button-text-span">Autopilot OFF</span>
         </button>
-        <h2 id="pilot-order">0/0</h2>
+        <span id="pilot-order">0/0</span>
     </div>
 
-    <div id="settings-div">
-    </div>
+
 </div>
 
-<h1>Beeter</h1>
-<div class="center">
+<div id="header">
+    <h1>Beeter</h1>
     <h2>Use WASD & Shift</h2>
+</div>
+
+<div id="settings-menu-container">
+    <ion-icon name="menu-outline" id="settings-menu-icon"></ion-icon>
+    <div id="settings-menu">
+        <div id="settings-div">
+        </div>
+    </div>
 </div>
 </body>
 </html>
