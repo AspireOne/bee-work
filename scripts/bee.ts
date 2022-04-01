@@ -1,5 +1,5 @@
-import {VanishingCircle} from "./vanishingCircle.js";
-import {getAvailableHeight, getAvailableWidth} from "./utils.js";
+import {Props, VanishingCircle} from "./vanishingCircle.js";
+import {getAvailableHeight, getAvailableWidth, Point} from "./utils.js";
 import {Controls} from "./controls.js";
 import {Acceleration, WayX} from "./pilotUtils.js";
 
@@ -13,7 +13,7 @@ export interface modifiableProp {
 }
 
 export class Bee {
-    public currPos = { y: 0, x: 0 }
+    public currPos: Point = { y: 0, x: 0 }
 
     public circleProps = {
         durationNormal: {
@@ -28,7 +28,7 @@ export class Bee {
             value: 2000,
             values: {
                 default: 2000,
-                min: 50,
+                min: 1000,
                 max: 4000
             }
         },
@@ -71,7 +71,7 @@ export class Bee {
             value: 8,
             values: {
                 default: 8,
-                min: 2,
+                min: 1,
                 max: 20
             }
         }
@@ -127,8 +127,7 @@ export class Bee {
     private frame() {
         let newY = this.calculateNewY();
         let newX = this.calculateNewX();
-        this.currPos.y = newY;
-        this.currPos.x = newX;
+        this.currPos = {y: newY, x: newX};
 
         this.element.style.top = newY + "px";
         this.element.style.left = newX + "px";
@@ -137,9 +136,13 @@ export class Bee {
 
         if ((this.timeFromLastCircle += this.props.deltaTime.value) >= this.circleProps.frequency.value) {
             this.timeFromLastCircle = 0;
-            new VanishingCircle(newX, newY,
-                Controls.keys.floss.downPressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
-                this.circleProps.size.value, 1, this.circleProps.hue.value).show();
+            const props: Props = {
+                duration: Controls.keys.floss.downPressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
+                size: this.circleProps.size.value,
+                initialOpacity: 1,
+                hue: this.circleProps.hue.value
+            }
+            new VanishingCircle(this.currPos, props).show();
         }
     }
 

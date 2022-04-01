@@ -78,7 +78,8 @@ body * {
 
 .circle {
     position: absolute;
-    height: auto;
+    contain: strict;
+    will-change: opacity;
     z-index: -1;
 }
 

@@ -2,7 +2,7 @@ const widthIndicator = document.getElementById("js-width-indicator") as HTMLElem
 const heightIndicator = document.getElementById("js-height-indicator") as HTMLElement;
 export const getAvailableHeight = () => heightIndicator?.clientHeight;
 export const getAvailableWidth = () => widthIndicator?.clientWidth;
-
+export type Point = { x: number; y: number };
 export const randomIntFromInterval = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) + min);
 
 export function collides(a: DOMRect, b: DOMRect) {
@@ -25,7 +25,7 @@ export function isPointInsideRect(x: number, y: number, rect: DOMRect) {
 
 export function htmlToElement(html: string): HTMLElement {
     const template = document.createElement('template');
-    html = html.trim(); // Never return a text node of whitespace as the result.
+    html = html.trim();
     template.innerHTML = html;
     return template.content.firstChild as HTMLElement;
 }

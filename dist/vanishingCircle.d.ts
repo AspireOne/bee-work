@@ -1,26 +1,32 @@
+import { Point } from "./utils.js";
+export declare type Props = {
+    duration: number;
+    initialOpacity: number;
+    size: number;
+    hue: number;
+};
 export declare class VanishingCircle {
-    private static circles;
-    disabled: boolean;
-    readonly vanishIn: number;
-    readonly x: number;
-    readonly y: number;
-    readonly initialOpacity: number;
-    readonly width: number;
-    readonly hue: number;
-    private static baseElement;
     private static readonly delta;
-    private elapsed;
+    private static readonly doNotApplyFilterThreshold;
+    private static circles;
+    private static image;
     private static intervalId;
-    private prevOpacity;
-    private readonly decreaseBy;
+    readonly point: {
+        x: number;
+        y: number;
+    };
+    readonly props: Props;
+    private readonly decreaseStep;
     private readonly clone;
     private readonly applyFilter;
-    private readonly doNotApplyFilterThreshold;
-    constructor(x: number, y: number, vanishIn?: number, size?: number, initialOpacity?: number, hue?: number);
+    disabled: boolean;
+    private elapsed;
+    private prevOpacity;
+    constructor(point: Point, props: Partial<Props>);
     static runLoop(): void;
     static stopLoop(): void;
     private createClone;
-    private createBaseCircleElement;
+    private static createBaseCircleElement;
     show(): void;
     updateVanish(): void;
 }

@@ -1,3 +1,4 @@
+import { Point } from "./utils.js";
 import { Controls } from "./controls.js";
 import { Acceleration } from "./pilotUtils.js";
 export interface modifiableProp {
@@ -9,10 +10,7 @@ export interface modifiableProp {
     };
 }
 export declare class Bee {
-    currPos: {
-        y: number;
-        x: number;
-    };
+    currPos: Point;
     circleProps: {
         durationNormal: {
             value: number;
