@@ -1,2 +1,2 @@
-export declare namespace Playground {
+export declare module Playground {
 }

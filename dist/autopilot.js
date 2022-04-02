@@ -1,104 +1,104 @@
-import { getAvailableHeight, getAvailableWidth } from "./utils.js";
+import { Controls } from "./controls.js";
+import { Utils } from "./utils.js";
 export class Autopilot {
     constructor(bee, controls) {
-        this.currDelayX = 500;
-        this.currDelayY = 500;
-        this.elapsedToDelayX = 0;
-        this.currPressedKeyX = "";
-        this.currPressedKeyY = "";
-        this.elapsedToDelayY = 0;
-        this.id = 0;
-        this.playerPosCheckOffset = 90;
         this.running = false;
-        this.getRandomDelay = () => (Math.random() * (Autopilot.maxDelay - Autopilot.minDelay)) + Autopilot.minDelay;
-        this.player = bee;
+        this.intervalId = 0;
+        this.currPressedKey = { x: "", y: "" };
+        this.currDelay = { x: 500, y: 500 };
+        this.elapsed = { x: 0, y: 0 };
+        this.getRandomDelay = () => (Math.random() * (Autopilot.delay.max - Autopilot.delay.min)) + Autopilot.delay.min;
+        this.bee = bee;
         this.controls = controls;
     }
     start() {
         if (this.running)
             return;
         this.running = true;
-        this.id = setInterval(() => {
+        this.intervalId = setInterval(() => {
             this.updateX();
             this.updateY();
         }, Autopilot.delta);
     }
     stop() {
-        clearInterval(this.id);
-        this.id = 0;
+        if (!this.running)
+            return;
         this.running = false;
+        clearInterval(this.intervalId);
         this.resetX();
         this.resetY();
+    }
+    isXOutOfBounds() {
+        const beeWidth = this.bee.element.offsetWidth;
+        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        return this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall || this.bee.currPos.x <= Autopilot.distanceFromWall;
+    }
+    isYOutOfBounds() {
+        const beeHeight = this.bee.element.offsetHeight;
+        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        return this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall || this.bee.currPos.y <= Autopilot.distanceFromWall;
     }
     // This Y X duplication could be solved by a shared interface or abstract class (as a lot of other things) or what they use here lol, but who has the time for that.
     updateX() {
         /* If the element is out of bounds (too close to a wall), do not respect current
          key delay and force an immediate update, which will make the element fly out of it. */
-        if ((this.elapsedToDelayX += Autopilot.delta) >= this.currDelayX || this.isXOutOfBounds()) {
+        if ((this.elapsed.x += Autopilot.delta) >= this.currDelay.x || this.isXOutOfBounds()) {
             this.resetX();
             this.executeNewX();
         }
     }
     resetX() {
-        this.elapsedToDelayX = 0;
-        if (this.currPressedKeyX != "")
-            this.controls.onKeyUp(this.currPressedKeyX);
-    }
-    isXOutOfBounds() {
-        const playerWidth = this.player.element.offsetWidth;
-        const playerMaxX = getAvailableWidth() - playerWidth;
-        return this.player.currPos.x >= playerMaxX - this.playerPosCheckOffset || this.player.currPos.x <= this.playerPosCheckOffset;
-    }
-    isYOutOfBounds() {
-        const playerHeight = this.player.element.offsetHeight;
-        const playerMaxY = getAvailableHeight() - playerHeight;
-        return this.player.currPos.y >= playerMaxY - this.playerPosCheckOffset || this.player.currPos.y <= this.playerPosCheckOffset;
+        this.elapsed.x = 0;
+        if (this.currPressedKey.x != "")
+            Controls.changePressState(this.currPressedKey.x, false);
     }
     executeNewX() {
         let key;
-        const playerWidth = this.player.element.offsetWidth;
-        const playerMaxX = getAvailableWidth() - playerWidth;
-        if (this.player.currPos.x >= playerMaxX - this.playerPosCheckOffset)
+        const beeWidth = this.bee.element.offsetWidth;
+        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        if (this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall)
             key = "a";
-        else if (this.player.currPos.x <= this.playerPosCheckOffset)
+        else if (this.bee.currPos.x <= Autopilot.distanceFromWall)
             key = "d";
         else
-            key = Autopilot.possibleKeysX[Math.floor(Math.random() * Autopilot.possibleKeysX.length)];
-        this.currDelayX = this.getRandomDelay();
-        this.currPressedKeyX = key;
+            key = Autopilot.possibleKeys.x[Math.floor(Math.random() * Autopilot.possibleKeys.x.length)];
+        this.currDelay.x = this.getRandomDelay();
+        this.currPressedKey.x = key;
         if (key != "")
-            this.controls.onKeyDown(key);
+            Controls.changePressState(key, true);
     }
     updateY() {
-        if ((this.elapsedToDelayY += Autopilot.delta) >= this.currDelayY || this.isYOutOfBounds()) {
+        if ((this.elapsed.y += Autopilot.delta) >= this.currDelay.y || this.isYOutOfBounds()) {
             this.resetY();
             this.executeNewY();
         }
     }
     resetY() {
-        this.elapsedToDelayY = 0;
-        if (this.currPressedKeyY != "")
-            this.controls.onKeyUp(this.currPressedKeyY);
+        this.elapsed.y = 0;
+        if (this.currPressedKey.y != "")
+            Controls.changePressState(this.currPressedKey.y, false);
     }
     executeNewY() {
         let key;
-        const playerHeight = this.player.element.offsetHeight;
-        const playerMaxY = getAvailableHeight() - playerHeight;
-        if (this.player.currPos.y >= playerMaxY - this.playerPosCheckOffset)
+        const beeHeight = this.bee.element.offsetHeight;
+        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        if (this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall)
             key = "w";
-        else if (this.player.currPos.y <= this.playerPosCheckOffset)
+        else if (this.bee.currPos.y <= Autopilot.distanceFromWall)
             key = "";
         else
-            key = Autopilot.possibleKeysY[Math.floor(Math.random() * Autopilot.possibleKeysY.length)];
-        this.currDelayY = this.getRandomDelay();
-        this.currPressedKeyY = key;
+            key = Autopilot.possibleKeys.y[Math.floor(Math.random() * Autopilot.possibleKeys.y.length)];
+        this.currDelay.y = this.getRandomDelay();
+        this.currPressedKey.y = key;
         if (key != "")
-            this.controls.onKeyDown((key));
+            Controls.changePressState(key, true);
     }
 }
 Autopilot.delta = 50;
-Autopilot.maxDelay = 550;
-Autopilot.minDelay = 150;
-Autopilot.possibleKeysX = ["", "a", "d"];
-Autopilot.possibleKeysY = ["", "w"];
+Autopilot.distanceFromWall = 90;
+Autopilot.delay = { max: 550, min: 150 };
+Autopilot.possibleKeys = {
+    x: ["", "a", "d"],
+    y: ["", "w"]
+};
 //# sourceMappingURL=autopilot.js.map

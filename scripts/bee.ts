@@ -1,21 +1,30 @@
-import {Props, VanishingCircle} from "./vanishingCircle.js";
-import {getAvailableHeight, getAvailableWidth, Point} from "./utils.js";
+import {VanishingCircle} from "./vanishingCircle.js";
 import {Controls} from "./controls.js";
 import {Acceleration, WayX} from "./pilotUtils.js";
+import CircleProps = Bee.CircleProps;
+import Props = Bee.Props;
+import {Utils} from "./utils.js";
 
-export interface modifiableProp {
-    value: number,
-    values: {
-        readonly default: number,
-        readonly min: number,
-        readonly max: number,
-    },
+export module Bee {
+    import ModifiableProp = Utils.ModifiableProp;
+    export type CircleProps = {
+        durationNormal: ModifiableProp,
+        durationShift: ModifiableProp,
+        frequency: ModifiableProp,
+        size: ModifiableProp,
+        hue: ModifiableProp
+    }
+
+    export type Props = {
+        maxSpeed: ModifiableProp,
+        deltaTime: ModifiableProp
+    }
 }
 
 export class Bee {
-    public currPos: Point = { y: 0, x: 0 }
+    public currPos: Utils.Point = { y: 0, x: 0 }
 
-    public circleProps = {
+    public circleProps: CircleProps = {
         durationNormal: {
             value: 400,
             values: {
@@ -41,11 +50,11 @@ export class Bee {
             }
         },
         size: {
-            value: 80,
+            value: 100,
             values: {
-                default: 80,
+                default: 100,
                 min: 40,
-                max: 200
+                max: 500
             }
         },
         hue: {
@@ -56,9 +65,9 @@ export class Bee {
                 max: 360
             }
         },
-    }
+    };
 
-    public props = {
+    public props: Props = {
         maxSpeed: {
             value: 7,
             values: {
@@ -92,8 +101,8 @@ export class Bee {
         this.element = bee;
         this.scale = parseInt(bee.style.transform.replace(/\D/g, ""));
 
-        this.element.style.top = getAvailableHeight() - this.element.offsetHeight + "px";
-        this.element.style.left = getAvailableWidth()/2 - this.element.offsetWidth + "px";
+        this.element.style.top = Utils.getAvailableHeight() - this.element.offsetHeight + "px";
+        this.element.style.left = Utils.getAvailableWidth()/2 - this.element.offsetWidth + "px";
         this.element.style.visibility = "visible";
         this.element.onclick = () => {
             let text = document.getElementById("bee-text") as HTMLElement;
@@ -105,6 +114,8 @@ export class Bee {
             text.style.top = parseInt(bee.style.top) - 40 + "px";
             setTimeout(() => text.innerHTML = "", 1500);
         }
+
+        this.applySavedSettings();
     }
 
     public start() {
@@ -124,6 +135,48 @@ export class Bee {
         this.updateIntervalId = null;
     }
 
+    public resetSettings() {
+        Object.entries({...this.props, ...this.circleProps}).forEach(([key, prop]) => prop.value = prop.values.default);
+        this.accelerationData.acceleration.value = this.accelerationData.acceleration.values.default;
+    }
+
+    public saveCurrentSettings() {
+        const circleProps = this.createObjectWithValuesFromProps(this.circleProps);
+        const beeProps = this.createObjectWithValuesFromProps(this.props);
+
+        localStorage.setItem("bee-circleProps", JSON.stringify(circleProps));
+        localStorage.setItem("bee-props", JSON.stringify(beeProps));
+        localStorage.setItem("bee-acceleration", this.accelerationData.acceleration.value + "");
+    }
+
+    createObjectWithValuesFromProps(sourceProps: {[key: string]: Utils.ModifiableProp}): Utils.SavedModifiableProp {
+        const values: Utils.SavedModifiableProp = {};
+        Object.entries(sourceProps).forEach(([key, value]) => values[key] = value.value);
+        return values;
+    }
+
+    updatePropsValues(targetProps: {[key: string]: Utils.ModifiableProp}, values: Utils.SavedModifiableProp) {
+        Object.entries(values).forEach(([key, value]) => targetProps[key].value = value);
+    }
+
+    private applySavedSettings() {
+        let props = localStorage.getItem("bee-props");
+        if (props != null) {
+            const propsValues = JSON.parse(props) as Utils.SavedModifiableProp;
+            this.updatePropsValues(this.props, propsValues);
+        }
+
+        let circleProps = localStorage.getItem("bee-circleProps");
+        if (circleProps != null) {
+            const circlePropsValues = JSON.parse(circleProps) as Utils.SavedModifiableProp;
+            this.updatePropsValues(this.circleProps, circlePropsValues);
+        }
+
+        let acceleration = localStorage.getItem("bee-acceleration");
+        if (acceleration != null)
+            this.accelerationData.acceleration.value = parseFloat(acceleration);
+    }
+
     private frame() {
         let newY = this.calculateNewY();
         let newX = this.calculateNewX();
@@ -136,12 +189,12 @@ export class Bee {
 
         if ((this.timeFromLastCircle += this.props.deltaTime.value) >= this.circleProps.frequency.value) {
             this.timeFromLastCircle = 0;
-            const props: Props = {
-                duration: Controls.keys.floss.downPressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
+            const props: VanishingCircle.Props = {
+                duration: Controls.keys.floss.pressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
                 size: this.circleProps.size.value,
                 initialOpacity: 1,
                 hue: this.circleProps.hue.value
-            }
+            };
             new VanishingCircle(this.currPos, props).show();
         }
     }
@@ -149,9 +202,9 @@ export class Bee {
     private flipElementIfShould() {
         let scale = 0;
 
-        if (Controls.keys.right.downPressed)
+        if (Controls.keys.right.pressed)
             scale = -1;
-        else if (Controls.keys.left.downPressed)
+        else if (Controls.keys.left.pressed)
             scale = 1;
 
         if (scale !== 0 && scale !== this.scale) {
@@ -163,7 +216,7 @@ export class Bee {
     private calculateNewX(): number {
         const currPosX = parseInt(this.element.style.left);
         const width = this.element.offsetWidth;
-        const maxX = getAvailableWidth() - width;
+        const maxX = Utils.getAvailableWidth() - width;
         const getUpdatedWay = (): WayX => {
             if (this.accelerationData.currAccelerationX > 0)
                 return WayX.RIGHT;
@@ -176,17 +229,17 @@ export class Bee {
 
         let newAcceleration = this.accelerationData.currAccelerationX;
 
-        if (Controls.keys.left.downPressed)
-            newAcceleration -= this.accelerationData.acceleration;
-        else if (Controls.keys.right.downPressed)
-            newAcceleration += this.accelerationData.acceleration;
+        if (Controls.keys.left.pressed)
+            newAcceleration -= this.accelerationData.acceleration.value;
+        else if (Controls.keys.right.pressed)
+            newAcceleration += this.accelerationData.acceleration.value;
         else {
             if (updatedWay != this.wayX)
                 newAcceleration = 0;
             else if (this.accelerationData.currAccelerationX > 0)
-                newAcceleration -= this.accelerationData.acceleration;
+                newAcceleration -= this.accelerationData.acceleration.value;
             else if (this.accelerationData.currAccelerationX < 0)
-                newAcceleration += this.accelerationData.acceleration;
+                newAcceleration += this.accelerationData.acceleration.value;
         }
 
         let newPosX = currPosX + newAcceleration;
@@ -208,11 +261,11 @@ export class Bee {
     private calculateNewY(): number {
         const currPosY = parseInt(this.element.style.top);
         const height = this.element.offsetHeight;
-        const maxY = getAvailableHeight() - height;
+        const maxY = Utils.getAvailableHeight() - height;
 
-        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.downPressed
-            ? -this.accelerationData.acceleration
-            : this.accelerationData.acceleration);
+        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.pressed
+            ? -this.accelerationData.acceleration.value
+            : this.accelerationData.acceleration.value);
         let newPosY = currPosY + newAcceleration;
 
         this.accelerationData.currAccelerationY = this.getMaxSpeed(newAcceleration);
@@ -228,6 +281,7 @@ export class Bee {
         return newPosY;
     }
 
+    // Returns the max speed (either positive or negative, based on the acceleration).
     // Acceleration is there to know if the player is going left or right.
     private getMaxSpeed(acceleration: number): number {
         if (acceleration > this.props.maxSpeed.value)

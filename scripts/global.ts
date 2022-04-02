@@ -1,9 +1,7 @@
-import {Autopilot} from "./autopilot.js";
 import {Bee} from "./bee.js";
-import {ScreenSaverPilot} from "./screenSaverPilot.js";
 import {Controls} from "./controls.js";
 import {Portals} from "./portals.js";
-import {getAvailableHeight, getAvailableWidth, htmlToElement, addValueToSliders} from "./utils.js";
+import {Utils} from "./utils.js";
 
 export let controls = new Controls();
 export let bee: Bee;
@@ -18,8 +16,9 @@ const beeElementHTML =
         </div>
     `;
 
+//document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
-    document.body.appendChild(htmlToElement(beeElementHTML));
+    document.body.appendChild(Utils.htmlToElement(beeElementHTML));
     const beeElement = document.getElementById("bee") as HTMLElement;
 
     portals = new Portals(beeElement);
@@ -29,7 +28,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     bee = new Bee(beeElement, controls);
     bee.start();
 
-    addValueToSliders();
+    Utils.addValueToSliders();
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });

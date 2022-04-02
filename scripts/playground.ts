@@ -1,10 +1,9 @@
 import {ScreenSaverPilot} from "./screenSaverPilot.js";
 import {Autopilot} from "./autopilot.js";
 import {bee, controls, modules, portals} from "./global.js";
-import {Bee, modifiableProp} from "./bee.js";
-import {getAvailableHeight, getAvailableWidth, htmlToElement, randomIntFromInterval} from "./utils.js";
+import {Utils} from "./utils.js";
 
-export namespace Playground {
+export module Playground {
     const colorCycling = {
         cyclingUp: true,
         currColorValue: 0,
@@ -21,18 +20,31 @@ export namespace Playground {
 
     const portalGeneration = {
         duration: 5000,
-        spawnDelayRange: [10000, 30000]
+        spawnDelayRange: {min: 10000, max: 30000}
     };
 
-    interface setting {
+    type Setting = {
         element: HTMLDivElement;
         parts: {
             slider: HTMLInputElement;
             sliderValue: HTMLSpanElement;
+            defaultValue: HTMLSpanElement;
         }
     }
 
+    type SettingProps = {
+        name?: string;
+        onChange?: (value: number) => void;
+        step?: number;
+        showValue: boolean;
+    }
+
+    const settings: { setting: Setting, props: Utils.ModifiableProp }[] = [];
+
     let cycleColorButt: HTMLElement;
+    let saveSettingsButt: HTMLElement;
+    let resetSettingsButt: HTMLElement;
+    let settingsSaveConfirmation: HTMLElement;
 
     let autopilotButtonTextSpan: HTMLElement;
     let autopilotButton: HTMLInputElement;
@@ -52,6 +64,9 @@ export namespace Playground {
         autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span") as HTMLElement;
         pilotOrderText = document.getElementById("pilot-order") as HTMLElement;
         cycleColorButt = document.getElementById("cycle-hue-button") as HTMLElement;
+        saveSettingsButt = document.getElementById("save-settings-button") as HTMLElement;
+        settingsSaveConfirmation = document.getElementById("settings-save-confirmation") as HTMLElement;
+        resetSettingsButt = document.getElementById("reset-settings-button") as HTMLElement;
 
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -60,18 +75,21 @@ export namespace Playground {
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider") as HTMLElement;
 
-        ctx.canvas.width  = getAvailableWidth();
-        ctx.canvas.height = getAvailableHeight();
+        ctx.canvas.width  = Utils.getAvailableWidth();
+        ctx.canvas.height = Utils.getAvailableHeight();
         canvas.style.position = "absolute";
+
 
         addListenersToElements();
         startCyclingColor();
         addSettings(settingsDiv);
-        addSetting(cycleSpeedSlider, colorCycling.updateFreq, "Cycle Speed", (value) => {
+
+        const onHueValueChange = (value: number) => {
             stopCyclingColor();
             colorCycling.updateFreq.value = value;
             startCyclingColor();
-        }, false);
+        };
+        addSetting(cycleSpeedSlider, colorCycling.updateFreq, {name: "Cycle Speed", showValue: false, onChange: onHueValueChange});
         setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
 
         if (pilotOrderText)
@@ -84,34 +102,55 @@ export namespace Playground {
 
     function setUpSettingsMenu(menuContainer: HTMLDivElement, menuButton: HTMLElement) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
-        menuButton.addEventListener("click", () => {
-            if (parseInt(menuContainer.style.bottom.replace("px", "")) < 0)
-                menuContainer.style.bottom = "0px";
-            else
-                menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer));
+        document.addEventListener("keypress", (e) => {
+            if (e.key.toLowerCase() === "q")
+                toggleSettingsMenu(menuContainer);
         });
-
         menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
+    }
+
+    function toggleSettingsMenu(menuContainer: HTMLDivElement) {
+        if (parseInt(menuContainer.style.bottom) < 0)
+            menuContainer.style.bottom = "0px";
+        else
+            menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
     }
 
     function startGeneratingPortals(canvas: HTMLCanvasElement) {
         portals.generateRandomPortal(portalGeneration.duration, canvas);
-        setTimeout(() => {
-            startGeneratingPortals(canvas);
-        }, randomIntFromInterval(portalGeneration.spawnDelayRange[0], portalGeneration.spawnDelayRange[1]));
+        setTimeout(
+            () => startGeneratingPortals(canvas),
+            Utils.randomIntFromInterval(portalGeneration.spawnDelayRange.min, portalGeneration.spawnDelayRange.max));
     }
 
     function addListenersToElements() {
-        hueSlide.addEventListener("input", (e) => stopCyclingColor());
+        hueSlide.addEventListener("input", (e) => {
+            stopCyclingColor();
+            bee.circleProps.hue.value = parseInt(hueSlide.value);
+        });
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+        saveSettingsButt.addEventListener("click", (e) => {
+            bee.saveCurrentSettings();
+            Utils.resetAnimation(settingsSaveConfirmation);
+        });
+        resetSettingsButt.addEventListener("click", (e) => {
+            bee.resetSettings();
+            settings.forEach(setting => {
+                setting.setting.parts.sliderValue.innerText = setting.props.value + "";
+                setting.setting.parts.slider.value = setting.props.value + "";
+            });
+            bee.stop();
+            bee.start();
+        });
     }
 
     function startCyclingColor() {
         if (colorCycling.intervalId)
             return;
 
-        colorCycling.currColorValue = Number(hueSlide.value.replace("px", ""));
+        colorCycling.currColorValue = parseInt(hueSlide.value);
         cycleColorButt.classList.replace("off", "on");
 
         colorCycling.intervalId = setInterval(() => {
@@ -135,60 +174,60 @@ export namespace Playground {
     }
 
     function addSettings(toElement: HTMLElement) {
-        const accelerationProps: modifiableProp = {
-            value: bee.accelerationData.acceleration,
-            values: {
-                default: bee.accelerationData.acceleration,
-                max: 2,
-                min: 0.05
-            }
-        }
-
-        addSetting(toElement, bee.props.deltaTime, "Delta", (value) => {
+        const onDeltaChange = (value: number) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
-        });
-        addSetting(toElement, accelerationProps, "Acceleration", (value) => bee.accelerationData.acceleration = value);
-        addSetting(toElement, bee.props.maxSpeed, "Speed");
-        addSetting(toElement, bee.circleProps.durationNormal, "Circle Duration");
-        addSetting(toElement, bee.circleProps.durationShift, "Circle Duration Shift");
-        addSetting(toElement, bee.circleProps.frequency, "Circle Frequency");
-        addSetting(toElement, bee.circleProps.size, "Circle Size");
+        };
+
+        addSetting(toElement, bee.props.deltaTime, {name: "Delta", showValue: true, onChange: onDeltaChange});
+        addSetting(toElement, bee.accelerationData.acceleration, {name: "Acceleration", showValue: true, step: 0.01 });
+        addSetting(toElement, bee.props.maxSpeed, {name: "Speed", showValue: true});
+        addSetting(toElement, bee.circleProps.durationNormal, {name: "Circle Duration", showValue: true});
+        addSetting(toElement, bee.circleProps.durationShift, {name: "Cirlce Duration Shift", showValue: true});
+        addSetting(toElement, bee.circleProps.frequency, {name: "Circle Frequency", showValue: true});
+        addSetting(toElement, bee.circleProps.size, {name: "Circle Size", showValue: true});
     }
 
-    function addSetting(toElement: HTMLElement, props: modifiableProp, name?: string, onChange?: (value: number) => void, showValue: boolean = true) {
-        const setting = createSettingElement(props, showValue, name);
+    function addSetting(toElement: HTMLElement, props: Utils.ModifiableProp, {step = 1, ...rest}: SettingProps) {
+        const setting = createSettingElement(props, {step, ...rest});
         toElement.appendChild(setting.element);
 
-        setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, onChange));
+        setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, rest.onChange));
+        setting.parts.defaultValue.addEventListener("click", (e) => {
+            setting.parts.slider.value = props.values.default + "";
+            handleSettingValueChange(setting, props, rest.onChange);
+        });
+        settings.push({setting: setting, props: props});
     }
 
-    function handleSettingValueChange(setting: setting, props: modifiableProp, onChange?: (value: number) => void) {
+    function handleSettingValueChange(setting: Setting, props: Utils.ModifiableProp, onChange?: (value: number) => void) {
         if (onChange)
             onChange(parseFloat(setting.parts.slider.value));
         else
             props.value = parseFloat(setting.parts.slider.value);
 
         setting.parts.sliderValue.innerText = setting.parts.slider.value;
-        console.log(setting.parts.slider.value);
     }
 
-    function createSettingElement(props: modifiableProp, showValue: boolean, name?: string): setting {
-        const settingDiv = htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
-        const nameSpan = htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
-        const sliderContainer = htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;
-        const slider = htmlToElement(`<input class="slider small-slider" type="range" step="0.1" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`) as HTMLInputElement;
-        const sliderValue = htmlToElement(`<span class="slider-value">${props.value}</span>`) as HTMLSpanElement;
+    function createSettingElement(props: Utils.ModifiableProp, {step, showValue, name}: SettingProps): Setting {
+        const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
+        const nameSpan = Utils.htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
+        const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;
+        const slider = Utils.htmlToElement(`<input class="slider small-slider" type="range" step="${step}" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`) as HTMLInputElement;
+        const sliderValue = Utils.htmlToElement(`<span class="slider-value">${props.value}</span>`) as HTMLSpanElement;
+        const defaultValue = Utils.htmlToElement(`<span class="default-value"> (default: ${props.values.default})</span>`) as HTMLSpanElement;
 
         if (name)
             settingDiv.appendChild(nameSpan);
         settingDiv.appendChild(sliderContainer);
         sliderContainer.appendChild(slider);
-        if (showValue)
+        if (showValue) {
             sliderContainer.appendChild(sliderValue);
+            sliderContainer.appendChild(defaultValue);
+        }
 
-        return { element: settingDiv, parts: { slider, sliderValue } };
+        return { element: settingDiv, parts: { slider, sliderValue, defaultValue } };
     }
 
     function handlePilotButtonClick() {
@@ -217,7 +256,7 @@ export namespace Playground {
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
-                    bee.accelerationData.acceleration += screenSaverAccelerationIncrease;
+                    bee.accelerationData.acceleration.value += screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value -= screenSaverSpeedDecrease;
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "3/" + modes;
@@ -225,7 +264,7 @@ export namespace Playground {
                 case screenSaverOn:
                     screenSaverPilot.stop();
                     portals.setTargetPortalsDisplay(true);
-                    bee.accelerationData.acceleration -= screenSaverAccelerationIncrease;
+                    bee.accelerationData.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;
                     controls.ignoreUserInput = false;

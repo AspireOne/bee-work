@@ -1,76 +1,26 @@
-import { Point } from "./utils.js";
 import { Controls } from "./controls.js";
 import { Acceleration } from "./pilotUtils.js";
-export interface modifiableProp {
-    value: number;
-    values: {
-        readonly default: number;
-        readonly min: number;
-        readonly max: number;
+import CircleProps = Bee.CircleProps;
+import Props = Bee.Props;
+import { Utils } from "./utils.js";
+export declare module Bee {
+    import ModifiableProp = Utils.ModifiableProp;
+    type CircleProps = {
+        durationNormal: ModifiableProp;
+        durationShift: ModifiableProp;
+        frequency: ModifiableProp;
+        size: ModifiableProp;
+        hue: ModifiableProp;
+    };
+    type Props = {
+        maxSpeed: ModifiableProp;
+        deltaTime: ModifiableProp;
     };
 }
 export declare class Bee {
-    currPos: Point;
-    circleProps: {
-        durationNormal: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-        durationShift: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-        frequency: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-        size: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-        hue: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-    };
-    props: {
-        maxSpeed: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-        deltaTime: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
-    };
+    currPos: Utils.Point;
+    circleProps: CircleProps;
+    props: Props;
     accelerationData: Acceleration;
     element: HTMLElement;
     private timeFromLastCircle;
@@ -81,6 +31,15 @@ export declare class Bee {
     constructor(bee: HTMLElement, controls: Controls);
     start(): void;
     stop(): void;
+    resetSettings(): void;
+    saveCurrentSettings(): void;
+    createObjectWithValuesFromProps(sourceProps: {
+        [key: string]: Utils.ModifiableProp;
+    }): Utils.SavedModifiableProp;
+    updatePropsValues(targetProps: {
+        [key: string]: Utils.ModifiableProp;
+    }, values: Utils.SavedModifiableProp): void;
+    private applySavedSettings;
     private frame;
     private flipElementIfShould;
     private calculateNewX;

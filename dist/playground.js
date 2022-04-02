@@ -1,7 +1,18 @@
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { ScreenSaverPilot } from "./screenSaverPilot.js";
 import { Autopilot } from "./autopilot.js";
 import { bee, controls, modules, portals } from "./global.js";
-import { getAvailableHeight, getAvailableWidth, htmlToElement, randomIntFromInterval } from "./utils.js";
+import { Utils } from "./utils.js";
 export var Playground;
 (function (Playground) {
     const colorCycling = {
@@ -19,9 +30,13 @@ export var Playground;
     };
     const portalGeneration = {
         duration: 5000,
-        spawnDelayRange: [10000, 30000]
+        spawnDelayRange: { min: 10000, max: 30000 }
     };
+    const settings = [];
     let cycleColorButt;
+    let saveSettingsButt;
+    let resetSettingsButt;
+    let settingsSaveConfirmation;
     let autopilotButtonTextSpan;
     let autopilotButton;
     let screenSaverPilot;
@@ -36,23 +51,27 @@ export var Playground;
         autopilotButtonTextSpan = document.getElementById("js-pilot-button-text-span");
         pilotOrderText = document.getElementById("pilot-order");
         cycleColorButt = document.getElementById("cycle-hue-button");
+        saveSettingsButt = document.getElementById("save-settings-button");
+        settingsSaveConfirmation = document.getElementById("settings-save-confirmation");
+        resetSettingsButt = document.getElementById("reset-settings-button");
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
         const settingsDiv = document.getElementById("settings-div");
         const settingsMenuContainer = document.getElementById("settings-menu-container");
         const settingsMenuIcon = document.getElementById("settings-menu-icon");
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider");
-        ctx.canvas.width = getAvailableWidth();
-        ctx.canvas.height = getAvailableHeight();
+        ctx.canvas.width = Utils.getAvailableWidth();
+        ctx.canvas.height = Utils.getAvailableHeight();
         canvas.style.position = "absolute";
         addListenersToElements();
         startCyclingColor();
         addSettings(settingsDiv);
-        addSetting(cycleSpeedSlider, colorCycling.updateFreq, "Cycle Speed", (value) => {
+        const onHueValueChange = (value) => {
             stopCyclingColor();
             colorCycling.updateFreq.value = value;
             startCyclingColor();
-        }, false);
+        };
+        addSetting(cycleSpeedSlider, colorCycling.updateFreq, { name: "Cycle Speed", showValue: false, onChange: onHueValueChange });
         setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
@@ -62,29 +81,48 @@ export var Playground;
     }
     function setUpSettingsMenu(menuContainer, menuButton) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
-        menuButton.addEventListener("click", () => {
-            if (parseInt(menuContainer.style.bottom.replace("px", "")) < 0)
-                menuContainer.style.bottom = "0px";
-            else
-                menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer));
+        document.addEventListener("keypress", (e) => {
+            if (e.key.toLowerCase() === "q")
+                toggleSettingsMenu(menuContainer);
         });
         menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
     }
+    function toggleSettingsMenu(menuContainer) {
+        if (parseInt(menuContainer.style.bottom) < 0)
+            menuContainer.style.bottom = "0px";
+        else
+            menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+    }
     function startGeneratingPortals(canvas) {
         portals.generateRandomPortal(portalGeneration.duration, canvas);
-        setTimeout(() => {
-            startGeneratingPortals(canvas);
-        }, randomIntFromInterval(portalGeneration.spawnDelayRange[0], portalGeneration.spawnDelayRange[1]));
+        setTimeout(() => startGeneratingPortals(canvas), Utils.randomIntFromInterval(portalGeneration.spawnDelayRange.min, portalGeneration.spawnDelayRange.max));
     }
     function addListenersToElements() {
-        hueSlide.addEventListener("input", (e) => stopCyclingColor());
+        hueSlide.addEventListener("input", (e) => {
+            stopCyclingColor();
+            bee.circleProps.hue.value = parseInt(hueSlide.value);
+        });
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+        saveSettingsButt.addEventListener("click", (e) => {
+            bee.saveCurrentSettings();
+            Utils.resetAnimation(settingsSaveConfirmation);
+        });
+        resetSettingsButt.addEventListener("click", (e) => {
+            bee.resetSettings();
+            settings.forEach(setting => {
+                setting.setting.parts.sliderValue.innerText = setting.props.value + "";
+                setting.setting.parts.slider.value = setting.props.value + "";
+            });
+            bee.stop();
+            bee.start();
+        });
     }
     function startCyclingColor() {
         if (colorCycling.intervalId)
             return;
-        colorCycling.currColorValue = Number(hueSlide.value.replace("px", ""));
+        colorCycling.currColorValue = parseInt(hueSlide.value);
         cycleColorButt.classList.replace("off", "on");
         colorCycling.intervalId = setInterval(() => {
             if (colorCycling.currColorValue >= 360)
@@ -103,30 +141,29 @@ export var Playground;
         cycleColorButt.classList.replace("on", "off");
     }
     function addSettings(toElement) {
-        const accelerationProps = {
-            value: bee.accelerationData.acceleration,
-            values: {
-                default: bee.accelerationData.acceleration,
-                max: 2,
-                min: 0.05
-            }
-        };
-        addSetting(toElement, bee.props.deltaTime, "Delta", (value) => {
+        const onDeltaChange = (value) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
-        });
-        addSetting(toElement, accelerationProps, "Acceleration", (value) => bee.accelerationData.acceleration = value);
-        addSetting(toElement, bee.props.maxSpeed, "Speed");
-        addSetting(toElement, bee.circleProps.durationNormal, "Circle Duration");
-        addSetting(toElement, bee.circleProps.durationShift, "Circle Duration Shift");
-        addSetting(toElement, bee.circleProps.frequency, "Circle Frequency");
-        addSetting(toElement, bee.circleProps.size, "Circle Size");
+        };
+        addSetting(toElement, bee.props.deltaTime, { name: "Delta", showValue: true, onChange: onDeltaChange });
+        addSetting(toElement, bee.accelerationData.acceleration, { name: "Acceleration", showValue: true, step: 0.01 });
+        addSetting(toElement, bee.props.maxSpeed, { name: "Speed", showValue: true });
+        addSetting(toElement, bee.circleProps.durationNormal, { name: "Circle Duration", showValue: true });
+        addSetting(toElement, bee.circleProps.durationShift, { name: "Cirlce Duration Shift", showValue: true });
+        addSetting(toElement, bee.circleProps.frequency, { name: "Circle Frequency", showValue: true });
+        addSetting(toElement, bee.circleProps.size, { name: "Circle Size", showValue: true });
     }
-    function addSetting(toElement, props, name, onChange, showValue = true) {
-        const setting = createSettingElement(props, showValue, name);
+    function addSetting(toElement, props, _a) {
+        var { step = 1 } = _a, rest = __rest(_a, ["step"]);
+        const setting = createSettingElement(props, Object.assign({ step }, rest));
         toElement.appendChild(setting.element);
-        setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, onChange));
+        setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, rest.onChange));
+        setting.parts.defaultValue.addEventListener("click", (e) => {
+            setting.parts.slider.value = props.values.default + "";
+            handleSettingValueChange(setting, props, rest.onChange);
+        });
+        settings.push({ setting: setting, props: props });
     }
     function handleSettingValueChange(setting, props, onChange) {
         if (onChange)
@@ -134,21 +171,23 @@ export var Playground;
         else
             props.value = parseFloat(setting.parts.slider.value);
         setting.parts.sliderValue.innerText = setting.parts.slider.value;
-        console.log(setting.parts.slider.value);
     }
-    function createSettingElement(props, showValue, name) {
-        const settingDiv = htmlToElement(`<div class="setting"></div>`);
-        const nameSpan = htmlToElement(`<span class="setting-name">${name}:</span>`);
-        const sliderContainer = htmlToElement(`<span class="slider-container"></span>`);
-        const slider = htmlToElement(`<input class="slider small-slider" type="range" step="0.1" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`);
-        const sliderValue = htmlToElement(`<span class="slider-value">${props.value}</span>`);
+    function createSettingElement(props, { step, showValue, name }) {
+        const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`);
+        const nameSpan = Utils.htmlToElement(`<span class="setting-name">${name}:</span>`);
+        const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`);
+        const slider = Utils.htmlToElement(`<input class="slider small-slider" type="range" step="${step}" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`);
+        const sliderValue = Utils.htmlToElement(`<span class="slider-value">${props.value}</span>`);
+        const defaultValue = Utils.htmlToElement(`<span class="default-value"> (default: ${props.values.default})</span>`);
         if (name)
             settingDiv.appendChild(nameSpan);
         settingDiv.appendChild(sliderContainer);
         sliderContainer.appendChild(slider);
-        if (showValue)
+        if (showValue) {
             sliderContainer.appendChild(sliderValue);
-        return { element: settingDiv, parts: { slider, sliderValue } };
+            sliderContainer.appendChild(defaultValue);
+        }
+        return { element: settingDiv, parts: { slider, sliderValue, defaultValue } };
     }
     function handlePilotButtonClick() {
         {
@@ -175,7 +214,7 @@ export var Playground;
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
-                    bee.accelerationData.acceleration += screenSaverAccelerationIncrease;
+                    bee.accelerationData.acceleration.value += screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value -= screenSaverSpeedDecrease;
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "3/" + modes;
@@ -183,7 +222,7 @@ export var Playground;
                 case screenSaverOn:
                     screenSaverPilot.stop();
                     portals.setTargetPortalsDisplay(true);
-                    bee.accelerationData.acceleration -= screenSaverAccelerationIncrease;
+                    bee.accelerationData.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;
                     controls.ignoreUserInput = false;

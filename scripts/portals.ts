@@ -1,9 +1,4 @@
-import {
-    collides,
-    getAvailableHeight,
-    getAvailableWidth,
-    randomIntFromInterval
-} from "./utils.js";
+import {Utils} from "./utils.js";
 
 export class Portals {
     portalAnimation = {
@@ -34,7 +29,7 @@ export class Portals {
 
             this.lastBeeX = beeX;
             this.portals.forEach(p => {
-                if (collides(p[0].getBoundingClientRect(), this.bee.getBoundingClientRect())) {
+                if (Utils.collides(p[0].getBoundingClientRect(), this.bee.getBoundingClientRect())) {
                     if (p[1])
                         p[1]();
 
@@ -65,16 +60,16 @@ export class Portals {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         const locationOffset = 100;
 
-        const maxX = getAvailableWidth() - locationOffset;
-        const maxY = getAvailableHeight() - locationOffset;
+        const maxX = Utils.getAvailableWidth() - locationOffset;
+        const maxY = Utils.getAvailableHeight() - locationOffset;
         const minX = locationOffset;
         const minY = locationOffset;
 
-        const y = randomIntFromInterval(minY, maxY);
-        const x = randomIntFromInterval(minX, maxX);
+        const y = Utils.randomIntFromInterval(minY, maxY);
+        const x = Utils.randomIntFromInterval(minX, maxX);
 
-        const portY = randomIntFromInterval(minY, maxY);
-        const portX = randomIntFromInterval(minX, maxX);
+        const portY = Utils.randomIntFromInterval(minY, maxY);
+        const portX = Utils.randomIntFromInterval(minX, maxX);
 
         const portal = this.createPortal();
         this.placePortal(portal, x, y);

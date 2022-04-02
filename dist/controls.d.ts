@@ -1,8 +1,15 @@
+declare type Key = {
+    [key: string]: {
+        definition: string[];
+        pressed: boolean;
+    };
+};
 export declare class Controls {
+    private static instanceCreated;
+    static keys: Readonly<Key>;
     ignoreUserInput: boolean;
-    static keys: Readonly<any>;
+    static changePressState(definition: string, pressed: boolean): boolean;
     constructor();
-    onKeyDown: (e: KeyboardEvent | string) => void;
-    onKeyUp: (e: KeyboardEvent | string) => void;
-    onKeyChange(e: KeyboardEvent | string, keyDown: boolean): void;
+    onKeyChange(eOrKey: KeyboardEvent | string, keyDown: boolean): void;
 }
+export {};

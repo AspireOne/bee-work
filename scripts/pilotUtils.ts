@@ -1,3 +1,6 @@
+import {Utils} from "./utils.js";
+import ModifiableProp = Utils.ModifiableProp;
+
 export enum WayX {
     LEFT,
     RIGHT,
@@ -5,26 +8,18 @@ export enum WayX {
 }
 
 export class Acceleration {
-    private static readonly divisionFactor = 1.8;
     public currAccelerationX = 0;
     public currAccelerationY = 0;
-    private _acceleration: number = 0.12;
-    private _accelerationDivided: number = 0;
+    public readonly acceleration: ModifiableProp = {
+        value: 0.12,
+        values: {
+            default: 0.12,
+            min: 0.05,
+            max: 2
+        }
+    }
 
     constructor(acceleration = 0.12) {
-        this.acceleration = acceleration;
-    }
-
-    public get acceleration() {
-        return this._acceleration;
-    }
-
-    public set acceleration(newAcceleration) {
-        this._acceleration = newAcceleration;
-        this._accelerationDivided = newAcceleration / Acceleration.divisionFactor;
-    }
-
-    public get accelerationDivided() {
-        return this._accelerationDivided;
+        this.acceleration.value = acceleration;
     }
 }

@@ -1,10 +1,13 @@
-import {Point} from "./utils.js";
+import Props = VanishingCircle.Props;
+import {Utils} from "./utils.js";
 
-export type Props = {
-    duration: number,
-    initialOpacity: number,
-    size: number,
-    hue: number
+export module VanishingCircle {
+    export type Props = {
+        duration: number,
+        initialOpacity: number,
+        size: number,
+        hue: number
+    }
 }
 
 export class VanishingCircle {
@@ -44,7 +47,7 @@ export class VanishingCircle {
     // The opacity during the previous update.
     private prevOpacity: number;
 
-    public constructor(point: Point, props: Partial<Props>) {
+    public constructor(point: Utils.Point, props: Partial<Props>) {
         this.props = {...this.props, ...props};
         this.point = point;
         /* I didn't find a way to apply the filter to a lot of circles simulatenously without making the website laggy, so we'll

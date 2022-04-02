@@ -1,7 +1,7 @@
 import { Bee } from "./bee.js";
 import { Controls } from "./controls.js";
 import { Portals } from "./portals.js";
-import { htmlToElement, addValueToSliders } from "./utils.js";
+import { Utils } from "./utils.js";
 export let controls = new Controls();
 export let bee;
 export let portals;
@@ -12,15 +12,16 @@ const beeElementHTML = `
             <img src="../resources/bee.png" draggable="false" class="unselectable" id="bee"/>
         </div>
     `;
+//document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
-    document.body.appendChild(htmlToElement(beeElementHTML));
+    document.body.appendChild(Utils.htmlToElement(beeElementHTML));
     const beeElement = document.getElementById("bee");
     portals = new Portals(beeElement);
     portals.getSidePortalsFromDoc().forEach(portal => portals.addPortal(portal, null));
     portals.startChecking();
     bee = new Bee(beeElement, controls);
     bee.start();
-    addValueToSliders();
+    Utils.addValueToSliders();
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });

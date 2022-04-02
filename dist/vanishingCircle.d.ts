@@ -1,10 +1,13 @@
-import { Point } from "./utils.js";
-export declare type Props = {
-    duration: number;
-    initialOpacity: number;
-    size: number;
-    hue: number;
-};
+import Props = VanishingCircle.Props;
+import { Utils } from "./utils.js";
+export declare module VanishingCircle {
+    type Props = {
+        duration: number;
+        initialOpacity: number;
+        size: number;
+        hue: number;
+    };
+}
 export declare class VanishingCircle {
     private static readonly delta;
     private static readonly doNotApplyFilterThreshold;
@@ -22,7 +25,7 @@ export declare class VanishingCircle {
     disabled: boolean;
     private elapsed;
     private prevOpacity;
-    constructor(point: Point, props: Partial<Props>);
+    constructor(point: Utils.Point, props: Partial<Props>);
     static runLoop(): void;
     static stopLoop(): void;
     private createClone;
