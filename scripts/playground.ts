@@ -2,6 +2,7 @@ import {ScreenSaverPilot} from "./screenSaverPilot.js";
 import {Autopilot} from "./autopilot.js";
 import {bee, controls, modules, portals} from "./global.js";
 import {Utils} from "./utils.js";
+import {Types} from "./types.js";
 
 export module Playground {
     const colorCycling = {
@@ -39,12 +40,12 @@ export module Playground {
         showValue: boolean;
     }
 
-    const settings: { setting: Setting, props: Utils.ModifiableProp }[] = [];
+    const settings: { setting: Setting, props: Types.ModifiableProp }[] = [];
 
     let cycleColorButt: HTMLElement;
     let saveSettingsButt: HTMLElement;
     let resetSettingsButt: HTMLElement;
-    let settingsSaveConfirmation: HTMLElement;
+    let settingsSaveButtonText: HTMLSpanElement;
 
     let autopilotButtonTextSpan: HTMLElement;
     let autopilotButton: HTMLInputElement;
@@ -65,7 +66,7 @@ export module Playground {
         pilotOrderText = document.getElementById("pilot-order") as HTMLElement;
         cycleColorButt = document.getElementById("cycle-hue-button") as HTMLElement;
         saveSettingsButt = document.getElementById("save-settings-button") as HTMLElement;
-        settingsSaveConfirmation = document.getElementById("settings-save-confirmation") as HTMLElement;
+        settingsSaveButtonText = document.getElementById("save-settings-button-text") as HTMLSpanElement;
         resetSettingsButt = document.getElementById("reset-settings-button") as HTMLElement;
 
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -75,8 +76,8 @@ export module Playground {
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider") as HTMLElement;
 
-        ctx.canvas.width  = Utils.getAvailableWidth();
-        ctx.canvas.height = Utils.getAvailableHeight();
+        ctx.canvas.width  = document.body.clientWidth;
+        ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
 
 
@@ -131,18 +132,22 @@ export module Playground {
         });
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+
+        let timeoutSet = false;
         saveSettingsButt.addEventListener("click", (e) => {
-            bee.saveCurrentSettings();
-            Utils.resetAnimation(settingsSaveConfirmation);
-        });
-        resetSettingsButt.addEventListener("click", (e) => {
-            bee.resetSettings();
-            settings.forEach(setting => {
-                setting.setting.parts.sliderValue.innerText = setting.props.value + "";
-                setting.setting.parts.slider.value = setting.props.value + "";
-            });
-            bee.stop();
-            bee.start();
+            bee.saveProps();
+            const prevText = settingsSaveButtonText.innerText;
+            const newText = saveSettingsButt.classList.contains("saved") ? "Already Saved" : "Saved!";
+            saveSettingsButt.classList.replace("unsaved", "saved");
+            if (!timeoutSet) {
+                timeoutSet = true;
+                settingsSaveButtonText.innerText = newText;
+                setTimeout(() => {
+                    settingsSaveButtonText.innerText = prevText;
+                    timeoutSet = false;
+                }, 1000);
+            }
+            //Utils.resetAnimation(settingsSaveConfirmation);
         });
     }
 
@@ -189,28 +194,33 @@ export module Playground {
         addSetting(toElement, bee.circleProps.size, {name: "Circle Size", showValue: true});
     }
 
-    function addSetting(toElement: HTMLElement, props: Utils.ModifiableProp, {step = 1, ...rest}: SettingProps) {
+    function addSetting(toElement: HTMLElement, props: Types.ModifiableProp, {step = 1, ...rest}: SettingProps) {
         const setting = createSettingElement(props, {step, ...rest});
         toElement.appendChild(setting.element);
 
         setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, rest.onChange));
-        setting.parts.defaultValue.addEventListener("click", (e) => {
-            setting.parts.slider.value = props.values.default + "";
-            handleSettingValueChange(setting, props, rest.onChange);
-        });
+
+        [setting.parts.defaultValue, resetSettingsButt].forEach((el) => el.addEventListener("click", (e) => {
+            if (setting.parts.slider.value !== props.values.default + "") {
+                setting.parts.slider.value = props.values.default + "";
+                handleSettingValueChange(setting, props, rest.onChange);
+            }
+        }));
+
         settings.push({setting: setting, props: props});
     }
 
-    function handleSettingValueChange(setting: Setting, props: Utils.ModifiableProp, onChange?: (value: number) => void) {
+    function handleSettingValueChange(setting: Setting, props: Types.ModifiableProp, onChange?: (value: number) => void) {
         if (onChange)
             onChange(parseFloat(setting.parts.slider.value));
         else
             props.value = parseFloat(setting.parts.slider.value);
 
         setting.parts.sliderValue.innerText = setting.parts.slider.value;
+        saveSettingsButt.classList.replace("saved", "unsaved");
     }
 
-    function createSettingElement(props: Utils.ModifiableProp, {step, showValue, name}: SettingProps): Setting {
+    function createSettingElement(props: Types.ModifiableProp, {step, showValue, name}: SettingProps): Setting {
         const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
         const nameSpan = Utils.htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
         const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;

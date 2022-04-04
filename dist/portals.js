@@ -47,8 +47,8 @@ export class Portals {
     generateRandomPortal(timeout, canvas) {
         const ctx = canvas.getContext('2d');
         const locationOffset = 100;
-        const maxX = Utils.getAvailableWidth() - locationOffset;
-        const maxY = Utils.getAvailableHeight() - locationOffset;
+        const maxX = document.body.clientWidth - locationOffset;
+        const maxY = document.body.clientHeight - locationOffset;
         const minX = locationOffset;
         const minY = locationOffset;
         const y = Utils.randomIntFromInterval(minY, maxY);

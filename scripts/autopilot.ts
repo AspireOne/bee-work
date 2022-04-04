@@ -1,11 +1,12 @@
 import {Bee} from "./bee.js";
 import {Controls} from "./controls.js";
 import {Utils} from "./utils.js";
+import {Types} from "./types";
 
 export class Autopilot {
     private static readonly delta = 50;
     private static readonly distanceFromWall = 90;
-    private static readonly delay: Readonly<Utils.Range> = { max: 550, min: 150 }
+    private static readonly delay: Readonly<Types.Range> = { max: 550, min: 150 }
     private static readonly possibleKeys: Readonly<{x: string[], y: string[]}> = {
         x: ["", "a", "d"],
         y: ["", "w"]
@@ -49,13 +50,13 @@ export class Autopilot {
 
     private isXOutOfBounds(): boolean {
         const beeWidth = this.bee.element.offsetWidth;
-        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        const beeMaxX = document.body.clientWidth - beeWidth;
         return this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall || this.bee.currPos.x <= Autopilot.distanceFromWall;
     }
 
     private isYOutOfBounds(): boolean {
         const beeHeight = this.bee.element.offsetHeight;
-        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        const beeMaxY = document.body.clientHeight - beeHeight;
         return this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall || this.bee.currPos.y <= Autopilot.distanceFromWall;
     }
 
@@ -80,7 +81,7 @@ export class Autopilot {
         let key: string;
 
         const beeWidth = this.bee.element.offsetWidth;
-        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        const beeMaxX = document.body.clientWidth - beeWidth;
 
         if (this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall)
             key = "a";
@@ -112,7 +113,7 @@ export class Autopilot {
         let key: string;
 
         const beeHeight = this.bee.element.offsetHeight;
-        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        const beeMaxY = document.body.clientHeight - beeHeight;
 
         if (this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall)
             key = "w";

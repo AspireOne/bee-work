@@ -35,8 +35,8 @@ export class ScreenSaverPilot {
     private frame() {
         let x = parseInt(this.bee.element.style.left);
         let y = parseInt(this.bee.element.style.top);
-        let maxX = Utils.getAvailableWidth() - this.bee.element.clientWidth;
-        let maxY = Utils.getAvailableHeight() - this.bee.element.clientHeight;
+        let maxX = document.body.clientWidth - this.bee.element.clientWidth;
+        let maxY = document.body.clientHeight - this.bee.element.clientHeight;
 
         if (x <= 0) {
             Controls.changePressState(Controls.keys.left.definition[0], false);

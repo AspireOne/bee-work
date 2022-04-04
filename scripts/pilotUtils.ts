@@ -1,5 +1,5 @@
 import {Utils} from "./utils.js";
-import ModifiableProp = Utils.ModifiableProp;
+import {Types} from "./types.js";
 
 export enum WayX {
     LEFT,
@@ -10,7 +10,7 @@ export enum WayX {
 export class Acceleration {
     public currAccelerationX = 0;
     public currAccelerationY = 0;
-    public readonly acceleration: ModifiableProp = {
+    public readonly acceleration: Types.ModifiableProp = {
         value: 0.12,
         values: {
             default: 0.12,

@@ -36,7 +36,7 @@ export var Playground;
     let cycleColorButt;
     let saveSettingsButt;
     let resetSettingsButt;
-    let settingsSaveConfirmation;
+    let settingsSaveButtonText;
     let autopilotButtonTextSpan;
     let autopilotButton;
     let screenSaverPilot;
@@ -52,7 +52,7 @@ export var Playground;
         pilotOrderText = document.getElementById("pilot-order");
         cycleColorButt = document.getElementById("cycle-hue-button");
         saveSettingsButt = document.getElementById("save-settings-button");
-        settingsSaveConfirmation = document.getElementById("settings-save-confirmation");
+        settingsSaveButtonText = document.getElementById("save-settings-button-text");
         resetSettingsButt = document.getElementById("reset-settings-button");
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
@@ -60,8 +60,8 @@ export var Playground;
         const settingsMenuContainer = document.getElementById("settings-menu-container");
         const settingsMenuIcon = document.getElementById("settings-menu-icon");
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider");
-        ctx.canvas.width = Utils.getAvailableWidth();
-        ctx.canvas.height = Utils.getAvailableHeight();
+        ctx.canvas.width = document.body.clientWidth;
+        ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
         addListenersToElements();
         startCyclingColor();
@@ -105,18 +105,21 @@ export var Playground;
         });
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+        let timeoutSet = false;
         saveSettingsButt.addEventListener("click", (e) => {
-            bee.saveCurrentSettings();
-            Utils.resetAnimation(settingsSaveConfirmation);
-        });
-        resetSettingsButt.addEventListener("click", (e) => {
-            bee.resetSettings();
-            settings.forEach(setting => {
-                setting.setting.parts.sliderValue.innerText = setting.props.value + "";
-                setting.setting.parts.slider.value = setting.props.value + "";
-            });
-            bee.stop();
-            bee.start();
+            bee.saveProps();
+            const prevText = settingsSaveButtonText.innerText;
+            const newText = saveSettingsButt.classList.contains("saved") ? "Already Saved" : "Saved!";
+            saveSettingsButt.classList.replace("unsaved", "saved");
+            if (!timeoutSet) {
+                timeoutSet = true;
+                settingsSaveButtonText.innerText = newText;
+                setTimeout(() => {
+                    settingsSaveButtonText.innerText = prevText;
+                    timeoutSet = false;
+                }, 1000);
+            }
+            //Utils.resetAnimation(settingsSaveConfirmation);
         });
     }
     function startCyclingColor() {
@@ -159,10 +162,12 @@ export var Playground;
         const setting = createSettingElement(props, Object.assign({ step }, rest));
         toElement.appendChild(setting.element);
         setting.parts.slider.addEventListener("input", (e) => handleSettingValueChange(setting, props, rest.onChange));
-        setting.parts.defaultValue.addEventListener("click", (e) => {
-            setting.parts.slider.value = props.values.default + "";
-            handleSettingValueChange(setting, props, rest.onChange);
-        });
+        [setting.parts.defaultValue, resetSettingsButt].forEach((el) => el.addEventListener("click", (e) => {
+            if (setting.parts.slider.value !== props.values.default + "") {
+                setting.parts.slider.value = props.values.default + "";
+                handleSettingValueChange(setting, props, rest.onChange);
+            }
+        }));
         settings.push({ setting: setting, props: props });
     }
     function handleSettingValueChange(setting, props, onChange) {
@@ -171,6 +176,7 @@ export var Playground;
         else
             props.value = parseFloat(setting.parts.slider.value);
         setting.parts.sliderValue.innerText = setting.parts.slider.value;
+        saveSettingsButt.classList.replace("saved", "unsaved");
     }
     function createSettingElement(props, { step, showValue, name }) {
         const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`);

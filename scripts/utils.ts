@@ -1,23 +1,4 @@
 export module Utils {
-    const widthIndicator = document.getElementById("js-width-indicator") as HTMLElement;
-    const heightIndicator = document.getElementById("js-height-indicator") as HTMLElement;
-
-    export type Point = { x: number; y: number };
-    export type Range = { min: number, max: number };
-    export type ModifiableProp = {
-        value: number;
-        values: {
-            readonly default: number;
-            readonly min: number;
-            readonly max: number;
-        },
-    }
-    export type SavedModifiableProp = {
-        [p: string]: number;
-    }
-
-    export const getAvailableHeight = () => heightIndicator?.clientHeight;
-    export const getAvailableWidth = () => widthIndicator?.clientWidth;
     export const randomIntFromInterval = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) + min);
     export const isTouchDevice = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
@@ -68,26 +49,5 @@ export module Utils {
             slider.addEventListener("input", _ => text.innerText = slider.value);
             text.innerText = slider.value;
         }
-    }
-
-
-    export function getWindowWidth() {
-        return Math.max(
-            document.body.scrollWidth,
-            document.documentElement.scrollWidth,
-            document.body.offsetWidth,
-            document.documentElement.offsetWidth,
-            document.documentElement.clientWidth
-        );
-    }
-
-    export function getWindowHeight() {
-        return Math.max(
-            document.body.scrollHeight,
-            document.documentElement.scrollHeight,
-            document.body.offsetHeight,
-            document.documentElement.offsetHeight,
-            document.documentElement.clientHeight
-        );
     }
 }

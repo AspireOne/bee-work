@@ -60,8 +60,8 @@ export class Portals {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         const locationOffset = 100;
 
-        const maxX = Utils.getAvailableWidth() - locationOffset;
-        const maxY = Utils.getAvailableHeight() - locationOffset;
+        const maxX = document.body.clientWidth - locationOffset;
+        const maxY = document.body.clientHeight - locationOffset;
         const minX = locationOffset;
         const minY = locationOffset;
 

@@ -1,5 +1,4 @@
 import { Controls } from "./controls.js";
-import { Utils } from "./utils.js";
 export class Autopilot {
     constructor(bee, controls) {
         this.running = false;
@@ -30,12 +29,12 @@ export class Autopilot {
     }
     isXOutOfBounds() {
         const beeWidth = this.bee.element.offsetWidth;
-        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        const beeMaxX = document.body.clientWidth - beeWidth;
         return this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall || this.bee.currPos.x <= Autopilot.distanceFromWall;
     }
     isYOutOfBounds() {
         const beeHeight = this.bee.element.offsetHeight;
-        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        const beeMaxY = document.body.clientHeight - beeHeight;
         return this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall || this.bee.currPos.y <= Autopilot.distanceFromWall;
     }
     // This Y X duplication could be solved by a shared interface or abstract class (as a lot of other things) or what they use here lol, but who has the time for that.
@@ -55,7 +54,7 @@ export class Autopilot {
     executeNewX() {
         let key;
         const beeWidth = this.bee.element.offsetWidth;
-        const beeMaxX = Utils.getAvailableWidth() - beeWidth;
+        const beeMaxX = document.body.clientWidth - beeWidth;
         if (this.bee.currPos.x >= beeMaxX - Autopilot.distanceFromWall)
             key = "a";
         else if (this.bee.currPos.x <= Autopilot.distanceFromWall)
@@ -81,7 +80,7 @@ export class Autopilot {
     executeNewY() {
         let key;
         const beeHeight = this.bee.element.offsetHeight;
-        const beeMaxY = Utils.getAvailableHeight() - beeHeight;
+        const beeMaxY = document.body.clientHeight - beeHeight;
         if (this.bee.currPos.y >= beeMaxY - Autopilot.distanceFromWall)
             key = "w";
         else if (this.bee.currPos.y <= Autopilot.distanceFromWall)

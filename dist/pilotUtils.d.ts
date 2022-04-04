@@ -1,5 +1,4 @@
-import { Utils } from "./utils.js";
-import ModifiableProp = Utils.ModifiableProp;
+import { Types } from "./types.js";
 export declare enum WayX {
     LEFT = 0,
     RIGHT = 1,
@@ -8,6 +7,6 @@ export declare enum WayX {
 export declare class Acceleration {
     currAccelerationX: number;
     currAccelerationY: number;
-    readonly acceleration: ModifiableProp;
+    readonly acceleration: Types.ModifiableProp;
     constructor(acceleration?: number);
 }

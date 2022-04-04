@@ -65,6 +65,26 @@
     margin-left: 1em;
 }
 
+#settings-menu .side-by-side {
+    gap: 1em;
+}
+
+#save-settings-button {
+    width: 13em;
+}
+
+#save-settings-button .saved {
+    border: none;
+}
+
+#save-settings-button.unsaved {
+    border: 3px solid rgba(205, 92, 92, 0.6);
+}
+
+#reset-settings-button {
+    width: 8em;
+}
+
 .pilot-button {
     border-radius: 4px;
     background-color: #fa8212;

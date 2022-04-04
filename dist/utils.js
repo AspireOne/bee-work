@@ -1,9 +1,5 @@
 export var Utils;
 (function (Utils) {
-    const widthIndicator = document.getElementById("js-width-indicator");
-    const heightIndicator = document.getElementById("js-height-indicator");
-    Utils.getAvailableHeight = () => heightIndicator === null || heightIndicator === void 0 ? void 0 : heightIndicator.clientHeight;
-    Utils.getAvailableWidth = () => widthIndicator === null || widthIndicator === void 0 ? void 0 : widthIndicator.clientWidth;
     Utils.randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
     Utils.isTouchDevice = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
     function collides(a, b) {
@@ -48,13 +44,5 @@ export var Utils;
         }
     }
     Utils.addValueToSliders = addValueToSliders;
-    function getWindowWidth() {
-        return Math.max(document.body.scrollWidth, document.documentElement.scrollWidth, document.body.offsetWidth, document.documentElement.offsetWidth, document.documentElement.clientWidth);
-    }
-    Utils.getWindowWidth = getWindowWidth;
-    function getWindowHeight() {
-        return Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.documentElement.clientHeight);
-    }
-    Utils.getWindowHeight = getWindowHeight;
 })(Utils || (Utils = {}));
 //# sourceMappingURL=utils.js.map

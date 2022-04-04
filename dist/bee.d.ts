@@ -2,9 +2,10 @@ import { Controls } from "./controls.js";
 import { Acceleration } from "./pilotUtils.js";
 import CircleProps = Bee.CircleProps;
 import Props = Bee.Props;
-import { Utils } from "./utils.js";
+import { Types } from "./types.js";
+/** Contains Bee-specific Types. */
 export declare module Bee {
-    import ModifiableProp = Utils.ModifiableProp;
+    import ModifiableProp = Types.ModifiableProp;
     type CircleProps = {
         durationNormal: ModifiableProp;
         durationShift: ModifiableProp;
@@ -16,33 +17,60 @@ export declare module Bee {
         maxSpeed: ModifiableProp;
         deltaTime: ModifiableProp;
     };
+    type SaveableProps = {
+        saveName: string;
+    };
 }
 export declare class Bee {
-    currPos: Utils.Point;
+    currPos: Types.Point;
+    /** Properties of the circle that bee creates. */
     circleProps: CircleProps;
+    /** Properties of the bee. */
     props: Props;
     accelerationData: Acceleration;
+    /** The base bee element. */
     element: HTMLElement;
+    /** The time since last circle was created. */
     private timeFromLastCircle;
     private updateIntervalId;
     private wayX;
+    /** Indicates the orientation of the bee (left/right). */
     private scale;
     private controls;
     constructor(bee: HTMLElement, controls: Controls);
+    /** Runs VanishingCircle's update loop and the bee's update loop. */
     start(): void;
+    /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop(): void;
+    /** Resets all props to their default values. */
     resetSettings(): void;
-    saveCurrentSettings(): void;
-    createObjectWithValuesFromProps(sourceProps: {
-        [key: string]: Utils.ModifiableProp;
-    }): Utils.SavedModifiableProp;
-    updatePropsValues(targetProps: {
-        [key: string]: Utils.ModifiableProp;
-    }, values: Utils.SavedModifiableProp): void;
-    private applySavedSettings;
+    /** Saves the current props to localStorage. */
+    saveProps(): void;
+    /** Creates an object with only the current values of the props.
+     * @param sourceProps The props to create the object from.
+     * @returns An object with the current values of the props.
+     */
+    private createObjectWithValuesFromProps;
+    /** Applies the saved props to the current props.
+     * @param targetProps The props to apply the saved props to.
+     * @param savedProps The saved props to apply.
+     */
+    applySavedProps(targetProps: {
+        [key: string]: Types.ModifiableProp;
+    }, savedProps: Types.SavedModifiableProp): void;
+    /** Retrieves all saved props from localStorage and applies them to their respective props. */
+    retrieveAndApplySavedProps(): void;
+    /** Updates the bee's position and orientation and places a next circle (if eligible). */
     private frame;
+    /** Flips the bee's rotation (left/right) based on the pressed keys. */
     private flipElementIfShould;
+    /** Calculates the next X position of the bee. */
     private calculateNewX;
+    /** Calculates the next Y position of the bee. */
     private calculateNewY;
+    /**
+     * @param acceleration To know the orientation the bee is going.
+     * @returns The max speed (either positive (down/right) or negative (left/top), based on the acceleration).
+     */
     private getMaxSpeed;
 }
