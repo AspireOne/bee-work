@@ -5,7 +5,7 @@ import CircleProps = Bee.CircleProps;
 import Props = Bee.Props;
 import {Utils} from "./utils.js";
 import {Types} from "./types.js";
-import SaveableProps = Bee.SaveableProps;
+import SaveableProps = Types.SaveableProps;
 
 /** Contains Bee-specific Types. */
 export module Bee {
@@ -21,10 +21,6 @@ export module Bee {
     export type Props = {
         maxSpeed: ModifiableProp,
         deltaTime: ModifiableProp
-    }
-
-    export type SaveableProps = {
-        saveName: string
     }
 }
 
@@ -290,7 +286,7 @@ export class Bee {
     private calculateNewY(): number {
         const currPosY = parseInt(this.element.style.top);
         const height = this.element.offsetHeight;
-        const maxY = document.body.clientHeight - 10 - height;
+        const maxY = document.body.clientHeight - height;
 
         let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.pressed
             ? -this.accelerationData.acceleration.value

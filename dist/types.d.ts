@@ -18,4 +18,7 @@ export declare module Types {
     type SavedModifiableProp = {
         [p: string]: number;
     };
+    type SaveableProps = {
+        saveName: string;
+    };
 }

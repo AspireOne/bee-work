@@ -225,7 +225,7 @@ export class Bee {
     calculateNewY() {
         const currPosY = parseInt(this.element.style.top);
         const height = this.element.offsetHeight;
-        const maxY = document.body.clientHeight - 10 - height;
+        const maxY = document.body.clientHeight - height;
         let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.pressed
             ? -this.accelerationData.acceleration.value
             : this.accelerationData.acceleration.value);

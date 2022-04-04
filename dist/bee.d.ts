@@ -17,9 +17,6 @@ export declare module Bee {
         maxSpeed: ModifiableProp;
         deltaTime: ModifiableProp;
     };
-    type SaveableProps = {
-        saveName: string;
-    };
 }
 export declare class Bee {
     currPos: Types.Point;

@@ -10,4 +10,5 @@ export module Types {
         },
     }
     export type SavedModifiableProp = { [p: string]: number; }
+    export type SaveableProps = { saveName: string }
 }
