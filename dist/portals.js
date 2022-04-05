@@ -3,9 +3,9 @@ export class Portals {
     constructor(bee) {
         this.portalAnimation = {
             step: 4,
-            speed: 10
+            speed: 10,
+            outPortalDuration: 450
         };
-        this.outPortalDuration = 450;
         this.checkInterval = 100;
         this.checkMoveThreshold = 25;
         this.id = -1;
@@ -41,7 +41,7 @@ export class Portals {
             const img = portalDiv.getElementsByTagName('img')[0];
             if (img.getAttribute("target") === null)
                 continue;
-            portalDiv.style.display = visible ? "block" : "none";
+            portalDiv.style.display = visible ? "" : "none";
         }
     }
     generateRandomPortal(timeout, canvas) {
@@ -75,7 +75,7 @@ export class Portals {
         this.bee.style.top = portY + "px";
         const endPortal = this.createPortal();
         this.placePortal(endPortal, portX, portY);
-        setTimeout(() => this.removePortal(endPortal), this.outPortalDuration);
+        setTimeout(() => this.removePortal(endPortal), this.portalAnimation.outPortalDuration);
     }
     removePortal(portal) {
         let width = portal.clientWidth;

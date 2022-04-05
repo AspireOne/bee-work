@@ -1,6 +1,6 @@
-import {Controls} from "./controls.js";
-import {Bee} from "./bee.js";
-import {Utils} from "./utils.js";
+import {Controls} from "../controls.js";
+import {Bee} from "../bee.js";
+import {Utils} from "../utils.js";
 
 export class ScreenSaverPilot {
     public running = false;

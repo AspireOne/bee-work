@@ -2,8 +2,8 @@ export declare class Portals {
     portalAnimation: {
         step: number;
         speed: number;
+        outPortalDuration: number;
     };
-    outPortalDuration: number;
     checkInterval: number;
     checkMoveThreshold: number;
     lastBeeX: number;

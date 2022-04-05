@@ -9,10 +9,11 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import { ScreenSaverPilot } from "./screenSaverPilot.js";
-import { Autopilot } from "./autopilot.js";
+import { ScreenSaverPilot } from "./pilots/screenSaverPilot.js";
+import { Autopilot } from "./pilots/autopilot.js";
 import { bee, controls, modules, portals } from "./global.js";
 import { Utils } from "./utils.js";
+import { Pencil } from "./pilots/pencil.js";
 export var Playground;
 (function (Playground) {
     const colorCycling = {
@@ -58,6 +59,7 @@ export var Playground;
         const ctx = canvas.getContext("2d");
         const settingsDiv = document.getElementById("settings-div");
         const settingsMenuContainer = document.getElementById("settings-menu-container");
+        const settingsMenu = document.getElementById("settings-menu");
         const settingsMenuIcon = document.getElementById("settings-menu-icon");
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider");
         ctx.canvas.width = document.body.clientWidth;
@@ -72,27 +74,30 @@ export var Playground;
             startCyclingColor();
         };
         addSetting(cycleSpeedSlider, colorCycling.updateFreq, { name: "Cycle Speed", showValue: false, onChange: onHueValueChange });
-        setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
+        setUpSettingsMenu(settingsMenuContainer, settingsMenu, settingsMenuIcon);
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
         startGeneratingPortals(canvas);
+        const drawCanvas = document.getElementById("draw-canvas");
+        const pencil = new Pencil(drawCanvas);
+        pencil.start();
     }
-    function setUpSettingsMenu(menuContainer, menuButton) {
+    function setUpSettingsMenu(menuContainer, menu, menuButton) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
-        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer));
+        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer, menu));
         document.addEventListener("keypress", (e) => {
             if (e.key.toLowerCase() === "q")
-                toggleSettingsMenu(menuContainer);
+                toggleSettingsMenu(menuContainer, menu);
         });
-        menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
+        toggleSettingsMenu(menuContainer, menu);
     }
-    function toggleSettingsMenu(menuContainer) {
+    function toggleSettingsMenu(menuContainer, menu) {
         if (parseInt(menuContainer.style.bottom) < 0)
             menuContainer.style.bottom = "0px";
         else
-            menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+            menuContainer.style.bottom = -menu.offsetHeight + "px";
     }
     function startGeneratingPortals(canvas) {
         portals.generateRandomPortal(portalGeneration.duration, canvas);
@@ -200,6 +205,7 @@ export var Playground;
             const autoPilotOff = "Autopilot OFF";
             const majaBeeOn = "Včelka mája ON";
             const screenSaverOn = "Screen Saver ON";
+            // TODO: Make this non-retarded.
             const screenSaverAccelerationIncrease = 0.3;
             const screenSaverSpeedDecrease = 3;
             const majaBeeSpeedDecrease = 1;

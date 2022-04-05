@@ -3,9 +3,9 @@ import {Utils} from "./utils.js";
 export class Portals {
     portalAnimation = {
         step: 4,
-        speed: 10
+        speed: 10,
+        outPortalDuration: 450
     }
-    outPortalDuration = 450;
     checkInterval = 100;
     checkMoveThreshold = 25;
     lastBeeX;
@@ -52,7 +52,7 @@ export class Portals {
             if (img.getAttribute("target") === null)
                 continue;
 
-            (portalDiv as HTMLElement).style.display = visible ? "block" : "none";
+            (portalDiv as HTMLElement).style.display = visible ? "" : "none";
         }
     }
 
@@ -96,7 +96,7 @@ export class Portals {
         this.bee.style.top = portY + "px";
         const endPortal = this.createPortal();
         this.placePortal(endPortal, portX, portY);
-        setTimeout(() => this.removePortal(endPortal), this.outPortalDuration);
+        setTimeout(() => this.removePortal(endPortal), this.portalAnimation.outPortalDuration);
     }
 
     removePortal(portal: HTMLImageElement) {

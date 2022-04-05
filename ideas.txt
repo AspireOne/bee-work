@@ -3,3 +3,5 @@
 - particles on portals
 - minigames (catching falling drops of honey, something time-based...)
 - Shapes (circle, square, your own - you will draw it and the bee will follow it). You could draw a name like that.
+
+- worms, kterým se musíš vyhývat. taky mají ten circle efekt.

@@ -6,6 +6,45 @@
     height: 8em;
 }
 
+.shape {
+    width: 3em;
+    height: 3em;
+    margin-right: 0.3em;
+    transition: 0.2s;
+    border-radius: 10px;
+    /*border: 2px solid #969393;
+    border-radius: 10px;*/
+}
+
+#draw-canvas {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    cursor: crosshair;
+    display: none;
+}
+
+.point {
+    width: 10px;
+    position: absolute;
+    pointer-events: none;
+}
+
+.shape.off:hover {
+    cursor: pointer;
+    color: rgb(128, 141, 215);
+}
+
+.shape.on {
+    color: rgb(64, 92, 245);
+}
+
+.shape.off {
+    color: #b4b4b4;
+}
+
 .slider {
     -webkit-appearance: none;
     height: 15px;
@@ -30,6 +69,7 @@
     height: 4em;
     cursor: pointer;
     margin-top: 1em;
+    transition: 0.1s;
 }
 
 #cycle-speed-slider .slider {width: 100%;}
@@ -133,6 +173,7 @@
 
 #hue-slider-div {
     width: 30%; /* Otherwise it would be as small as possible. */
+    min-width: 20em;
 }
 
 #hue-slider {

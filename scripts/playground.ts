@@ -1,8 +1,9 @@
-import {ScreenSaverPilot} from "./screenSaverPilot.js";
-import {Autopilot} from "./autopilot.js";
+import {ScreenSaverPilot} from "./pilots/screenSaverPilot.js";
+import {Autopilot} from "./pilots/autopilot.js";
 import {bee, controls, modules, portals} from "./global.js";
 import {Utils} from "./utils.js";
 import {Types} from "./types.js";
+import {Pencil} from "./pilots/pencil.js";
 
 export module Playground {
     const colorCycling = {
@@ -73,13 +74,13 @@ export module Playground {
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
         const settingsDiv = document.getElementById("settings-div") as HTMLDivElement;
         const settingsMenuContainer = document.getElementById("settings-menu-container") as HTMLDivElement;
+        const settingsMenu = document.getElementById("settings-menu") as HTMLDivElement;
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider") as HTMLElement;
 
         ctx.canvas.width  = document.body.clientWidth;
         ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
-
 
         addListenersToElements();
         startCyclingColor();
@@ -91,7 +92,7 @@ export module Playground {
             startCyclingColor();
         };
         addSetting(cycleSpeedSlider, colorCycling.updateFreq, {name: "Cycle Speed", showValue: false, onChange: onHueValueChange});
-        setUpSettingsMenu(settingsMenuContainer, settingsMenuIcon);
+        setUpSettingsMenu(settingsMenuContainer, settingsMenu, settingsMenuIcon);
 
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
@@ -99,23 +100,28 @@ export module Playground {
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
         startGeneratingPortals(canvas);
+
+        const drawCanvas = document.getElementById("draw-canvas") as HTMLDivElement;
+        const pencil = new Pencil(drawCanvas);
+        pencil.start();
     }
 
-    function setUpSettingsMenu(menuContainer: HTMLDivElement, menuButton: HTMLElement) {
+    function setUpSettingsMenu(menuContainer: HTMLDivElement, menu: HTMLDivElement, menuButton: HTMLElement) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
-        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer));
+        menuButton.addEventListener("click", () => toggleSettingsMenu(menuContainer, menu));
         document.addEventListener("keypress", (e) => {
             if (e.key.toLowerCase() === "q")
-                toggleSettingsMenu(menuContainer);
+                toggleSettingsMenu(menuContainer, menu);
         });
-        menuContainer.style.bottom = -menuContainer.offsetHeight + "px";
+
+        toggleSettingsMenu(menuContainer, menu);
     }
 
-    function toggleSettingsMenu(menuContainer: HTMLDivElement) {
+    function toggleSettingsMenu(menuContainer: HTMLDivElement, menu: HTMLDivElement) {
         if (parseInt(menuContainer.style.bottom) < 0)
             menuContainer.style.bottom = "0px";
         else
-            menuContainer.style.bottom = -menuContainer.offsetHeight + 50 + "px";
+            menuContainer.style.bottom = -menu.offsetHeight + "px";
     }
 
     function startGeneratingPortals(canvas: HTMLCanvasElement) {
@@ -245,6 +251,7 @@ export module Playground {
             const autoPilotOff = "Autopilot OFF";
             const majaBeeOn = "Včelka mája ON";
             const screenSaverOn = "Screen Saver ON";
+            // TODO: Make this non-retarded.
             const screenSaverAccelerationIncrease = 0.3;
             const screenSaverSpeedDecrease = 3;
             const majaBeeSpeedDecrease = 1;
