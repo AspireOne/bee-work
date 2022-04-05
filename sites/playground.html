@@ -16,9 +16,18 @@
 <body>
 <canvas id="canvas"></canvas>
 
-<div id="portal-home" class="side-portal portal-left">
-    <p>Home</p>
-    <img src="../resources/portal.png" id="portal-home-img" target="../index.html"/>
+<div id="portal-home" class="side-by-side side-portal portal-left">
+    <div class="portal-inner-wrapper">
+        <p>Home</p>
+        <img src="../resources/portal.png" id="portal-home-img" target="../index.html"/>
+    </div>
+</div>
+
+<div id="portal-games" class="side-by-side side-portal portal-right">
+    <div class="portal-inner-wrapper">
+        <img src="../resources/portal.png" id="portal-playground-img" target="sites/games.html"/>
+        <p>Games</p>
+    </div>
 </div>
 
 <div id="action-center">
@@ -37,8 +46,6 @@
         </button>
         <span id="pilot-order">0/0</span>
     </div>
-
-
 </div>
 
 <div id="header">

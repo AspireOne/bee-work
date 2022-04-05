@@ -1,12 +1,17 @@
 .side-portal {
-    height: 50vh;
-    top: 25vh;
+    height: 100%;
     position: absolute;
 }
-
+.portal-right p {transform: rotate(-180deg);}
 .side-portal p {
-    top: 40%;
+    /*top: 40%;
+    position: absolute;*/
+
     font-size: 2.5em;
+    font-family: 'Roboto', sans-serif;
+    writing-mode: vertical-rl;
+    font-weight: 100;
+    float: right;
 }
 
 .side-portal img {
@@ -14,17 +19,21 @@
     height: 100%;
 }
 
-.side-portal p {
-    font-family: 'Roboto', sans-serif;
-    position: absolute;
-    font-weight: 100;
-}
-
 .portal-left.side-portal {
     right: 0;
 }
 
-.portal-right p {transform: rotate(-90deg) translateY(-0.5em);}
-.portal-left p {transform: rotate(90deg) translateY(2.6em);}
-.portal-down p {transform: translateY(-0.5em);}
-.portal-up p {transform: translateY(0.5em);}
+.portal-inner-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+/*
+
+.portal-down p {
+    transform: translateY(-0.5em);
+}
+
+.portal-up p {
+    transform: translateY(0.5em);
+}*/
