@@ -4,8 +4,11 @@ import {bee, controls, modules, portals} from "./global.js";
 import {Utils} from "./utils.js";
 import {Types} from "./types.js";
 import {Pencil} from "./pilots/pencil.js";
+import {VanishingCircle} from "./vanishingCircle";
+import {Bee} from "./bee";
 
 export module Playground {
+    import CircleProps = Bee.CircleProps;
     const colorCycling = {
         cyclingUp: true,
         currColorValue: 0,
@@ -43,6 +46,9 @@ export module Playground {
 
     const settings: { setting: Setting, props: Types.ModifiableProp }[] = [];
 
+    let pencil: Pencil;
+
+    let pencilIcon: HTMLElement;
     let cycleColorButt: HTMLElement;
     let saveSettingsButt: HTMLElement;
     let resetSettingsButt: HTMLElement;
@@ -69,6 +75,7 @@ export module Playground {
         saveSettingsButt = document.getElementById("save-settings-button") as HTMLElement;
         settingsSaveButtonText = document.getElementById("save-settings-button-text") as HTMLSpanElement;
         resetSettingsButt = document.getElementById("reset-settings-button") as HTMLElement;
+        pencilIcon = document.getElementById("pencil") as HTMLElement;
 
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -77,21 +84,28 @@ export module Playground {
         const settingsMenu = document.getElementById("settings-menu") as HTMLDivElement;
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider") as HTMLElement;
+        const drawOverlay = document.getElementById("draw-canvas") as HTMLDivElement;
+        const pencilSpeedSlider = document.getElementById("pencil-speed-slider") as HTMLElement;
+
+        pencil = new Pencil(drawOverlay, bee.circleProps, () => {
+            pencilIcon.classList.remove("on");
+            console.log("asdasd");
+        });
 
         ctx.canvas.width  = document.body.clientWidth;
         ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
-
         addListenersToElements();
         startCyclingColor();
         addSettings(settingsDiv);
 
-        const onHueValueChange = (value: number) => {
+        const onHueCyclingSpeedChange = (value: number) => {
             stopCyclingColor();
             colorCycling.updateFreq.value = value;
             startCyclingColor();
         };
-        addSetting(cycleSpeedSlider, colorCycling.updateFreq, {name: "Cycle Speed", showValue: false, onChange: onHueValueChange});
+        addSetting(cycleSpeedSlider, colorCycling.updateFreq, {name: "Cycle Speed", showValue: false, onChange: onHueCyclingSpeedChange});
+        addSetting(pencilSpeedSlider, pencil.speed, {name: "Drawing Speed", showValue: false, onChange: (value: number) => pencil.changeSpeed(value)});
         setUpSettingsMenu(settingsMenuContainer, settingsMenu, settingsMenuIcon);
 
         if (pilotOrderText)
@@ -100,10 +114,6 @@ export module Playground {
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
         startGeneratingPortals(canvas);
-
-        const drawCanvas = document.getElementById("draw-canvas") as HTMLDivElement;
-        const pencil = new Pencil(drawCanvas);
-        pencil.start();
     }
 
     function setUpSettingsMenu(menuContainer: HTMLDivElement, menu: HTMLDivElement, menuButton: HTMLElement) {
@@ -132,12 +142,24 @@ export module Playground {
     }
 
     function addListenersToElements() {
+        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
+        cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+
         hueSlide.addEventListener("input", (e) => {
             stopCyclingColor();
             bee.circleProps.hue.value = parseInt(hueSlide.value);
         });
-        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
-        cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+
+        pencilIcon.addEventListener("click", () => {
+            if (pencil.running) {
+                pencilIcon.classList.remove("on");
+                pencil.stop()
+            }
+            else {
+                pencilIcon.classList.add("on");
+                pencil.start();
+            }
+        });
 
         let timeoutSet = false;
         saveSettingsButt.addEventListener("click", (e) => {

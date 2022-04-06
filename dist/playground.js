@@ -34,6 +34,8 @@ export var Playground;
         spawnDelayRange: { min: 10000, max: 30000 }
     };
     const settings = [];
+    let pencil;
+    let pencilIcon;
     let cycleColorButt;
     let saveSettingsButt;
     let resetSettingsButt;
@@ -55,6 +57,7 @@ export var Playground;
         saveSettingsButt = document.getElementById("save-settings-button");
         settingsSaveButtonText = document.getElementById("save-settings-button-text");
         resetSettingsButt = document.getElementById("reset-settings-button");
+        pencilIcon = document.getElementById("pencil");
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
         const settingsDiv = document.getElementById("settings-div");
@@ -62,27 +65,31 @@ export var Playground;
         const settingsMenu = document.getElementById("settings-menu");
         const settingsMenuIcon = document.getElementById("settings-menu-icon");
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider");
+        const drawOverlay = document.getElementById("draw-canvas");
+        const pencilSpeedSlider = document.getElementById("pencil-speed-slider");
+        pencil = new Pencil(drawOverlay, bee.circleProps, () => {
+            pencilIcon.classList.remove("on");
+            console.log("asdasd");
+        });
         ctx.canvas.width = document.body.clientWidth;
         ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
         addListenersToElements();
         startCyclingColor();
         addSettings(settingsDiv);
-        const onHueValueChange = (value) => {
+        const onHueCyclingSpeedChange = (value) => {
             stopCyclingColor();
             colorCycling.updateFreq.value = value;
             startCyclingColor();
         };
-        addSetting(cycleSpeedSlider, colorCycling.updateFreq, { name: "Cycle Speed", showValue: false, onChange: onHueValueChange });
+        addSetting(cycleSpeedSlider, colorCycling.updateFreq, { name: "Cycle Speed", showValue: false, onChange: onHueCyclingSpeedChange });
+        addSetting(pencilSpeedSlider, pencil.speed, { name: "Drawing Speed", showValue: false, onChange: (value) => pencil.changeSpeed(value) });
         setUpSettingsMenu(settingsMenuContainer, settingsMenu, settingsMenuIcon);
         if (pilotOrderText)
             pilotOrderText.innerText = "1/3";
         screenSaverPilot = new ScreenSaverPilot(bee, controls);
         autopilot = new Autopilot(bee, controls);
         startGeneratingPortals(canvas);
-        const drawCanvas = document.getElementById("draw-canvas");
-        const pencil = new Pencil(drawCanvas);
-        pencil.start();
     }
     function setUpSettingsMenu(menuContainer, menu, menuButton) {
         // If menuContainer bottom is below zero, make it the opposite of the current bottom on menuButtom click.
@@ -104,12 +111,22 @@ export var Playground;
         setTimeout(() => startGeneratingPortals(canvas), Utils.randomIntFromInterval(portalGeneration.spawnDelayRange.min, portalGeneration.spawnDelayRange.max));
     }
     function addListenersToElements() {
+        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
+        cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
         hueSlide.addEventListener("input", (e) => {
             stopCyclingColor();
             bee.circleProps.hue.value = parseInt(hueSlide.value);
         });
-        autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
-        cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
+        pencilIcon.addEventListener("click", () => {
+            if (pencil.running) {
+                pencilIcon.classList.remove("on");
+                pencil.stop();
+            }
+            else {
+                pencilIcon.classList.add("on");
+                pencil.start();
+            }
+        });
         let timeoutSet = false;
         saveSettingsButt.addEventListener("click", (e) => {
             bee.saveProps();

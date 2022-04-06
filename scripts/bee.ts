@@ -28,7 +28,7 @@ export class Bee {
     public currPos: Types.Point = { y: 0, x: 0 };
 
     /** Properties of the circle that bee creates. */
-    public circleProps: CircleProps = {
+    public readonly circleProps: CircleProps = {
         durationNormal: {
             value: 400,
             values: {
@@ -72,7 +72,7 @@ export class Bee {
     };
 
     /** Properties of the bee. */
-    public props: Props = {
+    public readonly props: Props = {
         maxSpeed: {
             value: 7,
             values: {

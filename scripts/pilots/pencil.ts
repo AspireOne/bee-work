@@ -3,53 +3,113 @@ import htmlToElement = Utils.htmlToElement;
 import {Types} from "../types.js";
 import Point = Types.Point;
 import {VanishingCircle} from "../vanishingCircle.js";
+import ModifiableProp = Types.ModifiableProp;
+import {Bee} from "../bee.js";
 
 export class Pencil {
-    private readonly canvas: HTMLDivElement;
-    private drawing: boolean = false;
+    private static instanceCreated: boolean = false;
+    private static minPoints = 20;
+    private readonly delta = 10;
+    public readonly speed: ModifiableProp = {
+        value: 12,
+        values: {
+            min: 4,
+            max: 50,
+            default: 12,
+        }
+    };
+    private readonly circleProps: Bee.CircleProps;
+    private readonly designOverlay: HTMLDivElement;
+    private readonly closeCallback?: () => void;
+    private designing: boolean = false;
     private points: Point[] = [];
+    private intervalId = 0;
+    public running: boolean = false;
     
-    constructor(canvas: HTMLDivElement) {
-        this.canvas = canvas;
-        this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));
-        this.canvas.addEventListener("mouseup", (e) => this.handleMouseUp(e));
-        this.canvas.addEventListener("mousemove", (e) => {
-            if (this.drawing)
-                this.putPoint(e);
+    constructor(designOverlay: HTMLDivElement, circleProps: Bee.CircleProps, closeCallback?: () => void) {
+        if (Pencil.instanceCreated) {
+            throw new Error("Pencil can be created only once");
+            return;
+        }
+        Pencil.instanceCreated = true;
+
+        this.closeCallback = closeCallback;
+        this.circleProps = circleProps;
+        this.designOverlay = designOverlay;
+        
+        this.designOverlay.addEventListener("mousedown", (e) => {
+            this.designing = true;
+        });
+        this.designOverlay.addEventListener("mouseup", (e) => {
+            this.designing = false;
+            this.clearDesignOverlay();
+            console.log(this.points.length);
+            if (this.points.length > Pencil.minPoints)
+                this.startEffect();
+            else
+                this.stop();
+        });
+        this.designOverlay.addEventListener("mousemove", (e) => {
+            if (this.designing)
+                this.placePointAndSmooth(e);
+        });
+        document.addEventListener("keydown", (e) => {
+            if (this.running && e.key === "Escape")
+                this.stop();
         });
     }
 
     public start() {
-        this.obtainShape();
+        this.designOverlay.style.display = "block";
+        this.running = true;
     }
 
-    private obtainShape() {
+    public changeSpeed(speed: number) {
+        this.speed.value = speed;
+        if (this.running) {
+            clearInterval(this.intervalId);
+            this.startEffect();
+        }
+    }
+
+    public stop() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = 0;
+        }
+
+        this.running = false;
         this.points = [];
-        this.canvas.style.display = "block";
+        this.designing = false;
+        this.clearDesignOverlay();
+        if (this.closeCallback)
+            this.closeCallback();
     }
 
-    private startDrawing() {
+    private startEffect() {
         let index = 0;
-        const props = {duration: 1000, initialOpacity: 1, size: 60, hue: 0};
-        setInterval(() => {
+        this.intervalId = setInterval(() => {
             if (index >= this.points.length)
                 index = 0;
 
-            new VanishingCircle(this.points[index += 5], props).show();
-        }, 1);
+            const props: VanishingCircle.Props = {
+                duration: this.circleProps.durationShift.value,
+                initialOpacity: 1,
+                size: this.circleProps.size.value,
+                hue: this.circleProps.hue.value
+            };
+
+            new VanishingCircle(this.points[index], props).show();
+            index += this.speed.value;
+        }, this.delta);
+    }
+    
+    private clearDesignOverlay() {
+        this.designOverlay.innerHTML = "";
+        this.designOverlay.style.display = "none";
     }
 
-    private handleMouseDown(e: MouseEvent) {
-        this.drawing = true;
-    }
-
-    private handleMouseUp(e: MouseEvent) {
-        this.drawing = false;
-        this.canvas.style.display = "none";
-        this.startDrawing();
-    }
-
-    private putPoint(e: MouseEvent) {
+    private placePointAndSmooth(e: MouseEvent) {
         const point = {x: e.clientX, y: e.clientY };
         const prevPoint = this.points[this.points.length - 1] ?? point;
         const pointsBetween = this.getPointsBetween(point, prevPoint);
@@ -69,37 +129,19 @@ export class Pencil {
             left: point.x + "px",
             top: point.y + "px",
         });
-        this.canvas.appendChild(pointElement);
+        this.designOverlay.appendChild(pointElement);
     }
 
     private getPointsBetween(a: Point, b: Point): Point[] {
-        const dx = Math.abs(a.x - b.x);
-        const dy = Math.abs(a.y - b.y);
-        const sx = b.x < a.x ? 1 : -1;
-        const sy = b.y < a.y ? 1 : -1;
-        let err = dx - dy;
-        if (err < 10)
-            return [];
-
         const points: Point[] = [];
-
-        while (true) {
-            points.push(a);
-            if (a.x === b.x && a.y === b.y)
-                break;
-            
-
-            const e2 = 2 * err;
-            if (e2 > -dy) {
-                err -= dy;
-                a.x -= sx;
-            }
-            if (e2 < dx) {
-                err += dx;
-                a.y += sy;
-            }
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const steps = Math.max(Math.abs(dx), Math.abs(dy));
+        for (let i = 1; i < steps; ++i) {
+            const x = b.x + (dx / steps) * i;
+            const y = b.y + (dy / steps) * i;
+            points.push({x, y});
         }
-
         return points;
     }
 }

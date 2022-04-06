@@ -1,14 +1,25 @@
+import { Types } from "../types.js";
+import ModifiableProp = Types.ModifiableProp;
+import { Bee } from "../bee.js";
 export declare class Pencil {
-    private readonly canvas;
-    private drawing;
+    private static instanceCreated;
+    private static minPoints;
+    private readonly delta;
+    readonly speed: ModifiableProp;
+    private readonly circleProps;
+    private readonly designOverlay;
+    private readonly closeCallback?;
+    private designing;
     private points;
-    constructor(canvas: HTMLDivElement);
+    private intervalId;
+    running: boolean;
+    constructor(designOverlay: HTMLDivElement, circleProps: Bee.CircleProps, closeCallback?: () => void);
     start(): void;
-    private obtainShape;
-    private startDrawing;
-    private handleMouseDown;
-    private handleMouseUp;
-    private putPoint;
+    changeSpeed(speed: number): void;
+    stop(): void;
+    private startEffect;
+    private clearDesignOverlay;
+    private placePointAndSmooth;
     private placePoint;
     private getPointsBetween;
 }

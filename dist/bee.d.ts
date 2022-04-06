@@ -21,9 +21,9 @@ export declare module Bee {
 export declare class Bee {
     currPos: Types.Point;
     /** Properties of the circle that bee creates. */
-    circleProps: CircleProps;
+    readonly circleProps: CircleProps;
     /** Properties of the bee. */
-    props: Props;
+    readonly props: Props;
     accelerationData: Acceleration;
     /** The base bee element. */
     element: HTMLElement;

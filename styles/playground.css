@@ -6,16 +6,6 @@
     height: 8em;
 }
 
-.shape {
-    width: 3em;
-    height: 3em;
-    margin-right: 0.3em;
-    transition: 0.2s;
-    border-radius: 10px;
-    /*border: 2px solid #969393;
-    border-radius: 10px;*/
-}
-
 #draw-canvas {
     position: absolute;
     width: 100vw;
@@ -32,17 +22,33 @@
     pointer-events: none;
 }
 
-.shape.off:hover {
+.shape {
+    width: 3em;
+    height: 3em;
+    margin-right: 0.3em;
+    transition: 0.2s;
+    border-radius: 10px;
+    color: #b4b4b4;
+    /*border: 2px solid #969393;
+    border-radius: 10px;*/
+}
+
+#pencil-speed-slider .slider {
+    width: 80%;
+}
+
+#pencil {
+    margin-top: 1em;
+    margin-right: 0.5em;
+}
+
+.shape:hover {
     cursor: pointer;
     color: rgb(128, 141, 215);
 }
 
 .shape.on {
     color: rgb(64, 92, 245);
-}
-
-.shape.off {
-    color: #b4b4b4;
 }
 
 .slider {
@@ -131,12 +137,15 @@
     border: none;
     color: #FFFFFF;
     text-align: center;
-    font-size: 28px;
-    padding: 20px;
-    width: 200px;
     transition: all 0.5s;
     cursor: pointer;
     margin: 5px;
+
+    padding: 0; /* So that the text inside is not offsetted. */
+    height: 2.5em;
+    width: 9em; /* So that the larger text that we add to it in js fit it. */
+    font-size: 1.5em; /* So that the text inside is not huge. */
+    outline: none;
 }
 
 .pilot-button span {
@@ -199,19 +208,12 @@
     justify-content: flex-start;
     /*justify-content: center;*/
     align-items: center;
-    gap: 1em;
+    gap: 5em;
 
     overflow: hidden;
 }
 
 #pilot-order {font-size: 1.8em;}
-#pilot-button {
-    padding: 0; /* So that the text inside is not offsetted. */
-    height: 2.5em;
-    width: 9em; /* So that the larger text that we add to it in js fit it. */
-    font-size: 1.5em; /* So that the text inside is not huge. */
-    outline: none;
-}
 
 .default-value {
     color: #8891b2;
@@ -246,10 +248,11 @@
     left: 0;
     top: unset;
     right: unset;
+    z-index: 2;
 }
 
 #settings-menu {
     padding: 2em 3em 1em 1em;
     border-radius: 1em;
-    background-color: rgba(255, 171, 171, 0.1);
+    background-color: #31292B;
 }
