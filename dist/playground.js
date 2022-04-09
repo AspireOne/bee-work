@@ -60,23 +60,21 @@ export var Playground;
         pencilIcon = document.getElementById("pencil");
         const canvas = document.getElementById("canvas");
         const ctx = canvas.getContext("2d");
-        const settingsDiv = document.getElementById("settings-div");
+        const settingsBee = document.getElementById("settings-bee");
+        const settingsCircle = document.getElementById("settings-bee-circle");
         const settingsMenuContainer = document.getElementById("settings-menu-container");
         const settingsMenu = document.getElementById("settings-menu");
         const settingsMenuIcon = document.getElementById("settings-menu-icon");
         const cycleSpeedSlider = document.getElementById("cycle-speed-slider");
         const drawOverlay = document.getElementById("draw-canvas");
         const pencilSpeedSlider = document.getElementById("pencil-speed-slider");
-        pencil = new Pencil(drawOverlay, bee.circleProps, () => {
-            pencilIcon.classList.remove("on");
-            console.log("asdasd");
-        });
+        pencil = new Pencil(drawOverlay, bee.circleProps, () => pencilIcon.classList.remove("on"));
         ctx.canvas.width = document.body.clientWidth;
         ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
         addListenersToElements();
         startCyclingColor();
-        addSettings(settingsDiv);
+        addSettings(settingsBee, settingsCircle);
         const onHueCyclingSpeedChange = (value) => {
             stopCyclingColor();
             colorCycling.updateFreq.value = value;
@@ -165,19 +163,19 @@ export var Playground;
         colorCycling.intervalId = 0;
         cycleColorButt.classList.replace("on", "off");
     }
-    function addSettings(toElement) {
+    function addSettings(settingsBee, settingsCircle) {
         const onDeltaChange = (value) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
         };
-        addSetting(toElement, bee.props.deltaTime, { name: "Delta", showValue: true, onChange: onDeltaChange });
-        addSetting(toElement, bee.accelerationData.acceleration, { name: "Acceleration", showValue: true, step: 0.01 });
-        addSetting(toElement, bee.props.maxSpeed, { name: "Speed", showValue: true });
-        addSetting(toElement, bee.circleProps.durationNormal, { name: "Circle Duration", showValue: true });
-        addSetting(toElement, bee.circleProps.durationShift, { name: "Cirlce Duration Shift", showValue: true });
-        addSetting(toElement, bee.circleProps.frequency, { name: "Circle Frequency", showValue: true });
-        addSetting(toElement, bee.circleProps.size, { name: "Circle Size", showValue: true });
+        addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true });
+        addSetting(settingsBee, bee.accelerationData.acceleration, { name: "Acceleration", showValue: true, step: 0.01 });
+        addSetting(settingsBee, bee.props.deltaTime, { name: "Delta", showValue: true, onChange: onDeltaChange });
+        addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true });
+        addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift", showValue: true });
+        addSetting(settingsCircle, bee.circleProps.frequency, { name: "Frequency", showValue: true });
+        addSetting(settingsCircle, bee.circleProps.size, { name: "Size", showValue: true });
     }
     function addSetting(toElement, props, _a) {
         var { step = 1 } = _a, rest = __rest(_a, ["step"]);

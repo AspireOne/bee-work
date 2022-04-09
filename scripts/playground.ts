@@ -79,7 +79,8 @@ export module Playground {
 
         const canvas = document.getElementById("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-        const settingsDiv = document.getElementById("settings-div") as HTMLDivElement;
+        const settingsBee = document.getElementById("settings-bee") as HTMLDivElement;
+        const settingsCircle = document.getElementById("settings-bee-circle") as HTMLDivElement;
         const settingsMenuContainer = document.getElementById("settings-menu-container") as HTMLDivElement;
         const settingsMenu = document.getElementById("settings-menu") as HTMLDivElement;
         const settingsMenuIcon = document.getElementById("settings-menu-icon") as HTMLElement;
@@ -87,17 +88,14 @@ export module Playground {
         const drawOverlay = document.getElementById("draw-canvas") as HTMLDivElement;
         const pencilSpeedSlider = document.getElementById("pencil-speed-slider") as HTMLElement;
 
-        pencil = new Pencil(drawOverlay, bee.circleProps, () => {
-            pencilIcon.classList.remove("on");
-            console.log("asdasd");
-        });
+        pencil = new Pencil(drawOverlay, bee.circleProps, () => pencilIcon.classList.remove("on"));
 
         ctx.canvas.width  = document.body.clientWidth;
         ctx.canvas.height = document.body.clientHeight;
         canvas.style.position = "absolute";
         addListenersToElements();
         startCyclingColor();
-        addSettings(settingsDiv);
+        addSettings(settingsBee, settingsCircle);
 
         const onHueCyclingSpeedChange = (value: number) => {
             stopCyclingColor();
@@ -106,6 +104,7 @@ export module Playground {
         };
         addSetting(cycleSpeedSlider, colorCycling.updateFreq, {name: "Cycle Speed", showValue: false, onChange: onHueCyclingSpeedChange});
         addSetting(pencilSpeedSlider, pencil.speed, {name: "Drawing Speed", showValue: false, onChange: (value: number) => pencil.changeSpeed(value)});
+
         setUpSettingsMenu(settingsMenuContainer, settingsMenu, settingsMenuIcon);
 
         if (pilotOrderText)
@@ -206,20 +205,20 @@ export module Playground {
         cycleColorButt.classList.replace("on", "off");
     }
 
-    function addSettings(toElement: HTMLElement) {
+    function addSettings(settingsBee: HTMLDivElement, settingsCircle: HTMLDivElement) {
         const onDeltaChange = (value: number) => {
             bee.props.deltaTime.value = value;
             bee.stop();
             bee.start();
         };
 
-        addSetting(toElement, bee.props.deltaTime, {name: "Delta", showValue: true, onChange: onDeltaChange});
-        addSetting(toElement, bee.accelerationData.acceleration, {name: "Acceleration", showValue: true, step: 0.01 });
-        addSetting(toElement, bee.props.maxSpeed, {name: "Speed", showValue: true});
-        addSetting(toElement, bee.circleProps.durationNormal, {name: "Circle Duration", showValue: true});
-        addSetting(toElement, bee.circleProps.durationShift, {name: "Cirlce Duration Shift", showValue: true});
-        addSetting(toElement, bee.circleProps.frequency, {name: "Circle Frequency", showValue: true});
-        addSetting(toElement, bee.circleProps.size, {name: "Circle Size", showValue: true});
+        addSetting(settingsBee, bee.props.maxSpeed, {name: "Speed", showValue: true});
+        addSetting(settingsBee, bee.accelerationData.acceleration, {name: "Acceleration", showValue: true, step: 0.01 });
+        addSetting(settingsBee, bee.props.deltaTime, {name: "Delta", showValue: true, onChange: onDeltaChange});
+        addSetting(settingsCircle, bee.circleProps.durationNormal, {name: "Duration", showValue: true});
+        addSetting(settingsCircle, bee.circleProps.durationShift, {name: "Duration Shift", showValue: true});
+        addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true});
+        addSetting(settingsCircle, bee.circleProps.size, {name: "Size", showValue: true});
     }
 
     function addSetting(toElement: HTMLElement, props: Types.ModifiableProp, {step = 1, ...rest}: SettingProps) {
