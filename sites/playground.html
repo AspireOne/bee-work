@@ -2,12 +2,9 @@
 <html lang="en">
 <head class="unselectable">
     <meta charset="utf-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <title>Playground</title>
     <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
     <link rel="stylesheet" href="../styles/playground.css" type="text/css" media="all"/>
-    <title>ya like jazz?</title>
     <script type="module" src="../dist/global.js"></script>
     <script type="module" src="../dist/playground.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -15,19 +12,13 @@
 </head>
 <body>
 <canvas id="canvas"></canvas>
-<div id="draw-canvas"></div>
-
-<div id="portal-home" class="side-by-side side-portal portal-left">
-    <div class="portal-inner-wrapper">
-        <p>Home</p>
-        <img src="../resources/portal.png" id="portal-home-img" target="../index.html"/>
-    </div>
+<div id="draw-canvas">
 </div>
 
-<div id="portal-games" class="side-by-side side-portal portal-right">
+<div id="portal-home" target="../index.html" class="side-by-side side-portal portal-right">
     <div class="portal-inner-wrapper">
-        <img src="../resources/portal.png" id="portal-playground-img" target="sites/games.html"/>
-        <p>Games</p>
+        <p>Home</p>
+        <img src="../resources/portal.png" id="portal-home-img"/>
     </div>
 </div>
 
@@ -59,10 +50,7 @@
     </div>
 </div>
 
-<div id="header">
-    <h1>Beeter</h1>
-    <h2>Use WASD, Q & Shift</h2>
-</div>
+<h1 id="title">Use WASD, Q & Shift</h1>
 
 <div id="settings-menu-container">
     <ion-icon name="menu-outline" id="settings-menu-icon"></ion-icon>

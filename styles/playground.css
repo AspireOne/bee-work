@@ -2,8 +2,33 @@
 #canvas {pointer-events: none;}
 .portal {
     position: absolute;
-    width: 8em;
-    height: 8em;
+    width: 6em;
+    height: 6em;
+
+    border-radius: 4em;
+    border: 2px solid orange;
+    box-shadow: 0px 0px 40px 1px orange;
+    animation: portal-pulse 2s infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes portal-pulse {
+    0% {
+        box-shadow: 0px 0px 40px 1px orange;
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0px 0px 26px 1px orange;
+        transform: scale(1.05);
+    }
+    100% {
+        box-shadow: 0px 0px 40px 1px orange;
+        transform: scale(1);
+    }
+}
+
+#title {
+    margin-top: 3em;
 }
 
 #draw-canvas {
@@ -14,6 +39,13 @@
     z-index: 1;
     cursor: crosshair;
     display: none;
+}
+
+#draw-canvas h2 {
+    position: absolute;
+    right: 30px;
+    font-size: 1.7em;
+    bottom: 0;
 }
 
 .point {
@@ -250,5 +282,5 @@
     padding: 2em 3em 1em 1em;
     border-radius: 1em;
     backdrop-filter: blur(2px);
-    background-color: rgba(49, 41, 43, 0.86);
+    background-color: rgba(49, 41, 43, 0.88);
 }

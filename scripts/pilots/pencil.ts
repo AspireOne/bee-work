@@ -105,7 +105,7 @@ export class Pencil {
     }
     
     private clearDesignOverlay() {
-        this.designOverlay.innerHTML = "";
+        this.designOverlay.innerHTML = "<h2>[ ESC ]</h2>";
         this.designOverlay.style.display = "none";
     }
 

@@ -112,6 +112,7 @@ export var Playground;
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
         hueSlide.addEventListener("input", (e) => {
+            console.log(hueSlide.value);
             stopCyclingColor();
             bee.circleProps.hue.value = parseInt(hueSlide.value);
         });
@@ -173,7 +174,7 @@ export var Playground;
         addSetting(settingsBee, bee.accelerationData.acceleration, { name: "Acceleration", showValue: true, step: 0.01 });
         addSetting(settingsBee, bee.props.deltaTime, { name: "Delta", showValue: true, onChange: onDeltaChange });
         addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true });
-        addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift", showValue: true });
+        addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift / Drawing", showValue: true });
         addSetting(settingsCircle, bee.circleProps.frequency, { name: "Frequency", showValue: true });
         addSetting(settingsCircle, bee.circleProps.size, { name: "Size", showValue: true });
     }
@@ -229,7 +230,7 @@ export var Playground;
             switch (autopilotButtonTextSpan.innerHTML) {
                 case autoPilotOff:
                     autopilotButtonTextSpan.innerHTML = majaBeeOn;
-                    portals.setTargetPortalsDisplay(false);
+                    portals.setSidePortalsDisplay(false);
                     autopilot.start();
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "2/" + modes;
@@ -237,7 +238,7 @@ export var Playground;
                     break;
                 case majaBeeOn:
                     autopilotButtonTextSpan.innerHTML = screenSaverOn;
-                    portals.setTargetPortalsDisplay(false);
+                    portals.setSidePortalsDisplay(false);
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
@@ -248,7 +249,7 @@ export var Playground;
                     break;
                 case screenSaverOn:
                     screenSaverPilot.stop();
-                    portals.setTargetPortalsDisplay(true);
+                    portals.setSidePortalsDisplay(true);
                     bee.accelerationData.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;

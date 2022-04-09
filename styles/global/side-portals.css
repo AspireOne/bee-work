@@ -1,8 +1,9 @@
 .side-portal {
     height: 100%;
     position: absolute;
+    pointer-events: none;
 }
-.portal-right p {transform: rotate(-180deg);}
+.portal-left p {transform: rotate(-180deg);}
 .side-portal p {
     font-size: 2.5em;
     font-family: 'Roboto', sans-serif;
@@ -16,7 +17,7 @@
     height: 50%;
 }
 
-.portal-left.side-portal {
+.portal-right.side-portal {
     right: 0;
 }
 

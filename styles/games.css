@@ -1,0 +1,18 @@
+.game-circle {
+    width: 10em;
+    height: 10em;
+    border-radius: 40em;
+    border: 2px solid white;
+    box-shadow: 0px 0px 5px 1px white;
+    background-color: rgba(64, 92, 245, 0.9);
+
+    display: flex; /* To align the items in the center of the container */
+    justify-content: center; /* Align horizontally. */
+    align-items: center; /* Align vertically. */
+    position: absolute; /* To position game cicles randomly on the screen without affecting the document flow. */
+}
+
+.game-circle p {
+    font-size: 1.5em;
+    font-weight: bold;
+}

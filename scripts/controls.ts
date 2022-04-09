@@ -26,7 +26,21 @@ export class Controls {
     // Indicates whether keyboard input should be ignored.
     public ignoreUserInput = false;
 
-    // Changes the press state of a key in keys object.
+    // Changes the press state of an action by it's name - not by the key bound to that action.
+    public static changePressStateByName(name: string, pressed: boolean): boolean {
+        let changed = false;
+
+        Object.keys(Controls.keys).forEach(key => {
+            if (key === name) {
+                Controls.keys[key].pressed = pressed;
+                changed = true;
+                // Keep iterating because two keys could have the same definition.
+            }
+        });
+
+        return changed;
+    }
+
     public static changePressState(definition: string, pressed: boolean): boolean {
         let changed = false;
 
@@ -50,7 +64,7 @@ export class Controls {
         document.addEventListener("keyup", (e) => this.onKeyChange(e, false));
     }
 
-    onKeyChange(eOrKey: KeyboardEvent | string, keyDown: boolean) {
+    private onKeyChange(eOrKey: KeyboardEvent | string, keyDown: boolean) {
         const key = eOrKey instanceof KeyboardEvent ? eOrKey.key : eOrKey;
 
         if (this.ignoreUserInput && !Controls.keys.floss.definition.includes(key))

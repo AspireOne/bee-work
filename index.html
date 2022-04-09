@@ -1,29 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head class="unselectable">
-    <meta charset="utf-8">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Menu - ya like jazz?</title>
+    <!--<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&family=Roboto:wght@100&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@200&family=Roboto:wght@100&display=swap" rel="stylesheet">-->
     <link rel="stylesheet" href="styles/global/global.css" type="text/css" media="all"/>
-    <title>ya like jazz?</title>
     <script type="module" src="dist/global.js"></script>
 </head>
-
-<div id="portal-playground" class="side-by-side side-portal portal-right">
+<body>
+<div id="portal-playground" target="sites/playground.html" class="side-by-side side-portal portal-left">
     <div class="portal-inner-wrapper">
-        <img src="resources/portal.png" id="portal-playground-img" target="sites/playground.html"/>
+        <img src="resources/portal.png" id="portal-playground-img"/>
         <p>Playground</p>
     </div>
 </div>
 
-<div id="portal-network" class="side-by-side side-portal portal-left">
+<div id="portal-games" target="sites/games.html" class="side-by-side side-portal portal-right">
     <div class="portal-inner-wrapper">
-        <p>Network</p>
-        <img src="resources/portal.png" id="portal-network-img" target="sites/network.html"/>
+        <p>Games</p>
+        <img src="../resources/portal.png" id="portal-games-img"/>
     </div>
 </div>
-
-<h1>Beeter</h1>
 </body>
 </html>

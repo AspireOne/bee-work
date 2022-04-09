@@ -1,25 +1,29 @@
-export declare class Portals {
-    portalAnimation: {
-        step: number;
-        speed: number;
-        outPortalDuration: number;
+import collisionPortalProps = Portals.collisionPortalProps;
+export declare module Portals {
+    type collisionPortalProps = {
+        collisionElement: HTMLElement;
+        collisionAction?: () => void;
+        target?: URL;
     };
-    checkInterval: number;
-    checkMoveThreshold: number;
-    lastBeeX: number;
-    id: number;
-    portals: [HTMLElement, null | (() => void)][];
+}
+export declare class Portals {
+    private appearAnimation;
+    private checkInterval;
+    private checkingId;
+    private portals;
     bee: HTMLElement;
     constructor(bee: HTMLElement);
-    startChecking(): void;
-    stopChecking(): void;
-    setTargetPortalsDisplay(visible: boolean): void;
+    startCheckingCollisions(): void;
+    stopCheckingCollisions(): void;
+    setSidePortalsDisplay(visible: boolean): void;
     generateRandomPortal(timeout: number, canvas: HTMLCanvasElement): void;
-    handlePortalTouched(portal: HTMLImageElement, portX: number, portY: number, canvas: HTMLCanvasElement): void;
-    removePortal(portal: HTMLImageElement): void;
-    drawPoint(x: number, y: number, canvas: HTMLCanvasElement): void;
-    placePortal(portal: HTMLImageElement, x: number, y: number): void;
-    createPortal(): HTMLImageElement;
-    getSidePortalsFromDoc(): HTMLImageElement[];
-    addPortal(portal: HTMLElement, action: null | (() => void)): void;
+    private static drawPoint;
+    private handlePortalTouched;
+    removePortal(portal: HTMLElement): void;
+    placePortal(portal: HTMLElement, x: number, y: number): void;
+    private animateAppearance;
+    createPortal(): HTMLElement;
+    /** Registers all side portals in document for collision. */
+    registerSidePortals(): void;
+    registerPortal(props: collisionPortalProps): void;
 }

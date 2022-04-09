@@ -9,7 +9,18 @@ export class Controls {
         document.addEventListener("keydown", (e) => this.onKeyChange(e, true));
         document.addEventListener("keyup", (e) => this.onKeyChange(e, false));
     }
-    // Changes the press state of a key in keys object.
+    // Changes the press state of an action by it's name - not by the key bound to that action.
+    static changePressStateByName(name, pressed) {
+        let changed = false;
+        Object.keys(Controls.keys).forEach(key => {
+            if (key === name) {
+                Controls.keys[key].pressed = pressed;
+                changed = true;
+                // Keep iterating because two keys could have the same definition.
+            }
+        });
+        return changed;
+    }
     static changePressState(definition, pressed) {
         let changed = false;
         Object.values(Controls.keys).forEach(key => {
