@@ -8,7 +8,7 @@ export module Games {
         for (let portal of document.getElementsByClassName("game-circle")) {
             const props: Portals.collisionPortalProps = {
                 collisionElement: portal as HTMLElement,
-                target: new URL(portal.getAttribute("target") as string)
+                target: new URL(portal.getAttribute("target") as string, window.location.href)
             }
             portals.registerPortal(props);
         }

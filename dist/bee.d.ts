@@ -60,7 +60,7 @@ export declare class Bee {
     /** Updates the bee's position and orientation and places a next circle (if eligible). */
     private frame;
     /** Flips the bee's rotation (left/right) based on the pressed keys. */
-    private flipElementIfShould;
+    private correctOrientation;
     /** Calculates the next X position of the bee. */
     private calculateNewX;
     /** Calculates the next Y position of the bee. */

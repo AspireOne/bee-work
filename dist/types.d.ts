@@ -7,6 +7,12 @@ export declare module Types {
         min: number;
         max: number;
     };
+    type SavedModifiableProp = {
+        [p: string]: number;
+    };
+    type SaveableProps = {
+        saveName: string;
+    };
     type ModifiableProp = {
         value: number;
         values: {
@@ -14,11 +20,5 @@ export declare module Types {
             readonly min: number;
             readonly max: number;
         };
-    };
-    type SavedModifiableProp = {
-        [p: string]: number;
-    };
-    type SaveableProps = {
-        saveName: string;
     };
 }

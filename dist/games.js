@@ -6,7 +6,7 @@ export var Games;
         for (let portal of document.getElementsByClassName("game-circle")) {
             const props = {
                 collisionElement: portal,
-                target: new URL(portal.getAttribute("target"))
+                target: new URL(portal.getAttribute("target"), window.location.href)
             };
             portals.registerPortal(props);
         }

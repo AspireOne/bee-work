@@ -157,7 +157,7 @@ export class Bee {
         this.currPos = { y: newY, x: newX };
         this.element.style.top = newY + "px";
         this.element.style.left = newX + "px";
-        this.flipElementIfShould();
+        this.correctOrientation();
         if ((this.timeFromLastCircle += this.props.deltaTime.value) >= this.circleProps.frequency.value) {
             this.timeFromLastCircle = 0;
             const props = {
@@ -170,7 +170,7 @@ export class Bee {
         }
     }
     /** Flips the bee's rotation (left/right) based on the pressed keys. */
-    flipElementIfShould() {
+    correctOrientation() {
         let scale = 0;
         if (Controls.keys.right.pressed)
             scale = -1;
@@ -198,9 +198,9 @@ export class Bee {
         let newAcceleration = this.accelerationData.currAccelerationX;
         if (Controls.keys.left.pressed)
             newAcceleration -= this.accelerationData.acceleration.value;
-        else if (Controls.keys.right.pressed)
+        if (Controls.keys.right.pressed)
             newAcceleration += this.accelerationData.acceleration.value;
-        else {
+        if (Controls.keys.left.pressed == Controls.keys.right.pressed) {
             if (updatedWay != this.wayX)
                 newAcceleration = 0;
             else if (this.accelerationData.currAccelerationX > 0)

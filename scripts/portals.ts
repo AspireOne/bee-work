@@ -36,9 +36,9 @@ export class Portals {
                         portal.collisionAction();
 
                     if (portal.target) {
-                        portal.target.searchParams.append("up", Controls.keys.up.pressed + "");
                         portal.target.searchParams.append("left", Controls.keys.left.pressed + "");
                         portal.target.searchParams.append("right", Controls.keys.right.pressed + "");
+                        portal.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
                         window.location.assign(portal.target); //  TODO: window.location.replace(portal.target);
 
                     }
