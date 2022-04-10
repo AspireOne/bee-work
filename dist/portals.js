@@ -12,6 +12,7 @@ export class Portals {
         this.portals = [];
         this.bee = bee;
     }
+    // TODO: Abstract out collision checking. We can use it for whatever.
     startCheckingCollisions() {
         if (this.checkingId)
             return;
@@ -20,12 +21,13 @@ export class Portals {
                 if (Utils.collides(portal.collisionElement.getBoundingClientRect(), this.bee.getBoundingClientRect())) {
                     if (portal.collisionAction)
                         portal.collisionAction();
-                    if (portal.target) {
+                    if (portal.target && !portal.noposition) {
                         portal.target.searchParams.append("left", Controls.keys.left.pressed + "");
                         portal.target.searchParams.append("right", Controls.keys.right.pressed + "");
                         portal.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
-                        window.location.assign(portal.target); //  TODO: window.location.replace(portal.target);
                     }
+                    if (portal.target)
+                        window.location.assign(portal.target); //  TODO: window.location.replace(portal.target);
                 }
             });
         }, this.checkInterval);
@@ -150,15 +152,16 @@ export class Portals {
             let target = portalDiv.getAttribute("target");
             if (!target)
                 continue;
+            const noPosition = portalDiv.getAttribute("noposition") === "" || portalDiv.getAttribute("noposition") === "true";
             // If target ends with a slash, remove it.
             /*if (!target.endsWith("/"))
                 target += "/";*/
             const url = new URL(target, window.location.href);
-            if (portalDiv.classList.contains("portal-right"))
+            if (!noPosition && portalDiv.classList.contains("portal-right"))
                 url.searchParams.append("from", "right");
-            else if (portalDiv.classList.contains("portal-left"))
+            else if (!noPosition && portalDiv.classList.contains("portal-left"))
                 url.searchParams.append("from", "left");
-            this.portals.push({ collisionElement: collisionElement, target: url });
+            this.portals.push({ collisionElement: collisionElement, target: url, noposition: noPosition });
         }
     }
     registerPortal(props) {

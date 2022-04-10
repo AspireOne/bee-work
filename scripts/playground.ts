@@ -61,7 +61,7 @@ export module Playground {
     let pilotOrderText: HTMLElement;
     let hueSlide: HTMLInputElement;
 
-    modules.push(() => run());
+    modules.push(run);
 
     function run() {
         // Must initialize it here cuz typescript dumb.

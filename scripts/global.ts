@@ -18,14 +18,14 @@ const beeElementHTML =
         </div>
     `;
 
+// Get them as soon as possible.
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
-history.pushState("", document.title, window.location.pathname);
-
 if (params.from) {
     for (let key in params)
         Controls.changePressStateByName(key, params[key] === "true");
 }
+history.pushState("", document.title, window.location.pathname);
 
 //document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {

@@ -12,13 +12,14 @@ const beeElementHTML = `
             <img src="../resources/bee.png" draggable="false" class="unselectable" id="bee"/>
         </div>
     `;
+// Get them as soon as possible.
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
-history.pushState("", document.title, window.location.pathname);
 if (params.from) {
     for (let key in params)
         Controls.changePressStateByName(key, params[key] === "true");
 }
+history.pushState("", document.title, window.location.pathname);
 //document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
     document.body.appendChild(Utils.htmlToElement(beeElementHTML));

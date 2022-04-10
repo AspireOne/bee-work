@@ -46,7 +46,7 @@ export var Playground;
     let autopilot;
     let pilotOrderText;
     let hueSlide;
-    modules.push(() => run());
+    modules.push(run);
     function run() {
         // Must initialize it here cuz typescript dumb.
         hueSlide = document.getElementById("hue-slider");

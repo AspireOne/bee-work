@@ -1,7 +1,7 @@
-import { modules, portals } from "./global.js";
+import { modules, portals } from "../global.js";
 export var Games;
 (function (Games) {
-    modules.push(() => run());
+    modules.push(run);
     function run() {
         for (let portal of document.getElementsByClassName("game-circle")) {
             const props = {

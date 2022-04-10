@@ -1,0 +1,160 @@
+:root {
+    --border-color: #c5c5c5;
+}
+
+#game-text * {
+    animation: game-text-slide forwards;
+    transform: translateX(100%);
+}
+
+#score-table {
+    /*border: 1px solid #6a6a70;
+    box-shadow: 0px 0px 5px 1px #1a1a1a;
+    border-radius: 16px;*/
+    border-right: 1px solid var(--border-color);
+    backdrop-filter: blur(2px);
+    width: 35em;
+    height: 100vh;
+    background-color: rgba(32, 34, 51, 0.4);
+}
+
+#score-table-selection {
+    font-size: 1.5em;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+#score-table-selection :nth-child(1) {
+    border-right: 1px solid var(--border-color);
+}
+
+.score-table-selection-option {
+    width: 100%;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
+    cursor: pointer;
+    color: #fcfcfc;
+}
+
+.score-table-selection-option.on {
+    background-color: #3d57e5;
+    color: white;
+}
+
+.score-table-row * {
+    margin: 0;
+}
+.score-table-row {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.8em;
+}
+
+.score-table-row:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.score-rank {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #ffffff;
+    margin-right: 0.5em;
+}
+
+.score-rank.first {
+    color: gold;
+}
+
+.score-name {
+    color: white;
+    font-size: 1.2em;
+}
+
+.score-date {
+    font-size: 0.85em;
+}
+
+.score-data {
+    margin-left: auto;
+    /* This is game-specific, so the game itself will make it fit. */
+}
+
+#top-score-header {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin-top: 5em;
+}
+
+#top-score-header .button {
+    margin-top: 5em;
+}
+#top-score-header #scores-div {
+    gap: 2em;
+}
+
+#play-button {
+    cursor: unset;
+}
+
+#play-button:hover {
+    background-color: #405cf5;
+}
+
+#play-button.collided {
+    background-color: #657eff;
+}
+
+#menu {
+    opacity: 0;
+    animation: 1s fade-in 4s forwards; /* TODO: Revert this. */
+}
+
+#game-text {
+    animation: 0.5s fade-out 3.7s forwards;
+    animation-timing-function: linear;
+    text-align: center;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    background-color: rgba(62, 73, 107, 0.6);
+    backdrop-filter: blur(2px);
+    font-style: oblique;
+    position: absolute;
+    top: 30%;
+    left: 0;
+    width: 100%;
+}
+
+#game-text h1 {
+    animation-timing-function: inherit;
+    animation-duration: 4s;
+
+    font-family: "Arial Black";
+    font-weight: 600;
+    font-size: 3.3em;
+    color: orange;
+}
+
+#game-text p {
+    animation-timing-function: inherit;
+    animation-duration: 3.2s;
+    animation-delay: 0.5s;
+
+    font-weight: 600; /* 500 is nice too. */
+    font-size: 1.5em;
+    color: #fcfcfc;
+}
+
+@keyframes game-text-slide {
+    0% {
+        transform: translateX(100%);
+    }
+    20% {
+        transform: translateX(5%);
+    }
+    80% {
+        transform: translateX(-5%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

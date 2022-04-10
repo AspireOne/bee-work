@@ -1,9 +1,10 @@
-import collisionPortalProps = Portals.collisionPortalProps;
+import collisionPortalProps = Portals.CollisionPortalProps;
 export declare module Portals {
-    type collisionPortalProps = {
+    type CollisionPortalProps = {
         collisionElement: HTMLElement;
         collisionAction?: () => void;
         target?: URL;
+        noposition?: boolean;
     };
 }
 export declare class Portals {

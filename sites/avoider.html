@@ -3,11 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <script type="module" src="../dist/global.js"></script>
-    <script type="module" src="../dist/avoider.js"></script>
+    <script type="module" src="../dist/games/game.js"></script>
+    <script type="module" src="../dist/games/avoider.js"></script>
     <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="../styles/game.css" type="text/css" media="all"/>
     <link rel="stylesheet" href="../styles/avoider.css" type="text/css" media="all"/>
 </head>
 <body>
+<div id="game-text">
+    <h1>Avoider</h1>
+    <p>Avoid the worms until you can't keep up!</p>
+</div>
+<div id="menu" class="side-by-side">
+    <div id="portal-home" target="games.html" noposition class="side-by-side side-portal portal-right">
+        <div class="portal-inner-wrapper">
+            <p>Games</p>
+            <img src="../resources/portal.png" id="portal-home-img"/>
+        </div>
+    </div>
+    <div id="score-table" class="scroll">
+        <div class="side-by-side" id="score-table-selection">
+            <div id="score-table-local-butt" class="score-table-selection-option on">LOCAL</div>
+            <div id="score-table-online-butt" class="score-table-selection-option">ONLINE</div>
+        </div>
+        <div class="score-table-row">
+            <div class="side-by-side">
+                <p class="score-rank">#1</p>
+                <div>
+                    <p class="score-name">Aspirateur</p>
+                    <p class="score-date">10.04.2022 16:24</p>
+                </div>
+                <div class="score-data">
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <div id="top-score-header">
+        <div id="scores-div" class="side-by-side">
+            <div>
+                <h1>Your best:</h1>
+                <h2>time: 151.51</h2>
+            </div>
+            <div>
+                <h1>Online best:</h1>
+                <h2>time: 151.51</h2>
+            </div>
+        </div>
+        <button class="button" id="play-button">Play</button>
+    </div>
+</div>
 </body>
 </html>
