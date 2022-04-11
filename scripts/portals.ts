@@ -1,11 +1,12 @@
 import {Utils} from "./utils.js";
 import collisionPortalProps = Portals.CollisionPortalProps;
 import {Controls} from "./controls.js";
+import {collisionChecker} from "./global.js";
 
 export module Portals {
     export type CollisionPortalProps = {
         collisionElement: HTMLElement,
-        collisionAction?: () => void,
+        onCollision?: () => void,
         target?: URL,
         noposition?: boolean
     };
@@ -17,42 +18,10 @@ export class Portals {
         speed: 10,
         duration: 450
     }
-    private checkInterval = 150;
-    private checkingId = 0;
-    private portals: collisionPortalProps[] = [];
-    public bee;
+    private bee;
 
     constructor(bee: HTMLElement) {
         this.bee = bee;
-    }
-
-    // TODO: Abstract out collision checking. We can use it for whatever.
-    public startCheckingCollisions() {
-        if (this.checkingId)
-            return;
-
-        this.checkingId = setInterval(() => {
-            this.portals.forEach(portal => {
-                if (Utils.collides(portal.collisionElement.getBoundingClientRect(), this.bee.getBoundingClientRect())) {
-                    if (portal.collisionAction)
-                        portal.collisionAction();
-
-                    if (portal.target && !portal.noposition) {
-                        portal.target.searchParams.append("left", Controls.keys.left.pressed + "");
-                        portal.target.searchParams.append("right", Controls.keys.right.pressed + "");
-                        portal.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
-                    }
-
-                    if (portal.target)
-                        window.location.assign(portal.target); //  TODO: window.location.replace(portal.target);
-                }
-            });
-        }, this.checkInterval);
-    }
-
-    public stopCheckingCollisions() {
-        clearInterval(this.checkingId);
-        this.checkingId = 0;
     }
 
     public setSidePortalsDisplay(visible: boolean) {
@@ -87,12 +56,12 @@ export class Portals {
 
         const props = {
             collisionElement: portal,
-            collisionAction: () => {
+            onCollision: () => {
                 clearTimeout(timeoutId);
                 this.handlePortalTouched(portal, portX, portY, canvas);
             }
         };
-        this.portals.push(props);
+        this.registerPortal(props);
     }
 
     private static drawPoint(x: number, y:number, canvas: HTMLCanvasElement) {
@@ -196,11 +165,6 @@ export class Portals {
                 continue;
 
             const noPosition = portalDiv.getAttribute("noposition") === "" || portalDiv.getAttribute("noposition") === "true";
-
-            // If target ends with a slash, remove it.
-            /*if (!target.endsWith("/"))
-                target += "/";*/
-
             const url = new URL(target, window.location.href);
 
             if (!noPosition && portalDiv.classList.contains("portal-right"))
@@ -208,11 +172,26 @@ export class Portals {
             else if (!noPosition && portalDiv.classList.contains("portal-left"))
                 url.searchParams.append("from", "left");
 
-            this.portals.push({collisionElement: collisionElement, target: url, noposition: noPosition});
+            this.registerPortal({collisionElement: collisionElement, target: url, noposition: noPosition});
         }
     }
 
     public registerPortal(props: collisionPortalProps): void {
-        this.portals.push(props);
+        const onCollision = () => {
+            if (props.onCollision)
+                props.onCollision();
+
+            if (!props.target)
+                return;
+
+            if (!props.noposition) {
+                props.target.searchParams.append("left", Controls.keys.left.pressed + "");
+                props.target.searchParams.append("right", Controls.keys.right.pressed + "");
+                props.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
+            }
+
+            window.location.assign(props.target); //  TODO: window.location.replace(props.target);
+        }
+        collisionChecker.addObject({element: props.collisionElement, onCollision: onCollision});
     }
 }

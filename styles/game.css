@@ -1,5 +1,6 @@
 :root {
     --border-color: #c5c5c5;
+    --menu-fade-out-animation: 1s fade-out 0s linear;
 }
 
 #game-text * {
@@ -104,9 +105,14 @@
     background-color: #657eff;
 }
 
+#menu .fly-over-button {
+    height: 4em;
+}
+
 #menu {
+    /* TODO: Revert this. */
     opacity: 0;
-    animation: 1s fade-in 4s forwards; /* TODO: Revert this. */
+    animation: 1s fade-in 4s forwards;
 }
 
 #game-text {

@@ -10,6 +10,7 @@ export module Game {
     }
 
     function run() {
+        const menuWrapper = document.getElementById("menu") as HTMLElement;
         const tableOnlineButt = document.getElementById("score-table-online-butt") as HTMLElement;
         const tableLocalButt = document.getElementById("score-table-local-butt") as HTMLElement;
         const playButt = document.getElementById("play-button") as HTMLElement;
@@ -25,9 +26,9 @@ export module Game {
 
         const props: Portals.CollisionPortalProps = {
             collisionElement: playButt,
-            collisionAction: () => {
-                console.log("dasdsdasdas");
-                playButt.classList.add("collided");
+            onCollision: () => {
+                playButt.classList.add("over");
+                menuWrapper.style.animation = "var(--menu-fade-out-animation)";
             },
         }
         portals.registerPortal(props);

@@ -5,9 +5,11 @@ import {Utils} from "./utils.js";
 import {Types} from "./types.js";
 import {VanishingCircle} from "./vanishingCircle.js";
 import Point = Types.Point;
+import {CollisionChecker} from "./collisionChecker.js";
 
 export const modules: (() => void)[] = [];
 export const controls = new Controls();
+export let collisionChecker: CollisionChecker;
 export let portals: Portals;
 export let bee: Bee;
 const beeElementHTML =
@@ -19,24 +21,33 @@ const beeElementHTML =
     `;
 
 // Get them as soon as possible.
-const urlSearchParams = new URLSearchParams(window.location.search);
-const params = Object.fromEntries(urlSearchParams.entries());
-if (params.from) {
-    for (let key in params)
-        Controls.changePressStateByName(key, params[key] === "true");
-}
+const params = getUrlSearchParams();
 history.pushState("", document.title, window.location.pathname);
 
+
+function getUrlSearchParams(): { [key: string]: string } {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    if (params.from) {
+        for (let key in params)
+            Controls.changePressStateByName(key, params[key] === "true");
+    }
+    return params;
+}
 //document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
+    // Initialization.
     document.body.appendChild(Utils.htmlToElement(beeElementHTML));
     const beeElement = document.getElementById("bee") as HTMLElement;
-
+    collisionChecker = new CollisionChecker(beeElement);
     portals = new Portals(beeElement);
-    portals.registerSidePortals();
-    portals.startCheckingCollisions();
-
     bee = new Bee(beeElement, controls);
+
+    // Logic.
+    document.body.appendChild(beeElement);
+    collisionChecker.startChecking();
+    portals.registerSidePortals();
+
     const pos = getBeeInitialPos(params);
     bee.element.style.left = pos.x + "px";
     bee.element.style.top = pos.y + "px";

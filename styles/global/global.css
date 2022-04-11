@@ -15,7 +15,16 @@
     display: flex;
 }
 
-.button {
+.fly-over-button {
+    background-color: transparent !important;
+    border: 1px solid white !important;
+}
+
+.fly-over-button.over {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.button, .fly-over-button {
     /*appearance: button;*/
     backface-visibility: hidden;
     background-color: #405cf5;

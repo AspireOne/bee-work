@@ -2,20 +2,15 @@ import collisionPortalProps = Portals.CollisionPortalProps;
 export declare module Portals {
     type CollisionPortalProps = {
         collisionElement: HTMLElement;
-        collisionAction?: () => void;
+        onCollision?: () => void;
         target?: URL;
         noposition?: boolean;
     };
 }
 export declare class Portals {
     private appearAnimation;
-    private checkInterval;
-    private checkingId;
-    private portals;
-    bee: HTMLElement;
+    private bee;
     constructor(bee: HTMLElement);
-    startCheckingCollisions(): void;
-    stopCheckingCollisions(): void;
     setSidePortalsDisplay(visible: boolean): void;
     generateRandomPortal(timeout: number, canvas: HTMLCanvasElement): void;
     private static drawPoint;

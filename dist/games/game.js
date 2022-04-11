@@ -4,6 +4,7 @@ export var Game;
 (function (Game) {
     modules.push(() => run());
     function run() {
+        const menuWrapper = document.getElementById("menu");
         const tableOnlineButt = document.getElementById("score-table-online-butt");
         const tableLocalButt = document.getElementById("score-table-local-butt");
         const playButt = document.getElementById("play-button");
@@ -17,9 +18,9 @@ export var Game;
         });
         const props = {
             collisionElement: playButt,
-            collisionAction: () => {
-                console.log("dasdsdasdas");
-                playButt.classList.add("collided");
+            onCollision: () => {
+                playButt.classList.add("over");
+                menuWrapper.style.animation = "var(--menu-fade-out-animation)";
             },
         };
         portals.registerPortal(props);

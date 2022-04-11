@@ -1,5 +1,6 @@
 import { Utils } from "./utils.js";
 import { Controls } from "./controls.js";
+import { collisionChecker } from "./global.js";
 export class Portals {
     constructor(bee) {
         this.appearAnimation = {
@@ -7,34 +8,7 @@ export class Portals {
             speed: 10,
             duration: 450
         };
-        this.checkInterval = 150;
-        this.checkingId = 0;
-        this.portals = [];
         this.bee = bee;
-    }
-    // TODO: Abstract out collision checking. We can use it for whatever.
-    startCheckingCollisions() {
-        if (this.checkingId)
-            return;
-        this.checkingId = setInterval(() => {
-            this.portals.forEach(portal => {
-                if (Utils.collides(portal.collisionElement.getBoundingClientRect(), this.bee.getBoundingClientRect())) {
-                    if (portal.collisionAction)
-                        portal.collisionAction();
-                    if (portal.target && !portal.noposition) {
-                        portal.target.searchParams.append("left", Controls.keys.left.pressed + "");
-                        portal.target.searchParams.append("right", Controls.keys.right.pressed + "");
-                        portal.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
-                    }
-                    if (portal.target)
-                        window.location.assign(portal.target); //  TODO: window.location.replace(portal.target);
-                }
-            });
-        }, this.checkInterval);
-    }
-    stopCheckingCollisions() {
-        clearInterval(this.checkingId);
-        this.checkingId = 0;
     }
     setSidePortalsDisplay(visible) {
         for (let portalDiv of document.getElementsByClassName("side-portal"))
@@ -60,12 +34,12 @@ export class Portals {
         }, timeout);
         const props = {
             collisionElement: portal,
-            collisionAction: () => {
+            onCollision: () => {
                 clearTimeout(timeoutId);
                 this.handlePortalTouched(portal, portX, portY, canvas);
             }
         };
-        this.portals.push(props);
+        this.registerPortal(props);
     }
     static drawPoint(x, y, canvas) {
         const ctx = canvas.getContext("2d");
@@ -153,19 +127,28 @@ export class Portals {
             if (!target)
                 continue;
             const noPosition = portalDiv.getAttribute("noposition") === "" || portalDiv.getAttribute("noposition") === "true";
-            // If target ends with a slash, remove it.
-            /*if (!target.endsWith("/"))
-                target += "/";*/
             const url = new URL(target, window.location.href);
             if (!noPosition && portalDiv.classList.contains("portal-right"))
                 url.searchParams.append("from", "right");
             else if (!noPosition && portalDiv.classList.contains("portal-left"))
                 url.searchParams.append("from", "left");
-            this.portals.push({ collisionElement: collisionElement, target: url, noposition: noPosition });
+            this.registerPortal({ collisionElement: collisionElement, target: url, noposition: noPosition });
         }
     }
     registerPortal(props) {
-        this.portals.push(props);
+        const onCollision = () => {
+            if (props.onCollision)
+                props.onCollision();
+            if (!props.target)
+                return;
+            if (!props.noposition) {
+                props.target.searchParams.append("left", Controls.keys.left.pressed + "");
+                props.target.searchParams.append("right", Controls.keys.right.pressed + "");
+                props.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
+            }
+            window.location.assign(props.target); //  TODO: window.location.replace(props.target);
+        };
+        collisionChecker.addObject({ element: props.collisionElement, onCollision: onCollision });
     }
 }
 //# sourceMappingURL=portals.js.map
