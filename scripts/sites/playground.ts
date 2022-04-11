@@ -1,10 +1,10 @@
-import {ScreenSaverPilot} from "./pilots/screenSaverPilot.js";
-import {Autopilot} from "./pilots/autopilot.js";
-import {bee, controls, modules, portals} from "./global.js";
-import {Utils} from "./utils.js";
-import {Types} from "./types.js";
-import {Pencil} from "./pilots/pencil.js";
-import {Bee} from "./bee.js";
+import {ScreenSaverPilot} from "../pilots/screenSaverPilot.js";
+import {Autopilot} from "../pilots/autopilot.js";
+import {bee, controls, modules, portals} from "../global.js";
+import {Utils} from "../utils.js";
+import {Types} from "../types.js";
+import {Pencil} from "../pencil.js";
+import {Bee} from "../bee.js";
 
 export module Playground {
     const colorCycling = {

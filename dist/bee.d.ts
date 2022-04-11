@@ -1,5 +1,4 @@
 import { Controls } from "./controls.js";
-import { Acceleration } from "./pilotUtils.js";
 import CircleProps = Bee.CircleProps;
 import Props = Bee.Props;
 import { Types } from "./types.js";
@@ -17,6 +16,12 @@ export declare module Bee {
         maxSpeed: ModifiableProp;
         deltaTime: ModifiableProp;
     };
+}
+declare class Acceleration {
+    currAccelerationX: number;
+    currAccelerationY: number;
+    readonly acceleration: Types.ModifiableProp;
+    constructor(acceleration?: number);
 }
 export declare class Bee {
     currPos: Types.Point;
@@ -71,3 +76,4 @@ export declare class Bee {
      */
     private getMaxSpeed;
 }
+export {};

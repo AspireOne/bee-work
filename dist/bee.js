@@ -1,6 +1,22 @@
 import { VanishingCircle } from "./vanishingCircle.js";
 import { Controls } from "./controls.js";
-import { Acceleration, WayX } from "./pilotUtils.js";
+import { Types } from "./types.js";
+var WayX = Types.WayX;
+class Acceleration {
+    constructor(acceleration = 0.12) {
+        this.currAccelerationX = 0;
+        this.currAccelerationY = 0;
+        this.acceleration = {
+            value: 0.12,
+            values: {
+                default: 0.12,
+                min: 0.05,
+                max: 2
+            }
+        };
+        this.acceleration.value = acceleration;
+    }
+}
 export class Bee {
     constructor(bee, controls) {
         this.currPos = { y: 0, x: 0 };

@@ -9,11 +9,11 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-import { ScreenSaverPilot } from "./pilots/screenSaverPilot.js";
-import { Autopilot } from "./pilots/autopilot.js";
-import { bee, controls, modules, portals } from "./global.js";
-import { Utils } from "./utils.js";
-import { Pencil } from "./pilots/pencil.js";
+import { ScreenSaverPilot } from "../pilots/screenSaverPilot.js";
+import { Autopilot } from "../pilots/autopilot.js";
+import { bee, controls, modules, portals } from "../global.js";
+import { Utils } from "../utils.js";
+import { Pencil } from "../pencil.js";
 export var Playground;
 (function (Playground) {
     const colorCycling = {

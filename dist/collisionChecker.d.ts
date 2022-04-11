@@ -2,7 +2,8 @@ import ObjectProps = CollisionChecker.ObjectProps;
 export declare module CollisionChecker {
     type ObjectProps = {
         element: HTMLElement;
-        onCollision: () => void;
+        onCollisionEnter?: () => void;
+        onCollisionLeave?: () => void;
     };
 }
 export declare class CollisionChecker {
@@ -14,5 +15,9 @@ export declare class CollisionChecker {
     constructor(bee: HTMLElement);
     startChecking(): void;
     addObject: (object: ObjectProps) => number;
-    removeObject: (object: ObjectProps) => ObjectProps[];
+    removeObject: (object: ObjectProps) => {
+        lastCollision?: boolean | undefined;
+        isColliding?: boolean | undefined;
+        props: ObjectProps;
+    }[];
 }

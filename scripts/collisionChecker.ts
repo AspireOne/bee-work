@@ -6,13 +6,14 @@ import ObjectProps = CollisionChecker.ObjectProps;
 export module CollisionChecker {
     export type ObjectProps = {
         element: HTMLElement,
-        onCollision: () => void
+        onCollisionEnter?: () => void,
+        onCollisionLeave?: () => void,
     };
 }
 
 export class CollisionChecker {
     private static created: boolean = false;
-    private objects: ObjectProps[] = [];
+    private objects: {lastCollision?: boolean, isColliding?: boolean, props: ObjectProps}[] = [];
     private delta = 150;
     private beeElement: HTMLElement;
     private id = 0;
@@ -31,10 +32,23 @@ export class CollisionChecker {
 
         this.id = setInterval(() => {
             this.objects.forEach(obj => {
-                if (Utils.collides(obj.element.getBoundingClientRect(), this.beeElement.getBoundingClientRect())) {
-                    obj.onCollision();
+                obj.lastCollision = false;
+                if (Utils.collides(obj.props.element.getBoundingClientRect(), this.beeElement.getBoundingClientRect())) {
+                    obj.lastCollision = true;
+                    if (obj.isColliding)
+                        return;
+
+                    obj.isColliding = true;
+                    if (obj.props.onCollisionEnter)
+                        obj.props.onCollisionEnter();
+                }
+                if (!obj.lastCollision && obj.isColliding) {
+                    obj.isColliding = false;
+                    if (obj.props.onCollisionLeave)
+                        obj.props.onCollisionLeave();
                 }
             });
+
         }, this.delta);
     }
 
@@ -43,6 +57,6 @@ export class CollisionChecker {
         this.id = 0;
     }*/
 
-    public addObject = (object: ObjectProps) => this.objects.push(object);
-    public removeObject = (object: ObjectProps) => this.objects.splice(this.objects.indexOf(object), 1);
+    public addObject = (object: ObjectProps) => this.objects.push({props: object});
+    public removeObject = (object: ObjectProps) => this.objects.splice(this.objects.indexOf({props: object}), 1);
 }

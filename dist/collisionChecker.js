@@ -8,8 +8,8 @@ export class CollisionChecker {
                 clearInterval(this.id);
                 this.id = 0;
             }*/
-        this.addObject = (object) => this.objects.push(object);
-        this.removeObject = (object) => this.objects.splice(this.objects.indexOf(object), 1);
+        this.addObject = (object) => this.objects.push({ props: object });
+        this.removeObject = (object) => this.objects.splice(this.objects.indexOf({ props: object }), 1);
         if (CollisionChecker.created)
             throw new Error("Only one instance of collision checker can be created.");
         CollisionChecker.created = true;
@@ -20,8 +20,19 @@ export class CollisionChecker {
             return;
         this.id = setInterval(() => {
             this.objects.forEach(obj => {
-                if (Utils.collides(obj.element.getBoundingClientRect(), this.beeElement.getBoundingClientRect())) {
-                    obj.onCollision();
+                obj.lastCollision = false;
+                if (Utils.collides(obj.props.element.getBoundingClientRect(), this.beeElement.getBoundingClientRect())) {
+                    obj.lastCollision = true;
+                    if (obj.isColliding)
+                        return;
+                    obj.isColliding = true;
+                    if (obj.props.onCollisionEnter)
+                        obj.props.onCollisionEnter();
+                }
+                if (!obj.lastCollision && obj.isColliding) {
+                    obj.isColliding = false;
+                    if (obj.props.onCollisionLeave)
+                        obj.props.onCollisionLeave();
                 }
             });
         }, this.delta);

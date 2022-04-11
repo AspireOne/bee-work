@@ -1,6 +1,6 @@
-import { Types } from "../types.js";
+import { Types } from "./types.js";
 import ModifiableProp = Types.ModifiableProp;
-import { Bee } from "../bee.js";
+import { Bee } from "./bee.js";
 export declare class Pencil {
     private static instanceCreated;
     private static minPoints;

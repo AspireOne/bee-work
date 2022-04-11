@@ -1,11 +1,10 @@
 import {VanishingCircle} from "./vanishingCircle.js";
 import {Controls} from "./controls.js";
-import {Acceleration, WayX} from "./pilotUtils.js";
 import CircleProps = Bee.CircleProps;
 import Props = Bee.Props;
 import {Utils} from "./utils.js";
 import {Types} from "./types.js";
-import SaveableProps = Types.SaveableProps;
+import WayX = Types.WayX;
 
 /** Contains Bee-specific Types. */
 export module Bee {
@@ -21,6 +20,23 @@ export module Bee {
     export type Props = {
         maxSpeed: ModifiableProp,
         deltaTime: ModifiableProp
+    }
+}
+
+class Acceleration {
+    public currAccelerationX = 0;
+    public currAccelerationY = 0;
+    public readonly acceleration: Types.ModifiableProp = {
+        value: 0.12,
+        values: {
+            default: 0.12,
+            min: 0.05,
+            max: 2
+        }
+    }
+
+    constructor(acceleration = 0.12) {
+        this.acceleration.value = acceleration;
     }
 }
 

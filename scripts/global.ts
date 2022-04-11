@@ -12,6 +12,7 @@ export const controls = new Controls();
 export let collisionChecker: CollisionChecker;
 export let portals: Portals;
 export let bee: Bee;
+const collisionButtMinEnterTime = 400;
 const beeElementHTML =
     `
         <div>
@@ -21,19 +22,10 @@ const beeElementHTML =
     `;
 
 // Get them as soon as possible.
-const params = getUrlSearchParams();
+const params = getUrlParams();
+handleUrlParams(params);
 history.pushState("", document.title, window.location.pathname);
 
-
-function getUrlSearchParams(): { [key: string]: string } {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const params = Object.fromEntries(urlSearchParams.entries());
-    if (params.from) {
-        for (let key in params)
-            Controls.changePressStateByName(key, params[key] === "true");
-    }
-    return params;
-}
 //document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
     // Initialization.
@@ -54,9 +46,26 @@ document.addEventListener("DOMContentLoaded", _ => {
     bee.start();
 
     Utils.addValueToSliders();
+    registerCollideButtons();
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });
+
+function registerCollideButtons() {
+    for (let butt of document.getElementsByClassName("collide-button")) {
+        const realButt = butt as HTMLElement;
+        let enterTime = 0;
+        collisionChecker.addObject({element: realButt,
+            onCollisionEnter: () => {
+                realButt.classList.add("over");
+                enterTime = Date.now();
+            },
+            onCollisionLeave: () => {
+                const timeDiff = Date.now() - enterTime;
+                setTimeout(() => realButt.classList.remove("over"), timeDiff < collisionButtMinEnterTime ? collisionButtMinEnterTime - timeDiff : 0);
+            }});
+    }
+}
 
 function getBeeInitialPos(searchParams: {[key: string]: string}): Point {
     const beePos = {x: document.body.clientWidth/2 - bee.element.clientWidth/2, y: document.body.clientHeight };
@@ -73,6 +82,17 @@ function getBeeInitialPos(searchParams: {[key: string]: string}): Point {
     return {x: beePos.x, y: beePos.y};
 }
 
+function handleUrlParams(params: {[key: string]: string}): void {
+    if (params.from) {
+        for (let key in params)
+            Controls.changePressStateByName(key, params[key] === "true");
+    }
+}
+
+function getUrlParams(): { [key: string]: string } {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    return Object.fromEntries(urlSearchParams.entries());
+}
 
 // Adds circleVanishing effect to the cursor.
 /*document.addEventListener('mousemove', e => {

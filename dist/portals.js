@@ -148,7 +148,7 @@ export class Portals {
             }
             window.location.assign(props.target); //  TODO: window.location.replace(props.target);
         };
-        collisionChecker.addObject({ element: props.collisionElement, onCollision: onCollision });
+        collisionChecker.addObject({ element: props.collisionElement, onCollisionEnter: onCollision });
     }
 }
 //# sourceMappingURL=portals.js.map
