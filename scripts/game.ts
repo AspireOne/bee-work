@@ -1,4 +1,4 @@
-import {collisionChecker, modules, portals} from "./global.js";
+import {bee, collisionChecker, controls, modules, portals} from "./global.js";
 import {Utils} from "./utils.js";
 import {Portals} from "./portals.js";
 import {CollisionChecker} from "./collisionChecker.js";
@@ -38,8 +38,8 @@ export module Game {
         gameMenuResumeButt = document.getElementById("resume-button") as HTMLElement;
         gameMenuLeaveButt = document.getElementById("leave-button") as HTMLElement;
 
-        document.addEventListener("keyup", (e) => {
-            if (game.running && e.key === "Escape")
+        document.addEventListener("keydown", (e) => {
+            if (game.running && e.key === "Escape" && !e.repeat)
                 gameMenuShown ? hideGameMenu() : showGameMenu();
         });
 
@@ -96,12 +96,15 @@ export module Game {
 
     function showGameMenu() {
         gameMenuShown = true;
+        bee.pauseUpdates = true;
         game.pauseGame();
         gameMenu.style.display = "flex";
+        gameMenu.style.animation = "var(--game-menu-fadein-animation)";
     }
 
     function hideGameMenu() {
         gameMenuShown = false;
+        bee.pauseUpdates = false;
         game.resumeGame();
         gameMenu.style.display = "none";
     }

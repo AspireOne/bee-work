@@ -9,6 +9,14 @@ export var Utils;
             (a.x > (b.x + b.width)));
     }
     Utils.collides = collides;
+    function isBetween(value, min, max) {
+        return value >= min && value <= max;
+    }
+    Utils.isBetween = isBetween;
+    function isZero(rect) {
+        return rect.x === 0 && rect.y === 0 && rect.width === 0 && rect.height === 0;
+    }
+    Utils.isZero = isZero;
     function isPointInsideRect(x, y, rect) {
         return (x >= rect.x &&
             x <= rect.x + rect.width &&

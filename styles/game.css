@@ -2,6 +2,7 @@
     --border-color: #c5c5c5;
     --menu-fade-out-animation: 1s fade-out 0s;
     --curr-counter-animation: none;
+    --game-menu-fadein-animation: fade-in 0.4s forwards;
 }
 
 #game-text * {

@@ -108,6 +108,7 @@ export class Bee {
     };
 
     public accelerationData = new Acceleration();
+    public pauseUpdates: boolean = false;
 
     /** The base bee element. */
     public element: HTMLElement;
@@ -148,7 +149,10 @@ export class Bee {
             return;
 
         VanishingCircle.runLoop();
-        this.updateIntervalId = setInterval(() => this.frame(), this.props.deltaTime.value);
+        this.updateIntervalId = setInterval(() => {
+            if (!this.pauseUpdates)
+                this.frame();
+        }, this.props.deltaTime.value);
     }
 
     /** Stops VanishingCircle's update loop and the bee's update loop. */

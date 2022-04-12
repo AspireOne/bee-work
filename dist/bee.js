@@ -83,6 +83,7 @@ export class Bee {
             }
         };
         this.accelerationData = new Acceleration();
+        this.pauseUpdates = false;
         /** The time since last circle was created. */
         this.timeFromLastCircle = 0;
         this.updateIntervalId = null;
@@ -111,7 +112,10 @@ export class Bee {
         if (this.updateIntervalId !== null)
             return;
         VanishingCircle.runLoop();
-        this.updateIntervalId = setInterval(() => this.frame(), this.props.deltaTime.value);
+        this.updateIntervalId = setInterval(() => {
+            if (!this.pauseUpdates)
+                this.frame();
+        }, this.props.deltaTime.value);
     }
     /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop() {

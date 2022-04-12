@@ -52,7 +52,7 @@ export class VanishingCircle {
             width: this.props.size + "px",
             height: this.props.size + "px",
             opacity: this.props.initialOpacity,
-            filter: this.applyFilter ? `hue-rotate(${this.props.hue}deg)` : '',
+            filter: this.applyFilter && this.props.hue != 0 ? `hue-rotate(${this.props.hue}deg)` : '',
         });
         return clone;
     }

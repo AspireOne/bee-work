@@ -11,6 +11,14 @@ export module Utils {
         );
     }
 
+    export function isBetween(value: number, min: number, max: number) {
+        return value >= min && value <= max;
+    }
+
+    export function isZero(rect: DOMRect) {
+        return rect.x === 0 && rect.y === 0 && rect.width === 0 && rect.height === 0;
+    }
+
     export function isPointInsideRect(x: number, y: number, rect: DOMRect) {
         return (
             x >= rect.x &&

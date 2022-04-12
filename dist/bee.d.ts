@@ -30,6 +30,7 @@ export declare class Bee {
     /** Properties of the bee. */
     readonly props: Props;
     accelerationData: Acceleration;
+    pauseUpdates: boolean;
     /** The base bee element. */
     element: HTMLElement;
     /** The time since last circle was created. */

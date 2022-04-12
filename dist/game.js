@@ -1,4 +1,4 @@
-import { collisionChecker, modules } from "./global.js";
+import { bee, collisionChecker, modules } from "./global.js";
 import { Utils } from "./utils.js";
 export var Game;
 (function (Game) {
@@ -20,8 +20,8 @@ export var Game;
         gameMenu = document.getElementById("game-menu");
         gameMenuResumeButt = document.getElementById("resume-button");
         gameMenuLeaveButt = document.getElementById("leave-button");
-        document.addEventListener("keyup", (e) => {
-            if (game.running && e.key === "Escape")
+        document.addEventListener("keydown", (e) => {
+            if (game.running && e.key === "Escape" && !e.repeat)
                 gameMenuShown ? hideGameMenu() : showGameMenu();
         });
         gameMenuResumeButt.addEventListener("click", () => hideGameMenu());
@@ -71,11 +71,14 @@ export var Game;
     }
     function showGameMenu() {
         gameMenuShown = true;
+        bee.pauseUpdates = true;
         game.pauseGame();
         gameMenu.style.display = "flex";
+        gameMenu.style.animation = "var(--game-menu-fadein-animation)";
     }
     function hideGameMenu() {
         gameMenuShown = false;
+        bee.pauseUpdates = false;
         game.resumeGame();
         gameMenu.style.display = "none";
     }

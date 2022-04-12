@@ -20,8 +20,13 @@ export class CollisionChecker {
             return;
         this.id = setInterval(() => {
             this.objects.forEach(obj => {
+                const rect = obj.props.element.getBoundingClientRect();
+                if (Utils.isZero(rect)) {
+                    this.removeObject(obj.props);
+                    return;
+                }
                 obj.lastCollision = false;
-                if (Utils.collides(obj.props.element.getBoundingClientRect(), this.beeElement.getBoundingClientRect())) {
+                if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
                     obj.lastCollision = true;
                     if (obj.isColliding)
                         return;
