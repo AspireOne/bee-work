@@ -1,2 +1,3 @@
-# [Bee](https://beez.netlify.app)
-## Speedrunned while learning typescript and later improved a bit.
+A little something.
+
+https://bee-work.netlify.app/
