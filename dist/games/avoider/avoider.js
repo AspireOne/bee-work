@@ -15,7 +15,7 @@ class Avoider {
         this._startTime = 0;
         this.timeElement = document.getElementById("time-span");
         this.gameDiv = document.getElementById("game");
-        this.randomBallGenerator = new RandomBallGenerator(this.gameDiv);
+        this.randomBallGenerator = new RandomBallGenerator(this.gameDiv, () => this.handleCollision());
     }
     get running() { return this._running; }
     set running(value) { this._running = value; }
@@ -60,6 +60,12 @@ class Avoider {
         this.id = 0;
         this.timeElement.innerText = "";
         this.randomBallGenerator.finish();
+    }
+    handleCollision() {
+        this.stopGame();
+        this.showEndScreen();
+    }
+    showEndScreen() {
     }
     pauseGame() {
         this.paused = true;

@@ -1,14 +1,15 @@
 export declare class RandomBallGenerator {
-    ballProps: {
+    readonly ballProps: {
         speed: number;
         width: number;
     };
-    private readonly div;
-    static generationFrequency: number;
     private static readonly angleOffset;
+    static generationFrequency: number;
+    private readonly div;
     private readonly balls;
     private ballGenerationTimer;
-    constructor(div: HTMLElement);
+    private onCollision;
+    constructor(div: HTMLElement, onCollision: () => void);
     update(delta: number): void;
     private addNewBall;
     private removeBall;

@@ -21,7 +21,6 @@ export class CollisionChecker {
             this.objects.forEach(object => {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;
-                console.log(this.objects.length);
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
                     object.state.lastCollision = true;
                     if (object.state.isColliding)

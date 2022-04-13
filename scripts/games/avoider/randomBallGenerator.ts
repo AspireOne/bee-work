@@ -16,18 +16,21 @@ type Ball = {
 enum Side { LEFT, RIGHT, TOP, BOTTOM, NONE };
 
 export class RandomBallGenerator {
-    public ballProps = {
+    public readonly ballProps = {
         speed: 2,
         width: 80
     }
-    private readonly div: HTMLElement;
-    public static generationFrequency = 200;
     private static readonly angleOffset = 10;
+    public static generationFrequency = 200;
+
+    private readonly div: HTMLElement;
     private readonly balls: Ball[] = [];
     private ballGenerationTimer = 0;
+    private onCollision: () => void;
 
-    constructor(div: HTMLElement) {
+    constructor(div: HTMLElement, onCollision: () => void) {
         this.div = div;
+        this.onCollision = onCollision;
     }
     public update(delta: number) {
         this.ballGenerationTimer += delta;
@@ -50,7 +53,7 @@ export class RandomBallGenerator {
     private addNewBall() {
         const ball = this.generateBall();
         this.div.appendChild(ball.element);
-        collisionChecker.addObject({element: ball.element});
+        collisionChecker.addObject({element: ball.element, onCollisionEnter: this.onCollision});
         this.balls.push(ball);
     }
 

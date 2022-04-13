@@ -38,8 +38,9 @@ class Avoider implements Game.IGame {
     constructor() {
         this.timeElement = document.getElementById("time-span") as HTMLSpanElement;
         this.gameDiv = document.getElementById("game") as HTMLDivElement;
-        this.randomBallGenerator = new RandomBallGenerator(this.gameDiv);
+        this.randomBallGenerator = new RandomBallGenerator(this.gameDiv, () => this.handleCollision());
     }
+
     public startGame() {
         if (this.running) {
             throw new Error("Game was attempted to be started but is already running.");
@@ -80,6 +81,15 @@ class Avoider implements Game.IGame {
         this.id = 0;
         this.timeElement.innerText = "";
         this.randomBallGenerator.finish();
+    }
+
+    private handleCollision() {
+        this.stopGame();
+        this.showEndScreen();
+    }
+
+    private showEndScreen() {
+
     }
 
     public pauseGame() {

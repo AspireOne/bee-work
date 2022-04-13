@@ -12,7 +12,7 @@ var Side;
 })(Side || (Side = {}));
 ;
 export class RandomBallGenerator {
-    constructor(div) {
+    constructor(div, onCollision) {
         this.ballProps = {
             speed: 2,
             width: 80
@@ -20,6 +20,7 @@ export class RandomBallGenerator {
         this.balls = [];
         this.ballGenerationTimer = 0;
         this.div = div;
+        this.onCollision = onCollision;
     }
     update(delta) {
         this.ballGenerationTimer += delta;
@@ -39,7 +40,7 @@ export class RandomBallGenerator {
     addNewBall() {
         const ball = this.generateBall();
         this.div.appendChild(ball.element);
-        collisionChecker.addObject({ element: ball.element });
+        collisionChecker.addObject({ element: ball.element, onCollisionEnter: this.onCollision });
         this.balls.push(ball);
     }
     removeBall(ball, notFromArray = false) {
@@ -132,6 +133,6 @@ export class RandomBallGenerator {
         ball.currPos.y = ball.currPos.y + Math.sin(rad) * this.ballProps.speed;
     }
 }
-RandomBallGenerator.generationFrequency = 200;
 RandomBallGenerator.angleOffset = 10;
+RandomBallGenerator.generationFrequency = 200;
 //# sourceMappingURL=randomBallGenerator.js.map
