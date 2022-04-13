@@ -8,8 +8,7 @@ export class CollisionChecker {
                 clearInterval(this.id);
                 this.id = 0;
             }*/
-        this.addObject = (object) => this.objects.push({ props: object });
-        this.removeObject = (object) => this.objects.splice(this.objects.indexOf({ props: object }), 1);
+        this.addObject = (object) => this.objects.push({ object: object, state: {} });
         if (CollisionChecker.created)
             throw new Error("Only one instance of collision checker can be created.");
         CollisionChecker.created = true;
@@ -19,29 +18,32 @@ export class CollisionChecker {
         if (this.id)
             return;
         this.id = setInterval(() => {
-            this.objects.forEach(obj => {
-                const rect = obj.props.element.getBoundingClientRect();
-                if (Utils.isZero(rect)) {
-                    this.removeObject(obj.props);
-                    return;
-                }
-                obj.lastCollision = false;
+            this.objects.forEach(object => {
+                const rect = object.object.element.getBoundingClientRect();
+                object.state.lastCollision = false;
+                console.log(this.objects.length);
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
-                    obj.lastCollision = true;
-                    if (obj.isColliding)
+                    object.state.lastCollision = true;
+                    if (object.state.isColliding)
                         return;
-                    obj.isColliding = true;
-                    if (obj.props.onCollisionEnter)
-                        obj.props.onCollisionEnter();
+                    object.state.isColliding = true;
+                    if (object.object.onCollisionEnter)
+                        object.object.onCollisionEnter();
                 }
-                if (!obj.lastCollision && obj.isColliding) {
-                    obj.isColliding = false;
-                    if (obj.props.onCollisionLeave)
-                        obj.props.onCollisionLeave();
+                if (!object.state.lastCollision && object.state.isColliding) {
+                    object.state.isColliding = false;
+                    if (object.object.onCollisionLeave)
+                        object.object.onCollisionLeave();
                 }
             });
         }, this.delta);
     }
+    Remove(objToRemove) {
+        const index = this.objects.findIndex(obj => obj.object.element === objToRemove);
+        if (index !== -1)
+            this.objects.splice(index, 1);
+    }
+    ;
 }
 CollisionChecker.created = false;
 //# sourceMappingURL=collisionChecker.js.map

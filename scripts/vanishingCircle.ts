@@ -69,10 +69,7 @@ export class VanishingCircle {
         if (this.intervalId != null)
             return;
 
-        this.intervalId = setInterval(() => {
-            this.circles = this.circles.filter(circle => !circle.disabled);
-            this.circles.forEach(circle => circle.updateOpacity());
-        }, VanishingCircle.delta);
+        this.intervalId = setInterval(() => this.update(this.delta), VanishingCircle.delta);
     }
 
     /** Stops the interval that updates the opacity of circles every delta time. */
@@ -82,6 +79,11 @@ export class VanishingCircle {
 
         clearInterval(this.intervalId);
         this.intervalId = null;
+    }
+
+    public static update(delta: number) {
+        this.circles = this.circles.filter(circle => !circle.disabled);
+        this.circles.forEach(circle => circle.updateOpacity(delta));
     }
 
     /** Clones the original image element of the circle and sets it's properties based on the properties of this object. */
@@ -115,8 +117,8 @@ export class VanishingCircle {
         VanishingCircle.circles.push(this);
     }
 
-    private updateOpacity() {
-        this.elapsed += VanishingCircle.delta;
+    private updateOpacity(delta: number) {
+        this.elapsed += delta;
         let newOpacity = this.prevOpacity - this.decreaseStep;
 
         if (this.elapsed >= this.props.duration && !this.disabled) {

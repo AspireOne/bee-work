@@ -1,3 +1,4 @@
+import { collisionChecker } from "../../global.js";
 import { Utils } from "../../utils.js";
 var htmlToElement = Utils.htmlToElement;
 var randomIntFromInterval = Utils.randomIntFromInterval;
@@ -11,14 +12,14 @@ var Side;
 })(Side || (Side = {}));
 ;
 export class RandomBallGenerator {
-    constructor() {
+    constructor(div) {
         this.ballProps = {
             speed: 2,
-            width: 80,
-            generationFrequency: 1000,
+            width: 80
         };
         this.balls = [];
         this.ballGenerationTimer = 0;
+        this.div = div;
     }
     update(delta) {
         this.ballGenerationTimer += delta;
@@ -27,21 +28,31 @@ export class RandomBallGenerator {
             ball.element.style.left = ball.currPos.x + "px";
             ball.element.style.top = ball.currPos.y + "px";
             if (ball.currPos.y < -this.ballProps.width - 10 || ball.currPos.y > document.body.clientHeight || ball.currPos.x < -this.ballProps.width - 10 || ball.currPos.x > document.body.clientWidth) {
-                console.log("removed");
-                ball.element.remove();
-                this.balls.splice(this.balls.indexOf(ball), 1);
+                this.removeBall(ball);
             }
         });
-        if (this.ballGenerationTimer >= this.ballProps.generationFrequency) {
+        if (this.ballGenerationTimer >= RandomBallGenerator.generationFrequency) {
             this.ballGenerationTimer = 0;
-            const ball = this.generateBall();
-            document.body.appendChild(ball.element);
-            this.balls.push(ball);
+            this.addNewBall();
         }
+    }
+    addNewBall() {
+        const ball = this.generateBall();
+        this.div.appendChild(ball.element);
+        collisionChecker.addObject({ element: ball.element });
+        this.balls.push(ball);
+    }
+    removeBall(ball, notFromArray = false) {
+        ball.element.remove();
+        collisionChecker.Remove(ball.element);
+        if (!notFromArray)
+            this.balls.splice(this.balls.indexOf(ball), 1);
+    }
+    finish() {
+        this.balls.forEach(ball => this.removeBall(ball, true));
     }
     getRandomStartingPos(degrees) {
         let side;
-        const offset = RandomBallGenerator.angleOffset;
         // Pick a side randomly based on degrees (trajectory).
         side = this.getRandomSide(degrees);
         if (side === Side.NONE)
@@ -103,19 +114,16 @@ export class RandomBallGenerator {
         const degrees = Math.floor(Math.random() * 360);
         const startingPos = this.getRandomStartingPos(degrees);
         const ballElement = this.createBallElement(startingPos);
-        ballElement.addEventListener("click", () => {
-            alert(degrees);
-        });
         return { degrees: degrees, currPos: startingPos, element: ballElement };
     }
     createBallElement(pos) {
-        const clone = htmlToElement(`<img src="../../../resources/circle.png">`);
-        clone.style.position = "absolute";
-        clone.style.width = this.ballProps.width + "px";
-        clone.style.height = this.ballProps.width + "px";
-        clone.style.left = pos.x + "px";
-        clone.style.top = pos.y + "px";
-        return clone;
+        const ball = htmlToElement(`<img src="../../../resources/circle.png">`);
+        ball.style.position = "absolute";
+        ball.style.width = this.ballProps.width + "px";
+        ball.style.height = this.ballProps.width + "px";
+        ball.style.left = pos.x + "px";
+        ball.style.top = pos.y + "px";
+        return ball;
     }
     getNewPos(ball) {
         const degrees = ball.degrees - 90;
@@ -124,5 +132,6 @@ export class RandomBallGenerator {
         ball.currPos.y = ball.currPos.y + Math.sin(rad) * this.ballProps.speed;
     }
 }
+RandomBallGenerator.generationFrequency = 200;
 RandomBallGenerator.angleOffset = 10;
 //# sourceMappingURL=randomBallGenerator.js.map

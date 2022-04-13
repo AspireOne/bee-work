@@ -49,6 +49,7 @@ export declare class VanishingCircle {
     static runLoop(): void;
     /** Stops the interval that updates the opacity of circles every delta time. */
     static stopLoop(): void;
+    static update(delta: number): void;
     /** Clones the original image element of the circle and sets it's properties based on the properties of this object. */
     private createClone;
     /** Creates an image element with the circle image. */

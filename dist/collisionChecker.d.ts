@@ -1,6 +1,6 @@
-import ObjectProps = CollisionChecker.ObjectProps;
+import CollidingObject = CollisionChecker.CollidingObject;
 export declare module CollisionChecker {
-    type ObjectProps = {
+    type CollidingObject = {
         element: HTMLElement;
         onCollisionEnter?: () => void;
         onCollisionLeave?: () => void;
@@ -8,16 +8,12 @@ export declare module CollisionChecker {
 }
 export declare class CollisionChecker {
     private static created;
-    private objects;
+    private readonly objects;
     private delta;
     private beeElement;
     private id;
     constructor(bee: HTMLElement);
     startChecking(): void;
-    addObject: (object: ObjectProps) => number;
-    removeObject: (object: ObjectProps) => {
-        lastCollision?: boolean | undefined;
-        isColliding?: boolean | undefined;
-        props: ObjectProps;
-    }[];
+    addObject: (object: CollidingObject) => number;
+    Remove(objToRemove: HTMLElement): void;
 }

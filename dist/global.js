@@ -8,7 +8,7 @@ export const controls = new Controls();
 export let collisionChecker;
 export let portals;
 export let bee;
-const collisionButtMinEnterTime = 400;
+const collisionButtMinEnterTime = 350;
 const beeElementHTML = `
         <div>
             <p id="bee-text"></p>
@@ -44,7 +44,8 @@ function registerCollideButtons() {
     for (let butt of document.getElementsByClassName("collide-button")) {
         const realButt = butt;
         let enterTime = 0;
-        collisionChecker.addObject({ element: realButt,
+        collisionChecker.addObject({
+            element: realButt,
             onCollisionEnter: () => {
                 realButt.classList.add("over");
                 enterTime = Date.now();
@@ -52,7 +53,8 @@ function registerCollideButtons() {
             onCollisionLeave: () => {
                 const timeDiff = Date.now() - enterTime;
                 setTimeout(() => realButt.classList.remove("over"), timeDiff < collisionButtMinEnterTime ? collisionButtMinEnterTime - timeDiff : 0);
-            } });
+            }
+        });
     }
 }
 function getBeeInitialPos(searchParams) {

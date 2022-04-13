@@ -12,7 +12,7 @@ export const controls = new Controls();
 export let collisionChecker: CollisionChecker;
 export let portals: Portals;
 export let bee: Bee;
-const collisionButtMinEnterTime = 400;
+const collisionButtMinEnterTime = 350;
 const beeElementHTML =
     `
         <div>
@@ -55,7 +55,8 @@ function registerCollideButtons() {
     for (let butt of document.getElementsByClassName("collide-button")) {
         const realButt = butt as HTMLElement;
         let enterTime = 0;
-        collisionChecker.addObject({element: realButt,
+        collisionChecker.addObject({
+            element: realButt,
             onCollisionEnter: () => {
                 realButt.classList.add("over");
                 enterTime = Date.now();

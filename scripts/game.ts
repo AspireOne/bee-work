@@ -17,38 +17,82 @@ export module Game {
         timestamp: number;
     }
 
+    let gameDiv: HTMLDivElement;
     let menu: HTMLElement;
     let gameMenu: HTMLElement;
     let gameMenuResumeButt: HTMLElement;
     let gameMenuLeaveButt: HTMLElement;
     let gameMenuShown: boolean = false;
     let game: IGame;
+    let gameFunc: () => IGame;
     modules.push(run);
 
-    export function addGame(gamee: IGame) {
+    export function addGame(gameFunction: () => IGame) {
         if (game)
             throw new Error("Game was already assigned.");
-
-        game = gamee;
+        gameFunc = gameFunction;
     }
 
     function run() {
         initializeMainMenu();
+        game = gameFunc();
         gameMenu = document.getElementById("game-menu") as HTMLElement;
         gameMenuResumeButt = document.getElementById("resume-button") as HTMLElement;
         gameMenuLeaveButt = document.getElementById("leave-button") as HTMLElement;
+        gameDiv = document.getElementById("game") as HTMLDivElement;
 
         document.addEventListener("keydown", (e) => {
             if (game.running && e.key === "Escape" && !e.repeat)
-                gameMenuShown ? hideGameMenu() : showGameMenu();
+                gameMenuShown ? resumeGame() : pauseGame();
         });
+        gameMenuResumeButt.addEventListener("click", () => resumeGame());
+        gameMenuLeaveButt.addEventListener("click", () => leaveGame());
+    }
 
-        gameMenuResumeButt.addEventListener("click", () => hideGameMenu());
-        gameMenuLeaveButt.addEventListener("click", () => {
-            hideGameMenu();
-            game.stopGame();
-            menu.style.animation = "fade-in 1s forwards";
-        });
+    function startGame(counter: HTMLElement) {
+        gameDiv.style.display = "initial";
+        menu.style.animation = "var(--menu-fade-out-animation)";
+        portals.setSidePortalsDisplay(false);
+
+        runCounter(counter);
+    }
+
+    function leaveGame() {
+        resumeGame();
+        game.stopGame();
+        gameDiv.style.display = "none";
+        menu.style.animation = "fade-in 1s forwards";
+        portals.setSidePortalsDisplay(true);
+        game = gameFunc();
+    }
+
+    function pauseGame() {
+        gameMenuShown = true;
+        bee.pauseUpdates = true;
+        game.pauseGame();
+        gameMenu.style.display = "flex";
+        gameMenu.style.animation = "var(--game-menu-fadein-animation)";
+    }
+
+    function resumeGame() {
+        gameMenuShown = false;
+        bee.pauseUpdates = false;
+        game.resumeGame();
+        gameMenu.style.display = "none";
+    }
+
+    function runCounter(counter: HTMLElement) {
+        counter.style.display = "block";
+        let num = 3;
+        counter.innerText = num + "";
+        const id = setInterval(() => {
+            if (num === 1) {
+                clearInterval(id);
+                counter.style.display = "none";
+                game.startGame();
+            }
+            counter.innerText = --num + "";
+        }, 1000);
     }
 
     function initializeMainMenu() {
@@ -67,46 +111,18 @@ export module Game {
             tableLocalButt.classList.add("on");
         });
 
-        let playPressed: boolean = false;
-        const props: CollisionChecker.ObjectProps = {
+        let play = {pressed: false};
+        const props: CollisionChecker.CollidingObject = {
             element: playButt,
             onCollisionEnter: () => {
-                if (playPressed || window.getComputedStyle(menu).getPropertyValue("opacity") === "0")
+                if (play.pressed || window.getComputedStyle(menu).getPropertyValue("opacity") === "0")
                     return;
-                playPressed = true;
-
-                menu.style.animation = "var(--menu-fade-out-animation)";
-
-                counter.style.display = "block";
-                let num = 3;
-                counter.innerText = num + "";
-                const id = setInterval(() => {
-                    if (num === 1) {
-                        clearInterval(id);
-                        counter.style.display = "none";
-                        playPressed = false;
-                        game.startGame();
-                    }
-                    counter.innerText = --num + "";
-                }, 1000);
+                play.pressed = true;
+                startGame(counter);
+                setTimeout(() => play.pressed = false, 3000);
             },
         }
         collisionChecker.addObject(props);
-    }
-
-    function showGameMenu() {
-        gameMenuShown = true;
-        bee.pauseUpdates = true;
-        game.pauseGame();
-        gameMenu.style.display = "flex";
-        gameMenu.style.animation = "var(--game-menu-fadein-animation)";
-    }
-
-    function hideGameMenu() {
-        gameMenuShown = false;
-        bee.pauseUpdates = false;
-        game.resumeGame();
-        gameMenu.style.display = "none";
     }
 
     export function getScoreTableRow(score: Score, rank: number, scoreDataHTML: string): HTMLElement {

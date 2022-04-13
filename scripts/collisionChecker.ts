@@ -1,10 +1,10 @@
 import {Bee} from "./bee.js";
 import {Utils} from "./utils.js";
-import ObjectProps = CollisionChecker.ObjectProps;
+import CollidingObject = CollisionChecker.CollidingObject;
 
 // Singleton.
 export module CollisionChecker {
-    export type ObjectProps = {
+    export type CollidingObject = {
         element: HTMLElement,
         onCollisionEnter?: () => void,
         onCollisionLeave?: () => void,
@@ -13,7 +13,13 @@ export module CollisionChecker {
 
 export class CollisionChecker {
     private static created: boolean = false;
-    private objects: {lastCollision?: boolean, isColliding?: boolean, props: ObjectProps}[] = [];
+    private readonly objects: {
+        state: {
+            lastCollision?: boolean,
+            isColliding?: boolean
+        };
+        object: CollidingObject;
+    }[] = [];
     private delta = 150;
     private beeElement: HTMLElement;
     private id = 0;
@@ -31,39 +37,41 @@ export class CollisionChecker {
             return;
 
         this.id = setInterval(() => {
-            this.objects.forEach(obj => {
-                const rect = obj.props.element.getBoundingClientRect();
+            this.objects.forEach(object => {
+                const rect = object.object.element.getBoundingClientRect();
+                object.state.lastCollision = false;
 
-                if (Utils.isZero(rect)) {
-                    this.removeObject(obj.props);
-                    return;
-                }
+                console.log(this.objects.length);
 
-                obj.lastCollision = false;
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
-                    obj.lastCollision = true;
-                    if (obj.isColliding)
+                    object.state.lastCollision = true;
+                    if (object.state.isColliding)
                         return;
 
-                    obj.isColliding = true;
-                    if (obj.props.onCollisionEnter)
-                        obj.props.onCollisionEnter();
+                    object.state.isColliding = true;
+                    if (object.object.onCollisionEnter)
+                        object.object.onCollisionEnter();
                 }
-                if (!obj.lastCollision && obj.isColliding) {
-                    obj.isColliding = false;
-                    if (obj.props.onCollisionLeave)
-                        obj.props.onCollisionLeave();
+
+                if (!object.state.lastCollision && object.state.isColliding) {
+                    object.state.isColliding = false;
+                    if (object.object.onCollisionLeave)
+                        object.object.onCollisionLeave();
                 }
             });
 
         }, this.delta);
     }
 
-/*    public stopChecking() {
-        clearInterval(this.id);
-        this.id = 0;
-    }*/
+    /*    public stopChecking() {
+            clearInterval(this.id);
+            this.id = 0;
+        }*/
 
-    public addObject = (object: ObjectProps) => this.objects.push({props: object});
-    public removeObject = (object: ObjectProps) => this.objects.splice(this.objects.indexOf({props: object}), 1);
+    public addObject = (object: CollidingObject) => this.objects.push({object: object, state: {}});
+    public Remove(objToRemove: HTMLElement) {
+        const index = this.objects.findIndex(obj => obj.object.element === objToRemove);
+        if (index !== -1)
+            this.objects.splice(index, 1);
+    };
 }

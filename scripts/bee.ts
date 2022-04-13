@@ -152,6 +152,7 @@ export class Bee {
         this.updateIntervalId = setInterval(() => {
             if (!this.pauseUpdates)
                 this.frame();
+            
         }, this.props.deltaTime.value);
     }
 

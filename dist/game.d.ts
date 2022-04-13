@@ -10,7 +10,7 @@ export declare module Game {
         name: string;
         timestamp: number;
     };
-    export function addGame(gamee: IGame): void;
+    export function addGame(gameFunction: () => IGame): void;
     export function getScoreTableRow(score: Score, rank: number, scoreDataHTML: string): HTMLElement;
     export {};
 }
