@@ -1,3 +1,4 @@
+/** Contains globally usable types. */
 export var Types;
 (function (Types) {
     let WayX;

@@ -1,15 +1,19 @@
-export declare class RandomBallGenerator {
-    readonly ballProps: {
+import Props = RandomBallGenerator.Props;
+export declare module RandomBallGenerator {
+    type Props = {
         speed: number;
-        width: number;
+        size: number;
+        generationFrequency: number;
     };
+}
+export declare class RandomBallGenerator {
     private static readonly angleOffset;
-    static generationFrequency: number;
     private readonly div;
     private readonly balls;
+    private readonly onCollision;
+    readonly props: Props;
     private ballGenerationTimer;
-    private onCollision;
-    constructor(div: HTMLElement, onCollision: () => void);
+    constructor(div: HTMLElement, props: Props, onCollision: () => void);
     update(delta: number): void;
     private addNewBall;
     private removeBall;

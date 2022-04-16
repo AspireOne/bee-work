@@ -6,6 +6,7 @@ import CollidingObject = CollisionChecker.CollidingObject;
 export module CollisionChecker {
     export type CollidingObject = {
         element: HTMLElement,
+        unremovable?: boolean
         onCollisionEnter?: () => void,
         onCollisionLeave?: () => void,
     };
@@ -20,7 +21,7 @@ export class CollisionChecker {
         };
         object: CollidingObject;
     }[] = [];
-    private delta = 150;
+    public delta = 130;
     private beeElement: HTMLElement;
     private id = 0;
 
@@ -41,14 +42,18 @@ export class CollisionChecker {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;
 
+                if (window.getComputedStyle(object.object.element).opacity === "0")
+                    return;
+
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
                     object.state.lastCollision = true;
                     if (object.state.isColliding)
                         return;
 
                     object.state.isColliding = true;
-                    if (object.object.onCollisionEnter)
+                    if (object.object.onCollisionEnter) {
                         object.object.onCollisionEnter();
+                    }
                 }
 
                 if (!object.state.lastCollision && object.state.isColliding) {
@@ -66,10 +71,16 @@ export class CollisionChecker {
             this.id = 0;
         }*/
 
-    public addObject = (object: CollidingObject) => this.objects.push({object: object, state: {}});
-    public Remove(objToRemove: HTMLElement) {
-        const index = this.objects.findIndex(obj => obj.object.element === objToRemove);
+    public add = (object: CollidingObject) => this.objects.push({object: object, state: {}});
+    public remove(objToRemove: HTMLElement) {
+        for (let i = 0; i < this.objects.length; ++i) {
+            if (this.objects[i].object.element === objToRemove && !this.objects[i].object.unremovable) {
+                this.objects.splice(i, 1);
+                break;
+            }
+        }
+        /*const index = this.objects.findIndex(obj => obj.object.element === objToRemove);
         if (index !== -1)
-            this.objects.splice(index, 1);
+            this.objects.splice(index, 1);*/
     };
 }

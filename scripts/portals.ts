@@ -192,6 +192,6 @@ export class Portals {
 
             window.location.assign(props.target); //  TODO: window.location.replace(props.target);
         }
-        collisionChecker.addObject({element: props.collisionElement, onCollisionEnter: onCollision});
+        collisionChecker.add({element: props.collisionElement, onCollisionEnter: onCollision});
     }
 }

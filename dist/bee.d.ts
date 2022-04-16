@@ -43,6 +43,7 @@ export declare class Bee {
     constructor(bee: HTMLElement, controls: Controls);
     /** Runs VanishingCircle's update loop and the bee's update loop. */
     start(): void;
+    private step;
     /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop(): void;
     /** Resets all props to their default values. */

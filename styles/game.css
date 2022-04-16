@@ -1,8 +1,41 @@
 :root {
     --border-color: #c5c5c5;
-    --menu-fade-out-animation: 1s fade-out 0s;
+    --menu-fade-out-animation: 1s fade-out;
     --curr-counter-animation: none;
     --game-menu-fadein-animation: fade-in 0.4s forwards;
+}
+
+#end-screen {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+}
+
+#end-screen h1 {
+    font-size: 5em;
+    margin-top: 1.5em;
+}
+
+#end-screen h2 {
+    font-size: 3em;
+}
+
+#end-screen-game-data {}
+
+#end-screen-buttons {
+    width: 30em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 8em;
+    gap: 1em;
+}
+
+#end-screen .button, #end-screen .collide-button {
+    height: 4em;
 }
 
 #game-text * {
@@ -112,9 +145,11 @@
 }
 
 #menu {
-    /* TODO: Revert this. */
     opacity: 0;
-    animation: 1s fade-in 4s forwards;
+
+    /* TODO: Revert this. */
+    /*animation: 1s fade-in 4s forwards;*/
+    animation: 1s fade-in 0s forwards;
 }
 
 #game-menu {
@@ -124,9 +159,6 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.4);
-    z-index: 3;
-    text-align: center;
-    display: flex;
     align-items: center;
     justify-content: center;
     display: none;

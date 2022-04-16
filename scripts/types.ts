@@ -1,3 +1,4 @@
+/** Contains globally usable types. */
 export module Types {
     export type Point = { x: number; y: number };
     export type Range = { min: number, max: number };

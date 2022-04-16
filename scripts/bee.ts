@@ -149,11 +149,16 @@ export class Bee {
             return;
 
         VanishingCircle.runLoop();
+
+        window.requ
         this.updateIntervalId = setInterval(() => {
             if (!this.pauseUpdates)
                 this.frame();
             
         }, this.props.deltaTime.value);
+    }
+
+    private step() {
     }
 
     /** Stops VanishingCircle's update loop and the bee's update loop. */
@@ -197,7 +202,12 @@ export class Bee {
      * @param savedProps The saved props to apply.
      */
     applySavedProps(targetProps: {[key: string]: Types.ModifiableProp}, savedProps: Types.SavedModifiableProp) {
-        Object.entries(savedProps).forEach(([key, value]) => targetProps[key].value = value);
+        Object.entries(savedProps).forEach(([key, value]) => {
+            if (targetProps[key])
+                targetProps[key].value = value;
+            else
+                console.error("Could not apply saved prop: " + key);
+        });
     }
 
     /** Retrieves all saved props from localStorage and applies them to their respective props. */

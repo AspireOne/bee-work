@@ -1,3 +1,4 @@
+/** Contains globally usable types. */
 export declare module Types {
     type Point = {
         x: number;

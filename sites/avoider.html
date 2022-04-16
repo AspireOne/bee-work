@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <script type="module" src="../dist/global.js"></script>
-    <script type="module" src="../dist/game.js"></script>
+    <script type="module" src="../dist/sites/gameSite.js"></script>
     <script type="module" src="../dist/sites/avoider.js"></script>
     <script type="module" src="../dist/games/avoider/avoider.js"></script>
     <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
@@ -69,8 +69,16 @@
         </div>
     </div>
 </div>
-<div id="end-screen"></div>
 
+<div id="end-screen">
+    <h1>Game over</h1>
+    <div id="end-screen-buttons" class="side-by-side">
+        <button class="collide-button" id="main-menu-butt" title="Fly over me!">Go back to main menu</button>
+        <button class="collide-button" id="restart-butt" title="Fly over me!">Restart</button>
+    </div>
+    <h2>Score:</h2>
+    <div id="end-screen-game-data"></div>
+</div>
 <!-- This is game specific. -->
 <div id="game">
     <div id="time">

@@ -12,15 +12,12 @@ var Side;
 })(Side || (Side = {}));
 ;
 export class RandomBallGenerator {
-    constructor(div, onCollision) {
-        this.ballProps = {
-            speed: 2,
-            width: 80
-        };
+    constructor(div, props, onCollision) {
         this.balls = [];
         this.ballGenerationTimer = 0;
         this.div = div;
         this.onCollision = onCollision;
+        this.props = props;
     }
     update(delta) {
         this.ballGenerationTimer += delta;
@@ -28,11 +25,11 @@ export class RandomBallGenerator {
             this.getNewPos(ball);
             ball.element.style.left = ball.currPos.x + "px";
             ball.element.style.top = ball.currPos.y + "px";
-            if (ball.currPos.y < -this.ballProps.width - 10 || ball.currPos.y > document.body.clientHeight || ball.currPos.x < -this.ballProps.width - 10 || ball.currPos.x > document.body.clientWidth) {
+            if (ball.currPos.y < -this.props.size - 10 || ball.currPos.y > document.body.clientHeight || ball.currPos.x < -this.props.size - 10 || ball.currPos.x > document.body.clientWidth) {
                 this.removeBall(ball);
             }
         });
-        if (this.ballGenerationTimer >= RandomBallGenerator.generationFrequency) {
+        if (this.ballGenerationTimer >= this.props.generationFrequency) {
             this.ballGenerationTimer = 0;
             this.addNewBall();
         }
@@ -40,12 +37,12 @@ export class RandomBallGenerator {
     addNewBall() {
         const ball = this.generateBall();
         this.div.appendChild(ball.element);
-        collisionChecker.addObject({ element: ball.element, onCollisionEnter: this.onCollision });
+        collisionChecker.add({ element: ball.element, onCollisionEnter: this.onCollision });
         this.balls.push(ball);
     }
     removeBall(ball, notFromArray = false) {
         ball.element.remove();
-        collisionChecker.Remove(ball.element);
+        collisionChecker.remove(ball.element);
         if (!notFromArray)
             this.balls.splice(this.balls.indexOf(ball), 1);
     }
@@ -93,7 +90,7 @@ export class RandomBallGenerator {
         const point = { x: 0, y: 0 };
         switch (side) {
             case Side.TOP:
-                point.y = -this.ballProps.width;
+                point.y = -this.props.size;
                 point.x = Math.random() * document.body.clientWidth;
                 break;
             case Side.RIGHT:
@@ -105,7 +102,7 @@ export class RandomBallGenerator {
                 point.x = Math.random() * document.body.clientWidth;
                 break;
             case Side.LEFT:
-                point.x = -this.ballProps.width;
+                point.x = -this.props.size;
                 point.y = Math.random() * document.body.clientHeight;
                 break;
         }
@@ -118,10 +115,10 @@ export class RandomBallGenerator {
         return { degrees: degrees, currPos: startingPos, element: ballElement };
     }
     createBallElement(pos) {
-        const ball = htmlToElement(`<img src="../../../resources/circle.png">`);
+        const ball = htmlToElement(`<img src="../../../resources/ball.png">`);
         ball.style.position = "absolute";
-        ball.style.width = this.ballProps.width + "px";
-        ball.style.height = this.ballProps.width + "px";
+        ball.style.width = this.props.size + "px";
+        ball.style.height = this.props.size + "px";
         ball.style.left = pos.x + "px";
         ball.style.top = pos.y + "px";
         return ball;
@@ -129,10 +126,9 @@ export class RandomBallGenerator {
     getNewPos(ball) {
         const degrees = ball.degrees - 90;
         let rad = degrees * Math.PI / 180;
-        ball.currPos.x = ball.currPos.x + Math.cos(rad) * this.ballProps.speed;
-        ball.currPos.y = ball.currPos.y + Math.sin(rad) * this.ballProps.speed;
+        ball.currPos.x = ball.currPos.x + Math.cos(rad) * this.props.speed;
+        ball.currPos.y = ball.currPos.y + Math.sin(rad) * this.props.speed;
     }
 }
-RandomBallGenerator.angleOffset = 10;
-RandomBallGenerator.generationFrequency = 200;
+RandomBallGenerator.angleOffset = 20;
 //# sourceMappingURL=randomBallGenerator.js.map

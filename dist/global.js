@@ -43,16 +43,17 @@ document.addEventListener("DOMContentLoaded", _ => {
 function registerCollideButtons() {
     for (let butt of document.getElementsByClassName("collide-button")) {
         const realButt = butt;
-        let enterTime = 0;
-        collisionChecker.addObject({
+        let id = 0;
+        collisionChecker.add({
             element: realButt,
+            unremovable: true,
             onCollisionEnter: () => {
                 realButt.classList.add("over");
-                enterTime = Date.now();
+                id = setTimeout(() => realButt.classList.remove("over"), 700);
             },
             onCollisionLeave: () => {
-                const timeDiff = Date.now() - enterTime;
-                setTimeout(() => realButt.classList.remove("over"), timeDiff < collisionButtMinEnterTime ? collisionButtMinEnterTime - timeDiff : 0);
+                realButt.classList.remove("over");
+                clearTimeout(id);
             }
         });
     }
