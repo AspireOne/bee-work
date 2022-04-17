@@ -39,6 +39,10 @@ export var GameSite;
             }
         };
         initializeMainMenu();
+        document.addEventListener("visibilitychange", function () {
+            if (document.visibilityState === 'hidden' && (gameInstance === null || gameInstance === void 0 ? void 0 : gameInstance.running))
+                pauseGame();
+        });
         document.addEventListener("keydown", (e) => {
             if ((gameInstance === null || gameInstance === void 0 ? void 0 : gameInstance.running) && e.key === "Escape" && !e.repeat)
                 currentScreen === Screen.GAME_MENU ? resumeGame() : pauseGame();

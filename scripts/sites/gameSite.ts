@@ -66,6 +66,11 @@ export module GameSite {
         
         initializeMainMenu();
 
+        document.addEventListener("visibilitychange", function() {
+            if (document.visibilityState === 'hidden' && gameInstance?.running)
+                pauseGame();
+        });
+
         document.addEventListener("keydown", (e) => {
             if (gameInstance?.running && e.key === "Escape" && !e.repeat)
                 currentScreen === Screen.GAME_MENU ? resumeGame() : pauseGame();

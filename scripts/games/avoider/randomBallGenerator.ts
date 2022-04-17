@@ -37,16 +37,15 @@ export class RandomBallGenerator {
         this.onCollision = onCollision;
         this.props = props;
     }
-    public update(delta: number) {
-        this.ballGenerationTimer += delta;
+    public update(delta: number, diffBetweenFrames: number) {
+        this.ballGenerationTimer += diffBetweenFrames;
 
         this.balls.forEach(ball => {
-            this.getNewPos(ball);
+            this.getNewPos(ball, delta);
             ball.element.style.left = ball.currPos.x + "px";
             ball.element.style.top = ball.currPos.y + "px";
-            if (ball.currPos.y < -this.props.size - 10 || ball.currPos.y > document.body.clientHeight || ball.currPos.x < -this.props.size - 10 || ball.currPos.x > document.body.clientWidth) {
+            if (Utils.isOutOfDoc(ball.currPos, ball.element.clientWidth))
                 this.removeBall(ball);
-            }
         });
 
         if (this.ballGenerationTimer >= this.props.generationFrequency) {
@@ -75,11 +74,12 @@ export class RandomBallGenerator {
 
     private getRandomStartingPos(degrees: number): Point {
         let side: Side;
-        // Pick a side randomly based on degrees (trajectory).
-        side = this.getRandomSide(degrees);
 
+        side = this.getSpecialCaseSide(degrees);
+
+        // Pick a side randomly based on degrees (trajectory).
         if (side === Side.NONE)
-            side = this.getSpecialCaseSide(degrees);
+            side = this.getRandomSide(degrees);
 
         if (side === Side.NONE)
             throw new Error("Could not find a starting side for " + degrees + " degrees.");
@@ -121,9 +121,10 @@ export class RandomBallGenerator {
 
     private getRandomPoint(side: Side): Point {
         const point: Point = {x: 0, y: 0};
+        const size = this.balls[this.balls.length - 1]?.element?.clientWidth ?? 10;
         switch (side) {
             case Side.TOP:
-                point.y = -this.props.size;
+                point.y = -size;
                 point.x = Math.random() * document.body.clientWidth;
                 break;
             case Side.RIGHT:
@@ -135,7 +136,7 @@ export class RandomBallGenerator {
                 point.x = Math.random() * document.body.clientWidth;
                 break;
             case Side.LEFT:
-                point.x = -this.props.size;
+                point.x = -size;
                 point.y = Math.random() * document.body.clientHeight;
                 break;
         }
@@ -152,18 +153,18 @@ export class RandomBallGenerator {
     private createBallElement(pos: Point): HTMLElement {
         const ball = htmlToElement(`<img src="../../../resources/ball.png">`);
         ball.style.position = "absolute";
-        ball.style.width = this.props.size + "px";
-        ball.style.height = this.props.size + "px";
+        ball.style.width = this.props.size + "%";
+        ball.style.height = "auto";
         ball.style.left = pos.x + "px";
         ball.style.top = pos.y + "px";
         return ball;
     }
 
-    private getNewPos(ball: Ball): void {
+    private getNewPos(ball: Ball, delta: number): void {
         const degrees = ball.degrees - 90;
-
-        let rad = degrees * Math.PI / 180;
-        ball.currPos.x = ball.currPos.x + Math.cos(rad) * this.props.speed;
-        ball.currPos.y = ball.currPos.y + Math.sin(rad) * this.props.speed;
+        const rad = degrees * Math.PI / 180;
+        const speedFactored = this.props.speed * delta;
+        ball.currPos.x = ball.currPos.x + Math.cos(rad) * speedFactored;
+        ball.currPos.y = ball.currPos.y + Math.sin(rad) * speedFactored;
     }
 }

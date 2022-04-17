@@ -3,12 +3,17 @@ export var Utils;
     Utils.randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
     Utils.isTouchDevice = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
     function collides(a, b) {
-        return !(((a.y + a.height) < (b.y)) ||
-            (a.y > (b.y + b.height)) ||
-            ((a.x + a.width) < b.x) ||
-            (a.x > (b.x + b.width)));
+        return !(a.y + a.height < b.y ||
+            a.y > b.y + b.height ||
+            a.x + a.width < b.x ||
+            a.x > b.x + b.width);
     }
     Utils.collides = collides;
+    function isOutOfDoc(pos, size) {
+        return pos.y < -size || pos.x < -size
+            || pos.y > document.body.clientHeight || pos.x > document.body.clientWidth;
+    }
+    Utils.isOutOfDoc = isOutOfDoc;
     function isBetween(value, min, max) {
         return value >= min && value <= max;
     }

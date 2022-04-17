@@ -1,14 +1,22 @@
+import {Types} from "./types";
+
 export module Utils {
+    import Point = Types.Point;
     export const randomIntFromInterval = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1) + min);
     export const isTouchDevice = () => "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     export function collides(a: DOMRect, b: DOMRect) {
         return !(
-            ((a.y + a.height) < (b.y)) ||
-            (a.y > (b.y + b.height)) ||
-            ((a.x + a.width) < b.x) ||
-            (a.x > (b.x + b.width))
+            a.y + a.height < b.y ||
+            a.y > b.y + b.height ||
+            a.x + a.width < b.x ||
+            a.x > b.x + b.width
         );
+    }
+    
+    export function isOutOfDoc(pos: Point, size: number) {
+        return pos.y < -size || pos.x < -size
+            || pos.y > document.body.clientHeight || pos.x > document.body.clientWidth;
     }
 
     export function isBetween(value: number, min: number, max: number) {

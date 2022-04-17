@@ -14,7 +14,7 @@ export declare class RandomBallGenerator {
     readonly props: Props;
     private ballGenerationTimer;
     constructor(div: HTMLElement, props: Props, onCollision: () => void);
-    update(delta: number): void;
+    update(delta: number, diffBetweenFrames: number): void;
     private addNewBall;
     private removeBall;
     finish(): void;

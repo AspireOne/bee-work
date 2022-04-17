@@ -1,6 +1,7 @@
 import {Bee} from "./bee.js";
 import {Utils} from "./utils.js";
 import CollidingObject = CollisionChecker.CollidingObject;
+import {collisionChecker} from "./global";
 
 // Singleton.
 export module CollisionChecker {
@@ -14,6 +15,7 @@ export module CollisionChecker {
 
 export class CollisionChecker {
     private static created: boolean = false;
+    public static readonly defaultDelta = 135;
     private readonly objects: {
         state: {
             lastCollision?: boolean,
@@ -21,7 +23,18 @@ export class CollisionChecker {
         };
         object: CollidingObject;
     }[] = [];
-    public delta = 130;
+    private _delta = CollisionChecker.defaultDelta;
+
+    public get delta(): number {
+        return this._delta;
+    }
+
+    public set delta(value: number) {
+        this._delta = value;
+        this.stopChecking();
+        this.startChecking();
+    }
+
     private beeElement: HTMLElement;
     private id = 0;
 
@@ -42,10 +55,9 @@ export class CollisionChecker {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;
 
-                if (window.getComputedStyle(object.object.element).opacity === "0")
-                    return;
-
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
+                    if (window.getComputedStyle(object.object.element).opacity === "0")
+                        return;
                     object.state.lastCollision = true;
                     if (object.state.isColliding)
                         return;
@@ -66,10 +78,10 @@ export class CollisionChecker {
         }, this.delta);
     }
 
-    /*    public stopChecking() {
-            clearInterval(this.id);
-            this.id = 0;
-        }*/
+    public stopChecking() {
+        clearInterval(this.id);
+        this.id = 0;
+    }
 
     public add = (object: CollidingObject) => this.objects.push({object: object, state: {}});
     public remove(objToRemove: HTMLElement) {
@@ -79,8 +91,5 @@ export class CollisionChecker {
                 break;
             }
         }
-        /*const index = this.objects.findIndex(obj => obj.object.element === objToRemove);
-        if (index !== -1)
-            this.objects.splice(index, 1);*/
     };
 }

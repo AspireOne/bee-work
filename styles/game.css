@@ -3,6 +3,30 @@
     --menu-fade-out-animation: 1s fade-out;
     --curr-counter-animation: none;
     --game-menu-fadein-animation: fade-in 0.4s forwards;
+    --achivement-animation: achivement-slide-in 3.4s;
+}
+
+#achivement {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    padding: 5px;
+    padding-bottom: 20px;
+    transform: translateX(-50%) translateY(100%);
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 18em;
+    border-radius: 1em;
+    text-align: center;
+
+}
+
+@keyframes achivement-slide-in {
+    0% {transform: translateX(-50%) translateY(100%);}
+
+    25% { transform: translateX(-50%) translateY(-50%); }
+    75% { transform: translateX(-50%) translateY(-50%); }
+
+    100% {transform: translateX(-50%) translateY(100%);}
 }
 
 #end-screen {
@@ -25,7 +49,9 @@
     font-size: 3em;
 }
 
-#end-screen-game-data {}
+#end-screen-game-data {
+
+}
 
 #end-screen-buttons {
     width: 30em;
@@ -153,6 +179,10 @@
     animation: 1s fade-in 0s forwards;
 }
 
+#game {
+    display: none;
+}
+
 #game-menu {
     position: absolute;
     left: 0;
@@ -163,6 +193,8 @@
     align-items: center;
     justify-content: center;
     display: none;
+    /* So that it is above the game (under the overlay). */
+    z-index: 1;
 }
 
 #game-menu-buttons {
@@ -170,7 +202,6 @@
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10em;
-    border: 1px solid red;
 }
 .game-menu-button {
     height: 4.1em;

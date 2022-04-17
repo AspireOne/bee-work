@@ -46,15 +46,15 @@ Controls.instanceCreated = false;
 // The state and definition of globally used keys (does not include game-specific keys etc.).
 Controls.keys = {
     up: {
-        definition: [' ', 'w', 'W'],
+        definition: ['w', 'W', "ArrowUp"],
         pressed: false,
     },
     right: {
-        definition: ['d', 'D'],
+        definition: ['d', 'D', "ArrowRight"],
         pressed: false,
     },
     left: {
-        definition: ['a', 'A'],
+        definition: ['a', 'A', "ArrowLeft"],
         pressed: false,
     },
     floss: {
