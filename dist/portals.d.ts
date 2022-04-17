@@ -1,4 +1,5 @@
 import collisionPortalProps = Portals.CollisionPortalProps;
+import { Bee } from "./bee.js";
 export declare module Portals {
     type CollisionPortalProps = {
         collisionElement: HTMLElement;
@@ -12,7 +13,7 @@ export declare class Portals {
     private bee;
     constructor(bee: HTMLElement);
     setSidePortalsDisplay(visible: boolean): void;
-    generateRandomPortal(timeout: number, canvas: HTMLCanvasElement): void;
+    generateRandomPortal(timeout: number, canvas: HTMLCanvasElement, bee: Bee): void;
     private static drawPoint;
     private handlePortalTouched;
     removePortal(portal: HTMLElement): void;

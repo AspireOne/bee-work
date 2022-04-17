@@ -105,7 +105,7 @@ export var Playground;
             menuContainer.style.bottom = -menu.offsetHeight + "px";
     }
     function startGeneratingPortals(canvas) {
-        portals.generateRandomPortal(portalGeneration.duration, canvas);
+        portals.generateRandomPortal(portalGeneration.duration, canvas, bee);
         setTimeout(() => startGeneratingPortals(canvas), Utils.randomIntFromInterval(portalGeneration.spawnDelayRange.min, portalGeneration.spawnDelayRange.max));
     }
     function addListenersToElements() {
@@ -166,7 +166,7 @@ export var Playground;
     }
     function addSettings(settingsBee, settingsCircle) {
         addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true, unit: "" });
-        addSetting(settingsBee, bee.acceleration.acceleration, { name: "Acceleration", showValue: true, unit: "" });
+        addSetting(settingsBee, bee.acceleration.acceleration, { name: "Acceleration", showValue: true });
         addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true, unit: "ms" });
         addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift / Drawing", showValue: true, unit: "ms" });
         //addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true, unit: "ms/circle"});

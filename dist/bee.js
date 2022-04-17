@@ -146,7 +146,7 @@ export class Bee {
             if (targetProps[key])
                 targetProps[key].value = value;
             else
-                console.error("Could not apply saved prop: " + key);
+                console.warn("Could not apply saved prop: " + key);
         });
     }
     /** Retrieves all saved props from localStorage and applies them to their respective props. */

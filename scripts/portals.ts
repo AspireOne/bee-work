@@ -2,6 +2,8 @@ import {Utils} from "./utils.js";
 import collisionPortalProps = Portals.CollisionPortalProps;
 import {Controls} from "./controls.js";
 import {collisionChecker} from "./global.js";
+import CollisionPortalProps = Portals.CollisionPortalProps;
+import {Bee} from "./bee.js";
 
 export module Portals {
     export type CollisionPortalProps = {
@@ -29,7 +31,7 @@ export class Portals {
             (portalDiv as HTMLElement).style.display = visible ? "" : "none";
     }
 
-    public generateRandomPortal(timeout: number, canvas: HTMLCanvasElement) {
+    public generateRandomPortal(timeout: number, canvas: HTMLCanvasElement, bee: Bee) {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
         const locationOffset = 100;
 
@@ -54,11 +56,11 @@ export class Portals {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }, timeout);
 
-        const props = {
+        const props: CollisionPortalProps = {
             collisionElement: portal,
             onCollision: () => {
                 clearTimeout(timeoutId);
-                this.handlePortalTouched(portal, portX, portY, canvas);
+                this.handlePortalTouched(portal, portX, portY, canvas, bee);
             }
         };
         this.registerPortal(props);
@@ -78,13 +80,12 @@ export class Portals {
         ctx.stroke();
     }
 
-    private handlePortalTouched(portal: HTMLElement, portX: number, portY: number, canvas: HTMLCanvasElement) {
+    private handlePortalTouched(portal: HTMLElement, portX: number, portY: number, canvas: HTMLCanvasElement, bee: Bee) {
         const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
         this.removePortal(portal);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        this.bee.style.left = portX + "px";
-        this.bee.style.top = portY + "px";
+        bee.currPos = {x: portX, y: portY};
         const endPortal = this.createPortal();
         this.placePortal(endPortal, portX, portY);
         setTimeout(() => this.removePortal(endPortal), this.appearAnimation.duration);
@@ -192,6 +193,6 @@ export class Portals {
 
             window.location.assign(props.target); //  TODO: window.location.replace(props.target);
         }
-        collisionChecker.add({element: props.collisionElement, onCollisionEnter: onCollision});
+        collisionChecker.add({element: props.collisionElement, onCollisionEnter: onCollision.bind(this)});
     }
 }

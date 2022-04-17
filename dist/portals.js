@@ -14,7 +14,7 @@ export class Portals {
         for (let portalDiv of document.getElementsByClassName("side-portal"))
             portalDiv.style.display = visible ? "" : "none";
     }
-    generateRandomPortal(timeout, canvas) {
+    generateRandomPortal(timeout, canvas, bee) {
         const ctx = canvas.getContext('2d');
         const locationOffset = 100;
         const maxX = document.body.clientWidth - locationOffset;
@@ -36,7 +36,7 @@ export class Portals {
             collisionElement: portal,
             onCollision: () => {
                 clearTimeout(timeoutId);
-                this.handlePortalTouched(portal, portX, portY, canvas);
+                this.handlePortalTouched(portal, portX, portY, canvas, bee);
             }
         };
         this.registerPortal(props);
@@ -53,12 +53,11 @@ export class Portals {
         ctx.strokeStyle = 'rgba(63,55,105,0.35)';
         ctx.stroke();
     }
-    handlePortalTouched(portal, portX, portY, canvas) {
+    handlePortalTouched(portal, portX, portY, canvas, bee) {
         const ctx = canvas.getContext('2d');
         this.removePortal(portal);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        this.bee.style.left = portX + "px";
-        this.bee.style.top = portY + "px";
+        bee.currPos = { x: portX, y: portY };
         const endPortal = this.createPortal();
         this.placePortal(endPortal, portX, portY);
         setTimeout(() => this.removePortal(endPortal), this.appearAnimation.duration);
@@ -148,7 +147,7 @@ export class Portals {
             }
             window.location.assign(props.target); //  TODO: window.location.replace(props.target);
         };
-        collisionChecker.add({ element: props.collisionElement, onCollisionEnter: onCollision });
+        collisionChecker.add({ element: props.collisionElement, onCollisionEnter: onCollision.bind(this) });
     }
 }
 //# sourceMappingURL=portals.js.map
