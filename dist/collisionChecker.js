@@ -25,6 +25,8 @@ export class CollisionChecker {
             this.objects.forEach(object => {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;
+                if (Utils.isZero(rect))
+                    return;
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
                     if (window.getComputedStyle(object.object.element).opacity === "0")
                         return;

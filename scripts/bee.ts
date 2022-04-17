@@ -227,7 +227,7 @@ export class Bee {
             initialOpacity: 1,
             hue: this.circleProps.hue.value
         };
-        new VanishingCircle(this.currPos, props).show();
+        new VanishingCircle({x: this.currPos.x, y: this.currPos.y}, props).show();
     }
 
     /** Flips the bee's rotation (left/right) based on the pressed keys. */

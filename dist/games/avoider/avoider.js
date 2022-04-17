@@ -12,9 +12,9 @@ class Avoider extends Game {
     constructor(onGameEnded) {
         super(onGameEnded);
         this.initialProps = {
-            generationFrequency: 340,
-            speed: 40,
-            size: 1
+            generationFrequency: 315,
+            speed: 62,
+            size: 1.05
         };
         this.timeAchivements = {
             initialPhasePassed: {
@@ -172,16 +172,16 @@ class Avoider extends Game {
 Avoider.stepFrequency = 1000;
 Avoider.propsStep = {
     generationFrequency: {
-        step: 4,
+        step: 3,
         max: 65,
     },
     speed: {
-        step: 6,
+        step: 5,
         max: 580,
     },
     size: {
-        step: 0.028,
-        max: 3.5
+        step: 0.026,
+        max: 2.9
     }
 };
 GameSite.addGame((endCallback) => new Avoider(endCallback));

@@ -29,22 +29,22 @@ class Avoider extends Game {
     private static readonly stepFrequency = 1000;
     private static readonly propsStep = {
         generationFrequency: {
-            step: 4,
+            step: 3,
             max: 65,
         },
         speed: {
-            step: 6,
+            step: 5,
             max: 580,
         },
         size: {
-            step: 0.028,
-            max: 3.5
+            step: 0.026,
+            max: 2.9
         }
     }
     private readonly initialProps: RandomBallGenerator.Props = {
-        generationFrequency: 340,
-        speed: 40,
-        size: 1
+        generationFrequency: 315,
+        speed: 62,
+        size: 1.05
     }
     private readonly timeAchivements: TimeAchivements = {
         initialPhasePassed: {

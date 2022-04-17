@@ -2,6 +2,7 @@ import {Bee} from "./bee.js";
 import {Utils} from "./utils.js";
 import CollidingObject = CollisionChecker.CollidingObject;
 import {collisionChecker} from "./global";
+import isZero = Utils.isZero;
 
 // Singleton.
 export module CollisionChecker {
@@ -54,6 +55,9 @@ export class CollisionChecker {
             this.objects.forEach(object => {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;
+
+                if (Utils.isZero(rect))
+                    return;
 
                 if (Utils.collides(rect, this.beeElement.getBoundingClientRect())) {
                     if (window.getComputedStyle(object.object.element).opacity === "0")
