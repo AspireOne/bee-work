@@ -32,7 +32,7 @@ export class Bee {
             values: {
                 default: 34,
                 min: 5,
-                max: 300
+                max: 400
             }
         }
     }
@@ -79,7 +79,7 @@ export class Bee {
             values: {
                 default: 15,
                 min: 3,
-                max: 40
+                max: 70
             }
         }
     };

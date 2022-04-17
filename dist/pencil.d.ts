@@ -4,14 +4,13 @@ import { Bee } from "./bee.js";
 export declare class Pencil {
     private static instanceCreated;
     private static minPoints;
-    private readonly delta;
     readonly speed: ModifiableProp;
     private readonly circleProps;
     private readonly designOverlay;
     private readonly closeCallback?;
     private designing;
     private points;
-    private intervalId;
+    private index;
     running: boolean;
     constructor(designOverlay: HTMLDivElement, circleProps: Bee.CircleProps, closeCallback?: () => void);
     start(): void;

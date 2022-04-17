@@ -180,8 +180,8 @@ Avoider.propsStep = {
         max: 580,
     },
     size: {
-        step: 0.026,
-        max: 2.9
+        step: 0.025,
+        max: 2.8
     }
 };
 GameSite.addGame((endCallback) => new Avoider(endCallback));

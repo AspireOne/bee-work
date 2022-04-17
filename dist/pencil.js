@@ -3,7 +3,6 @@ var htmlToElement = Utils.htmlToElement;
 import { VanishingCircle } from "./vanishingCircle.js";
 export class Pencil {
     constructor(designOverlay, circleProps, closeCallback) {
-        this.delta = 10;
         this.speed = {
             value: 12,
             values: {
@@ -14,7 +13,7 @@ export class Pencil {
         };
         this.designing = false;
         this.points = [];
-        this.intervalId = 0;
+        this.index = 0;
         this.running = false;
         if (Pencil.instanceCreated) {
             throw new Error("Pencil can be created only once");
@@ -24,9 +23,7 @@ export class Pencil {
         this.closeCallback = closeCallback;
         this.circleProps = circleProps;
         this.designOverlay = designOverlay;
-        this.designOverlay.addEventListener("mousedown", (e) => {
-            this.designing = true;
-        });
+        this.designOverlay.addEventListener("mousedown", (e) => this.designing = true);
         this.designOverlay.addEventListener("mouseup", (e) => {
             this.designing = false;
             this.clearDesignOverlay();
@@ -50,16 +47,9 @@ export class Pencil {
     }
     changeSpeed(speed) {
         this.speed.value = speed;
-        if (this.running) {
-            clearInterval(this.intervalId);
-            this.startEffect();
-        }
     }
     stop() {
-        if (this.intervalId) {
-            clearInterval(this.intervalId);
-            this.intervalId = 0;
-        }
+        this.index = 0;
         this.running = false;
         this.points = [];
         this.designing = false;
@@ -68,19 +58,19 @@ export class Pencil {
             this.closeCallback();
     }
     startEffect() {
-        let index = 0;
-        this.intervalId = setInterval(() => {
-            if (index >= this.points.length)
-                index = 0;
-            const props = {
-                duration: this.circleProps.durationShift.value,
-                initialOpacity: 1,
-                size: this.circleProps.size.value,
-                hue: this.circleProps.hue.value
-            };
-            new VanishingCircle(this.points[index], props).show();
-            index += this.speed.value;
-        }, this.delta);
+        if (!this.running)
+            return;
+        if (this.index >= this.points.length)
+            this.index = 0;
+        const props = {
+            duration: this.circleProps.durationShift.value,
+            initialOpacity: 1,
+            size: this.circleProps.size.value,
+            hue: this.circleProps.hue.value
+        };
+        new VanishingCircle(this.points[this.index], props).show();
+        this.index += this.speed.value;
+        requestAnimationFrame(this.startEffect.bind(this));
     }
     clearDesignOverlay() {
         this.designOverlay.innerHTML = "<h2>[ ESC ]</h2>";
@@ -99,7 +89,7 @@ export class Pencil {
         this.points.push(point);
     }
     placePoint(point) {
-        const pointElement = htmlToElement(`<img src="../resources/circle-blurred.png" class="point"></img>`);
+        const pointElement = htmlToElement(`<img src="../resources/circle-blurred.png" class="point">`);
         pointElement.classList.add("point");
         Object.assign(pointElement.style, {
             left: point.x + "px",
