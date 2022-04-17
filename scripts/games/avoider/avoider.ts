@@ -135,7 +135,7 @@ class Avoider extends Game {
             throw new Error("Game was attempted to be started but is already running.");
             return;
         }
-        
+
         collisionChecker.delta = 50;
         this.running = true;
         this.startTime = performance.now();

@@ -164,7 +164,7 @@ export var Playground;
         cycleColorButt.classList.replace("on", "off");
     }
     function addSettings(settingsBee, settingsCircle) {
-        addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true, unit: "" });
+        addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true });
         addSetting(settingsBee, bee.acceleration.acceleration, { name: "Acceleration", showValue: true });
         addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true, unit: "ms" });
         addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift / Drawing", showValue: true, unit: "ms" });
@@ -198,7 +198,7 @@ export var Playground;
         const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`);
         const slider = Utils.htmlToElement(`<input class="slider small-slider" type="range" step="${step}" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`);
         const sliderValue = Utils.htmlToElement(`<span class="slider-value">${props.value}</span>`);
-        const sliderUnit = Utils.htmlToElement(`<span class="slider-unit"> ${unit}</span>`);
+        const sliderUnit = Utils.htmlToElement(`<span class="slider-unit"> ${unit !== null && unit !== void 0 ? unit : ""}</span>`);
         const defaultValue = Utils.htmlToElement(`<span class="default-value"> (default: ${props.values.default})</span>`);
         if (name)
             settingDiv.appendChild(nameSpan);
