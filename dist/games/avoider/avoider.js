@@ -145,7 +145,6 @@ class Avoider extends Game {
             return;
         this.running = false;
         this.paused = false;
-        this.totalPassed = 0;
         this.DOMelements.time.innerText = "";
         collisionChecker.delta = CollisionChecker.defaultDelta;
         this.randomBallGenerator.finish();
