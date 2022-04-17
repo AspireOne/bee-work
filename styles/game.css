@@ -13,6 +13,7 @@
     width: 100vw;
     height: 100vh;
     text-align: center;
+    display: none;
 }
 
 #end-screen h1 {
@@ -164,14 +165,12 @@
     display: none;
 }
 
-#game-menu-content {
-    margin-bottom: 10em;
-}
-
 #game-menu-buttons {
     width: 23em;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10em;
+    border: 1px solid red;
 }
 .game-menu-button {
     height: 4.1em;
