@@ -30,7 +30,6 @@ export class Pencil {
         this.designOverlay.addEventListener("mouseup", (e) => {
             this.designing = false;
             this.clearDesignOverlay();
-            console.log(this.points.length);
             if (this.points.length > Pencil.minPoints)
                 this.startEffect();
             else

@@ -89,8 +89,6 @@ class Avoider extends Game {
             this.timeElement.innerText = (this.totalPassed / 1000).toFixed(1) + "s";
         }
         if (this.stepCounter >= Avoider.stepFrequency) {
-            console.log("stepping");
-            console.log(this.randomBallGenerator.props);
             this.stepCounter = 0;
             this.randomBallGenerator.props.generationFrequency -= Avoider.propsStep.generationFrequency;
             this.randomBallGenerator.props.size += Avoider.propsStep.size;

@@ -222,7 +222,6 @@ export class Bee {
         let newY = this.calculateNewY(delta);
         let newX = this.calculateNewX(delta);
         this.currPos = {y: newY, x: newX};
-        console.log(this.currPos);
 
         this.element.style.top = newY + "px";
         this.element.style.left = newX + "px";

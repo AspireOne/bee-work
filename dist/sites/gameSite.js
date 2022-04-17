@@ -89,7 +89,6 @@ export var GameSite;
             case Screen.END_SCREEN:
                 DOMelements.endScreen.screen.style.display = "none";
                 deactivateEndScreenButtons();
-                console.log("deactivated");
                 break;
         }
         currentScreen = screen;

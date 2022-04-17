@@ -41,8 +41,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     portals.registerSidePortals();
 
     const pos = getBeeInitialPos(params);
-    bee.element.style.left = pos.x + "px";
-    bee.element.style.top = pos.y + "px";
+    bee.currPos = pos;
     bee.start();
 
     Utils.addValueToSliders();

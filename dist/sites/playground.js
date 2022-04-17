@@ -112,7 +112,6 @@ export var Playground;
         autopilotButton.addEventListener("mousedown", (e) => handlePilotButtonClick());
         cycleColorButt.addEventListener("click", (e) => colorCycling.intervalId ? stopCyclingColor() : startCyclingColor());
         hueSlide.addEventListener("input", (e) => {
-            console.log(hueSlide.value);
             stopCyclingColor();
             bee.circleProps.hue.value = parseInt(hueSlide.value);
         });
@@ -222,6 +221,7 @@ export var Playground;
             const screenSaverSpeedDecrease = 3;
             const majaBeeSpeedDecrease = 1;
             const modes = 3;
+            // TODO: FIx autopilot.
             autopilotButtonTextSpan.innerHTML = autopilotButtonTextSpan.innerHTML.trim();
             switch (autopilotButtonTextSpan.innerHTML) {
                 case autoPilotOff:
