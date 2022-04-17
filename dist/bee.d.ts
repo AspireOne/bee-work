@@ -8,34 +8,38 @@ export declare module Bee {
     type CircleProps = {
         durationNormal: ModifiableProp;
         durationShift: ModifiableProp;
-        frequency: ModifiableProp;
         size: ModifiableProp;
         hue: ModifiableProp;
     };
     type Props = {
         maxSpeed: ModifiableProp;
-        deltaTime: ModifiableProp;
     };
-}
-declare class Acceleration {
-    currAccelerationX: number;
-    currAccelerationY: number;
-    readonly acceleration: Types.ModifiableProp;
-    constructor(acceleration?: number);
 }
 export declare class Bee {
     currPos: Types.Point;
+    readonly acceleration: {
+        currAccelerationX: number;
+        currAccelerationY: number;
+        acceleration: {
+            value: number;
+            values: {
+                default: number;
+                min: number;
+                max: number;
+            };
+        };
+    };
     /** Properties of the circle that bee creates. */
     readonly circleProps: CircleProps;
     /** Properties of the bee. */
     readonly props: Props;
-    accelerationData: Acceleration;
     pauseUpdates: boolean;
     /** The base bee element. */
     element: HTMLElement;
     /** The time since last circle was created. */
-    private timeFromLastCircle;
-    private updateIntervalId;
+    private animationFrameHandle;
+    private updatesStartTimestamp;
+    private prevUpdateTimestamp;
     private wayX;
     /** Indicates the orientation of the bee (left/right). */
     private scale;
@@ -73,9 +77,9 @@ export declare class Bee {
     /** Calculates the next Y position of the bee. */
     private calculateNewY;
     /**
+     * Corrects the acceleration to be within the max speed.
      * @param acceleration To know the orientation the bee is going.
-     * @returns The max speed (either positive (down/right) or negative (left/top), based on the acceleration).
+     * @returns The corrected acceleration (if needed).
      */
-    private getMaxSpeed;
+    private correctAcceleration;
 }
-export {};

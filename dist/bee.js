@@ -2,30 +2,27 @@ import { VanishingCircle } from "./vanishingCircle.js";
 import { Controls } from "./controls.js";
 import { Types } from "./types.js";
 var WayX = Types.WayX;
-class Acceleration {
-    constructor(acceleration = 0.12) {
-        this.currAccelerationX = 0;
-        this.currAccelerationY = 0;
-        this.acceleration = {
-            value: 0.12,
-            values: {
-                default: 0.12,
-                min: 0.05,
-                max: 2
-            }
-        };
-        this.acceleration.value = acceleration;
-    }
-}
 export class Bee {
     constructor(bee, controls) {
         this.currPos = { y: 0, x: 0 };
+        this.acceleration = {
+            currAccelerationX: 0,
+            currAccelerationY: 0,
+            acceleration: {
+                value: 34,
+                values: {
+                    default: 34,
+                    min: 5,
+                    max: 300
+                }
+            }
+        };
         /** Properties of the circle that bee creates. */
         this.circleProps = {
             durationNormal: {
-                value: 400,
+                value: 500,
                 values: {
-                    default: 400,
+                    default: 500,
                     min: 50,
                     max: 1000
                 }
@@ -36,14 +33,6 @@ export class Bee {
                     default: 2000,
                     min: 1000,
                     max: 4000
-                }
-            },
-            frequency: {
-                value: 9,
-                values: {
-                    default: 9,
-                    min: 7,
-                    max: 15
                 }
             },
             size: {
@@ -66,27 +55,15 @@ export class Bee {
         /** Properties of the bee. */
         this.props = {
             maxSpeed: {
-                value: 7,
+                value: 15,
                 values: {
-                    default: 7,
-                    min: 2,
-                    max: 25
-                }
-            },
-            deltaTime: {
-                value: 8,
-                values: {
-                    default: 8,
-                    min: 1,
-                    max: 20
+                    default: 15,
+                    min: 3,
+                    max: 40
                 }
             }
         };
-        this.accelerationData = new Acceleration();
         this.pauseUpdates = false;
-        /** The time since last circle was created. */
-        this.timeFromLastCircle = 0;
-        this.updateIntervalId = null;
         this.wayX = WayX.NONE;
         /** Indicates the orientation of the bee (left/right). */
         this.scale = 0;
@@ -109,29 +86,39 @@ export class Bee {
     }
     /** Runs VanishingCircle's update loop and the bee's update loop. */
     start() {
-        if (this.updateIntervalId !== null)
+        if (this.animationFrameHandle !== undefined)
             return;
+        // TODO: Move this to global.ts.
         VanishingCircle.runLoop();
-        window.requ;
-        this.updateIntervalId = setInterval(() => {
-            if (!this.pauseUpdates)
-                this.frame();
-        }, this.props.deltaTime.value);
+        requestAnimationFrame(this.step.bind(this));
     }
-    step() {
+    step(timestamp) {
+        if (this.updatesStartTimestamp === undefined)
+            this.updatesStartTimestamp = timestamp;
+        if (this.prevUpdateTimestamp === undefined) {
+            this.prevUpdateTimestamp = timestamp;
+            this.animationFrameHandle = requestAnimationFrame(this.step.bind(this));
+            return;
+        }
+        const elapsed = timestamp - this.prevUpdateTimestamp;
+        const delta = elapsed / 1000;
+        if (!this.pauseUpdates)
+            this.frame(delta);
+        this.prevUpdateTimestamp = timestamp;
+        this.animationFrameHandle = requestAnimationFrame(this.step.bind(this));
     }
     /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop() {
-        if (this.updateIntervalId === null)
+        if (this.animationFrameHandle === undefined)
             return;
+        cancelAnimationFrame(this.animationFrameHandle);
+        this.animationFrameHandle = undefined;
         VanishingCircle.stopLoop();
-        clearInterval(this.updateIntervalId);
-        this.updateIntervalId = null;
     }
     /** Resets all props to their default values. */
     resetSettings() {
         Object.entries(Object.assign(Object.assign({}, this.props), this.circleProps)).forEach(([key, prop]) => prop.value = prop.values.default);
-        this.accelerationData.acceleration.value = this.accelerationData.acceleration.values.default;
+        this.acceleration.acceleration.value = this.acceleration.acceleration.values.default;
     }
     /** Saves the current props to localStorage. */
     saveProps() {
@@ -139,7 +126,7 @@ export class Bee {
         const beeProps = this.createObjectWithValuesFromProps(this.props);
         localStorage.setItem("bee-circleProps", JSON.stringify(circleProps));
         localStorage.setItem("bee-props", JSON.stringify(beeProps));
-        localStorage.setItem("bee-acceleration", this.accelerationData.acceleration.value + "");
+        localStorage.setItem("bee-acceleration", this.acceleration.acceleration.value + "");
     }
     /** Creates an object with only the current values of the props.
      * @param sourceProps The props to create the object from.
@@ -176,26 +163,24 @@ export class Bee {
         }
         let acceleration = localStorage.getItem("bee-acceleration");
         if (acceleration != null)
-            this.accelerationData.acceleration.value = parseFloat(acceleration);
+            this.acceleration.acceleration.value = parseFloat(acceleration);
     }
     /** Updates the bee's position and orientation and places a next circle (if eligible). */
-    frame() {
-        let newY = this.calculateNewY();
-        let newX = this.calculateNewX();
+    frame(delta) {
+        let newY = this.calculateNewY(delta);
+        let newX = this.calculateNewX(delta);
         this.currPos = { y: newY, x: newX };
+        console.log(this.currPos);
         this.element.style.top = newY + "px";
         this.element.style.left = newX + "px";
         this.correctOrientation();
-        if ((this.timeFromLastCircle += this.props.deltaTime.value) >= this.circleProps.frequency.value) {
-            this.timeFromLastCircle = 0;
-            const props = {
-                duration: Controls.keys.floss.pressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
-                size: this.circleProps.size.value,
-                initialOpacity: 1,
-                hue: this.circleProps.hue.value
-            };
-            new VanishingCircle(this.currPos, props).show();
-        }
+        const props = {
+            duration: Controls.keys.floss.pressed ? this.circleProps.durationShift.value : this.circleProps.durationNormal.value,
+            size: this.circleProps.size.value,
+            initialOpacity: 1,
+            hue: this.circleProps.hue.value
+        };
+        new VanishingCircle(this.currPos, props).show();
     }
     /** Flips the bee's rotation (left/right) based on the pressed keys. */
     correctOrientation() {
@@ -209,76 +194,67 @@ export class Bee {
             this.scale = scale;
         }
     }
+    // TODO: Remove this for maxSpeed * scale.
     /** Calculates the next X position of the bee. */
-    calculateNewX() {
-        const currPosX = parseInt(this.element.style.left);
-        const width = this.element.offsetWidth;
-        const maxX = document.body.clientWidth - width;
-        const getUpdatedWay = () => {
-            if (this.accelerationData.currAccelerationX > 0)
-                return WayX.RIGHT;
-            else if (this.accelerationData.currAccelerationX < 0)
-                return WayX.LEFT;
-            else
-                return WayX.NONE;
-        };
-        const updatedWay = getUpdatedWay();
-        let newAcceleration = this.accelerationData.currAccelerationX;
+    calculateNewX(delta) {
+        const maxX = document.body.clientWidth - this.element.offsetWidth;
+        const updatedWay = this.acceleration.currAccelerationX > 0 ? WayX.RIGHT
+            : this.acceleration.currAccelerationX < 0 ? WayX.LEFT : WayX.NONE;
+        let accIncrease = 0;
         if (Controls.keys.left.pressed)
-            newAcceleration -= this.accelerationData.acceleration.value;
+            accIncrease -= this.acceleration.acceleration.value;
         if (Controls.keys.right.pressed)
-            newAcceleration += this.accelerationData.acceleration.value;
-        if (Controls.keys.left.pressed == Controls.keys.right.pressed) {
+            accIncrease += this.acceleration.acceleration.value;
+        if (Controls.keys.left.pressed === Controls.keys.right.pressed) {
             if (updatedWay != this.wayX)
-                newAcceleration = 0;
-            else if (this.accelerationData.currAccelerationX > 0)
-                newAcceleration -= this.accelerationData.acceleration.value;
-            else if (this.accelerationData.currAccelerationX < 0)
-                newAcceleration += this.accelerationData.acceleration.value;
+                this.acceleration.currAccelerationX = 0;
+            else
+                accIncrease = this.acceleration.acceleration.value * -Math.sign(this.acceleration.currAccelerationX);
         }
-        let newPosX = currPosX + newAcceleration;
-        this.accelerationData.currAccelerationX = this.getMaxSpeed(newAcceleration);
+        accIncrease *= delta;
+        const totalAcc = this.acceleration.currAccelerationX + accIncrease;
+        const totalAccCorrected = this.correctAcceleration(totalAcc);
+        this.acceleration.currAccelerationX = totalAccCorrected;
         this.wayX = updatedWay;
+        let newPosX = this.currPos.x + totalAccCorrected;
         if (newPosX < 0) {
             newPosX = 0;
-            this.accelerationData.currAccelerationX = 0;
+            this.acceleration.currAccelerationX = 0;
         }
         else if (newPosX > maxX) {
             newPosX = maxX;
-            this.accelerationData.currAccelerationX = 0;
+            this.acceleration.currAccelerationX = 0;
         }
         return newPosX;
     }
     /** Calculates the next Y position of the bee. */
-    calculateNewY() {
-        const currPosY = parseInt(this.element.style.top);
-        const height = this.element.offsetHeight;
-        const maxY = document.body.clientHeight - height;
-        let newAcceleration = this.accelerationData.currAccelerationY + (Controls.keys.up.pressed
-            ? -this.accelerationData.acceleration.value
-            : this.accelerationData.acceleration.value);
-        let newPosY = currPosY + newAcceleration;
-        this.accelerationData.currAccelerationY = this.getMaxSpeed(newAcceleration);
+    calculateNewY(delta) {
+        const maxY = document.body.clientHeight - this.element.offsetHeight;
+        let accIncrease = this.acceleration.acceleration.value * (Controls.keys.up.pressed ? -1 : 1);
+        accIncrease *= delta;
+        const totalAcc = this.acceleration.currAccelerationY + accIncrease;
+        const totalAccCorrected = this.correctAcceleration(totalAcc);
+        this.acceleration.currAccelerationY = totalAccCorrected;
+        let newPosY = this.currPos.y + totalAccCorrected;
         if (newPosY < 0) {
             newPosY = 0;
-            this.accelerationData.currAccelerationY = 0;
+            this.acceleration.currAccelerationY = 0;
         }
         else if (newPosY > maxY) {
             newPosY = maxY;
-            this.accelerationData.currAccelerationY = 0;
+            this.acceleration.currAccelerationY = 0;
         }
         return newPosY;
     }
     /**
+     * Corrects the acceleration to be within the max speed.
      * @param acceleration To know the orientation the bee is going.
-     * @returns The max speed (either positive (down/right) or negative (left/top), based on the acceleration).
+     * @returns The corrected acceleration (if needed).
      */
-    getMaxSpeed(acceleration) {
-        if (acceleration > this.props.maxSpeed.value)
-            return this.props.maxSpeed.value;
-        else if (acceleration < -this.props.maxSpeed.value)
-            return -this.props.maxSpeed.value;
-        return acceleration;
+    correctAcceleration(acceleration) {
+        return Math.abs(acceleration) > this.props.maxSpeed.value
+            ? this.props.maxSpeed.value * Math.sign(acceleration)
+            : acceleration;
     }
 }
 //# sourceMappingURL=bee.js.map

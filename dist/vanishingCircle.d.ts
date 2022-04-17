@@ -47,6 +47,7 @@ export declare class VanishingCircle {
      * If the interval is already running, this function does nothing.
      */
     static runLoop(): void;
+    private static step;
     /** Stops the interval that updates the opacity of circles every delta time. */
     static stopLoop(): void;
     static update(delta: number): void;

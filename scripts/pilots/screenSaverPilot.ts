@@ -18,7 +18,8 @@ export class ScreenSaverPilot {
             return;
 
         this.running = true;
-        this.id = setInterval(() => this.frame(), this.bee.props.deltaTime.value);
+        // TODO: Switch for requestanimationframe.
+        this.id = setInterval(() => this.frame(), 17);
     }
 
     public stop() {
@@ -44,7 +45,7 @@ export class ScreenSaverPilot {
         } else if (x >= maxX) {
             Controls.changePressState(Controls.keys.right.definition[0], false);
             Controls.changePressState(Controls.keys.left.definition[0], true);
-        } else if (this.bee.accelerationData.currAccelerationX === 0) {
+        } else if (this.bee.acceleration.currAccelerationX === 0) {
             Controls.changePressState(Controls.keys.left.definition[0], true);
         }
 

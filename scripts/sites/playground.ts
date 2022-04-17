@@ -39,6 +39,7 @@ export module Playground {
         name?: string;
         onChange?: (value: number) => void;
         step?: number;
+        unit?: string;
         showValue: boolean;
     }
 
@@ -205,19 +206,12 @@ export module Playground {
     }
 
     function addSettings(settingsBee: HTMLDivElement, settingsCircle: HTMLDivElement) {
-        const onDeltaChange = (value: number) => {
-            bee.props.deltaTime.value = value;
-            bee.stop();
-            bee.start();
-        };
-
-        addSetting(settingsBee, bee.props.maxSpeed, {name: "Speed", showValue: true});
-        addSetting(settingsBee, bee.accelerationData.acceleration, {name: "Acceleration", showValue: true, step: 0.01 });
-        addSetting(settingsBee, bee.props.deltaTime, {name: "Delta", showValue: true, onChange: onDeltaChange});
-        addSetting(settingsCircle, bee.circleProps.durationNormal, {name: "Duration", showValue: true});
-        addSetting(settingsCircle, bee.circleProps.durationShift, {name: "Duration Shift / Drawing", showValue: true});
-        addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true});
-        addSetting(settingsCircle, bee.circleProps.size, {name: "Size", showValue: true});
+        addSetting(settingsBee, bee.props.maxSpeed, {name: "Speed", showValue: true, unit: ""});
+        addSetting(settingsBee, bee.acceleration.acceleration, {name: "Acceleration", showValue: true, unit: "" });
+        addSetting(settingsCircle, bee.circleProps.durationNormal, {name: "Duration", showValue: true, unit: "ms"});
+        addSetting(settingsCircle, bee.circleProps.durationShift, {name: "Duration Shift / Drawing", showValue: true, unit: "ms"});
+        //addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true, unit: "ms/circle"});
+        addSetting(settingsCircle, bee.circleProps.size, {name: "Size", showValue: true, unit: "px"});
     }
 
     function addSetting(toElement: HTMLElement, props: Types.ModifiableProp, {step = 1, ...rest}: SettingProps) {
@@ -246,12 +240,13 @@ export module Playground {
         saveSettingsButt.classList.replace("saved", "unsaved");
     }
 
-    function createSettingElement(props: Types.ModifiableProp, {step, showValue, name}: SettingProps): Setting {
+    function createSettingElement(props: Types.ModifiableProp, {step, showValue, unit, name}: SettingProps): Setting {
         const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`) as HTMLDivElement;
         const nameSpan = Utils.htmlToElement(`<span class="setting-name">${name}:</span>`) as HTMLSpanElement;
         const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`) as HTMLSpanElement;
         const slider = Utils.htmlToElement(`<input class="slider small-slider" type="range" step="${step}" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`) as HTMLInputElement;
         const sliderValue = Utils.htmlToElement(`<span class="slider-value">${props.value}</span>`) as HTMLSpanElement;
+        const sliderUnit = Utils.htmlToElement(`<span class="slider-unit"> ${unit}</span>`) as HTMLSpanElement;
         const defaultValue = Utils.htmlToElement(`<span class="default-value"> (default: ${props.values.default})</span>`) as HTMLSpanElement;
 
         if (name)
@@ -260,6 +255,7 @@ export module Playground {
         sliderContainer.appendChild(slider);
         if (showValue) {
             sliderContainer.appendChild(sliderValue);
+            sliderContainer.appendChild(sliderUnit);
             sliderContainer.appendChild(defaultValue);
         }
 
@@ -293,7 +289,7 @@ export module Playground {
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
-                    bee.accelerationData.acceleration.value += screenSaverAccelerationIncrease;
+                    bee.acceleration.acceleration.value += screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value -= screenSaverSpeedDecrease;
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "3/" + modes;
@@ -301,7 +297,7 @@ export module Playground {
                 case screenSaverOn:
                     screenSaverPilot.stop();
                     portals.setSidePortalsDisplay(true);
-                    bee.accelerationData.acceleration.value -= screenSaverAccelerationIncrease;
+                    bee.acceleration.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;
                     controls.ignoreUserInput = false;

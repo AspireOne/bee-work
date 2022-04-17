@@ -69,7 +69,14 @@ export class VanishingCircle {
         if (this.intervalId != null)
             return;
 
-        this.intervalId = setInterval(() => this.update(this.delta), VanishingCircle.delta);
+        requestAnimationFrame((timestamp) => this.step(timestamp));
+        //this.intervalId = setInterval(() => this.update(this.delta), VanishingCircle.delta);
+    }
+
+    private static step(timestamp: number) {
+        // TODO: Finish this.
+        this.update(17);
+        requestAnimationFrame((timestamp) => this.step(timestamp));
     }
 
     /** Stops the interval that updates the opacity of circles every delta time. */

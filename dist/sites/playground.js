@@ -165,18 +165,12 @@ export var Playground;
         cycleColorButt.classList.replace("on", "off");
     }
     function addSettings(settingsBee, settingsCircle) {
-        const onDeltaChange = (value) => {
-            bee.props.deltaTime.value = value;
-            bee.stop();
-            bee.start();
-        };
-        addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true });
-        addSetting(settingsBee, bee.accelerationData.acceleration, { name: "Acceleration", showValue: true, step: 0.01 });
-        addSetting(settingsBee, bee.props.deltaTime, { name: "Delta", showValue: true, onChange: onDeltaChange });
-        addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true });
-        addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift / Drawing", showValue: true });
-        addSetting(settingsCircle, bee.circleProps.frequency, { name: "Frequency", showValue: true });
-        addSetting(settingsCircle, bee.circleProps.size, { name: "Size", showValue: true });
+        addSetting(settingsBee, bee.props.maxSpeed, { name: "Speed", showValue: true, unit: "" });
+        addSetting(settingsBee, bee.acceleration.acceleration, { name: "Acceleration", showValue: true, unit: "" });
+        addSetting(settingsCircle, bee.circleProps.durationNormal, { name: "Duration", showValue: true, unit: "ms" });
+        addSetting(settingsCircle, bee.circleProps.durationShift, { name: "Duration Shift / Drawing", showValue: true, unit: "ms" });
+        //addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true, unit: "ms/circle"});
+        addSetting(settingsCircle, bee.circleProps.size, { name: "Size", showValue: true, unit: "px" });
     }
     function addSetting(toElement, props, _a) {
         var { step = 1 } = _a, rest = __rest(_a, ["step"]);
@@ -199,12 +193,13 @@ export var Playground;
         setting.parts.sliderValue.innerText = setting.parts.slider.value;
         saveSettingsButt.classList.replace("saved", "unsaved");
     }
-    function createSettingElement(props, { step, showValue, name }) {
+    function createSettingElement(props, { step, showValue, unit, name }) {
         const settingDiv = Utils.htmlToElement(`<div class="setting"></div>`);
         const nameSpan = Utils.htmlToElement(`<span class="setting-name">${name}:</span>`);
         const sliderContainer = Utils.htmlToElement(`<span class="slider-container"></span>`);
         const slider = Utils.htmlToElement(`<input class="slider small-slider" type="range" step="${step}" min="${props.values.min}" max="${props.values.max}" value="${props.value}">`);
         const sliderValue = Utils.htmlToElement(`<span class="slider-value">${props.value}</span>`);
+        const sliderUnit = Utils.htmlToElement(`<span class="slider-unit"> ${unit}</span>`);
         const defaultValue = Utils.htmlToElement(`<span class="default-value"> (default: ${props.values.default})</span>`);
         if (name)
             settingDiv.appendChild(nameSpan);
@@ -212,6 +207,7 @@ export var Playground;
         sliderContainer.appendChild(slider);
         if (showValue) {
             sliderContainer.appendChild(sliderValue);
+            sliderContainer.appendChild(sliderUnit);
             sliderContainer.appendChild(defaultValue);
         }
         return { element: settingDiv, parts: { slider, sliderValue, defaultValue } };
@@ -242,7 +238,7 @@ export var Playground;
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
-                    bee.accelerationData.acceleration.value += screenSaverAccelerationIncrease;
+                    bee.acceleration.acceleration.value += screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value -= screenSaverSpeedDecrease;
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "3/" + modes;
@@ -250,7 +246,7 @@ export var Playground;
                 case screenSaverOn:
                     screenSaverPilot.stop();
                     portals.setSidePortalsDisplay(true);
-                    bee.accelerationData.acceleration.value -= screenSaverAccelerationIncrease;
+                    bee.acceleration.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;
                     controls.ignoreUserInput = false;
