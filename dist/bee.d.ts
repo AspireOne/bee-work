@@ -34,10 +34,11 @@ export declare class Bee {
     /** Properties of the bee. */
     readonly props: Props;
     pauseUpdates: boolean;
+    _running: boolean;
+    get running(): boolean;
+    private set running(value);
     /** The base bee element. */
     element: HTMLElement;
-    /** The time since last circle was created. */
-    private animationFrameHandle;
     private updatesStartTimestamp;
     private prevUpdateTimestamp;
     private wayX;

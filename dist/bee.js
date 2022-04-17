@@ -64,6 +64,7 @@ export class Bee {
             }
         };
         this.pauseUpdates = false;
+        this._running = false;
         this.wayX = WayX.NONE;
         /** Indicates the orientation of the bee (left/right). */
         this.scale = 0;
@@ -84,35 +85,33 @@ export class Bee {
         };
         this.retrieveAndApplySavedProps();
     }
+    get running() { return this._running; }
+    set running(value) { this._running = value; }
     /** Runs VanishingCircle's update loop and the bee's update loop. */
     start() {
-        if (this.animationFrameHandle !== undefined)
+        if (this.running)
             return;
+        this.running = true;
         // TODO: Move this to global.ts.
         VanishingCircle.runLoop();
-        requestAnimationFrame(this.step.bind(this));
+        requestAnimationFrame((timestamp) => {
+            this.updatesStartTimestamp = timestamp;
+            this.prevUpdateTimestamp = timestamp;
+            requestAnimationFrame(this.step.bind(this));
+        });
     }
     step(timestamp) {
-        if (this.updatesStartTimestamp === undefined)
-            this.updatesStartTimestamp = timestamp;
-        if (this.prevUpdateTimestamp === undefined) {
-            this.prevUpdateTimestamp = timestamp;
-            this.animationFrameHandle = requestAnimationFrame(this.step.bind(this));
-            return;
-        }
-        const elapsed = timestamp - this.prevUpdateTimestamp;
-        const delta = elapsed / 1000;
+        const diffBetweenFrames = timestamp - this.prevUpdateTimestamp;
+        const delta = diffBetweenFrames / 1000;
         if (!this.pauseUpdates)
             this.frame(delta);
         this.prevUpdateTimestamp = timestamp;
-        this.animationFrameHandle = requestAnimationFrame(this.step.bind(this));
+        if (this._running)
+            requestAnimationFrame(this.step.bind(this));
     }
     /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop() {
-        if (this.animationFrameHandle === undefined)
-            return;
-        cancelAnimationFrame(this.animationFrameHandle);
-        this.animationFrameHandle = undefined;
+        this.running = false;
         VanishingCircle.stopLoop();
     }
     /** Resets all props to their default values. */
