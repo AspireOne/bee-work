@@ -13,6 +13,7 @@ export declare module Bee {
     };
     type Props = {
         maxSpeed: ModifiableProp;
+        acceleration: ModifiableProp;
     };
 }
 export declare class Bee {
@@ -20,14 +21,6 @@ export declare class Bee {
     readonly acceleration: {
         currAccelerationX: number;
         currAccelerationY: number;
-        acceleration: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
     };
     /** Properties of the circle that bee creates. */
     readonly circleProps: CircleProps;
@@ -77,6 +70,7 @@ export declare class Bee {
     private calculateNewX;
     /** Calculates the next Y position of the bee. */
     private calculateNewY;
+    private static calculateAxis;
     /**
      * Corrects the acceleration to be within the max speed.
      * @param acceleration To know the orientation the bee is going.

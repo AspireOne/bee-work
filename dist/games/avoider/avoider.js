@@ -10,7 +10,7 @@ import { CollisionChecker } from "../../collisionChecker.js";
 /** There are flies coming from all sides, and your duty is to not touch them. They're getting gradually more frequent and faster. */
 class Avoider extends Game {
     constructor(onGameEnded) {
-        super(onGameEnded);
+        super(Avoider.beeProps, onGameEnded);
         this.initialProps = {
             generationFrequency: 315,
             speed: 62,
@@ -82,10 +82,8 @@ class Avoider extends Game {
     get startTime() { return this._startTime; }
     set startTime(value) { this._startTime = value; }
     startGame() {
-        if (this.running) {
+        if (this.running)
             throw new Error("Game was attempted to be started but is already running.");
-            return;
-        }
         collisionChecker.delta = 50;
         this.running = true;
         this.startTime = performance.now();
@@ -169,6 +167,10 @@ class Avoider extends Game {
         this.paused = false;
     }
 }
+Avoider.beeProps = {
+    maxSpeed: 15,
+    acceleration: 100
+};
 Avoider.stepFrequency = 1000;
 Avoider.propsStep = {
     generationFrequency: {

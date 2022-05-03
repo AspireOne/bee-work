@@ -6,6 +6,9 @@ import {Utils} from "../../utils.js";
 import htmlToElement = Utils.htmlToElement;
 import collides = Utils.collides;
 import {CollisionChecker} from "../../collisionChecker.js";
+import {Bee} from "../../bee.js";
+import {Types} from "../../types";
+import KeysMatching = Types.KeysMatching;
 
 type TimeAchivement = Achivement & { timePointSecs: number; }
 
@@ -26,6 +29,10 @@ type TimeAchivements = {
 // - Allow the bee to shoot drops of honey.
 /** There are flies coming from all sides, and your duty is to not touch them. They're getting gradually more frequent and faster. */
 class Avoider extends Game {
+    private static readonly beeProps = {
+        maxSpeed: 15,
+        acceleration: 100
+    };
     private static readonly stepFrequency = 1000;
     private static readonly propsStep = {
         generationFrequency: {
@@ -122,7 +129,7 @@ class Avoider extends Game {
     private set startTime(value: number) { this._startTime = value; }
 
     constructor(onGameEnded: (endScreenData: HTMLElement) => void) {
-        super(onGameEnded);
+        super(Avoider.beeProps, onGameEnded);
         this.DOMelements = {
             game: document.getElementById("game") as HTMLDivElement,
             time: document.getElementById("time-span") as HTMLSpanElement,
@@ -131,10 +138,8 @@ class Avoider extends Game {
     }
 
     public startGame() {
-        if (this.running) {
+        if (this.running)
             throw new Error("Game was attempted to be started but is already running.");
-            return;
-        }
 
         collisionChecker.delta = 50;
         this.running = true;

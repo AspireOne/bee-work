@@ -17,7 +17,8 @@ export module Bee {
     }
 
     export type Props = {
-        maxSpeed: ModifiableProp
+        maxSpeed: ModifiableProp,
+        acceleration: ModifiableProp
     }
 }
 
@@ -27,14 +28,6 @@ export class Bee {
     public readonly acceleration = {
         currAccelerationX: 0,
         currAccelerationY: 0,
-        acceleration: {
-            value: 34,
-            values: {
-                default: 34,
-                min: 5,
-                max: 400
-            }
-        }
     }
     /** Properties of the circle that bee creates. */
     public readonly circleProps: CircleProps = {
@@ -80,6 +73,14 @@ export class Bee {
                 default: 15,
                 min: 3,
                 max: 70
+            }
+        },
+        acceleration: {
+            value: 34,
+            values: {
+                default: 34,
+                min: 5,
+                max: 400
             }
         }
     };
@@ -156,7 +157,7 @@ export class Bee {
     /** Resets all props to their default values. */
     public resetSettings() {
         Object.entries({...this.props, ...this.circleProps}).forEach(([key, prop]) => prop.value = prop.values.default);
-        this.acceleration.acceleration.value = this.acceleration.acceleration.values.default;
+        this.props.acceleration.value = this.props.acceleration.values.default;
     }
 
     /** Saves the current props to localStorage. */
@@ -166,7 +167,7 @@ export class Bee {
 
         localStorage.setItem("bee-circleProps", JSON.stringify(circleProps));
         localStorage.setItem("bee-props", JSON.stringify(beeProps));
-        localStorage.setItem("bee-acceleration", this.acceleration.acceleration.value + "");
+        localStorage.setItem("bee-acceleration", this.props.acceleration.value + "");
     }
 
     /** Creates an object with only the current values of the props.
@@ -208,7 +209,7 @@ export class Bee {
 
         let acceleration = localStorage.getItem("bee-acceleration");
         if (acceleration != null)
-            this.acceleration.acceleration.value = parseFloat(acceleration);
+            this.props.acceleration.value = parseFloat(acceleration);
     }
 
     /** Updates the bee's position and orientation and places a next circle (if eligible). */
@@ -256,14 +257,14 @@ export class Bee {
         let accIncrease = 0;
 
         if (Controls.keys.left.pressed)
-            accIncrease -= this.acceleration.acceleration.value;
+            accIncrease -= this.props.acceleration.value;
         if (Controls.keys.right.pressed)
-            accIncrease += this.acceleration.acceleration.value;
+            accIncrease += this.props.acceleration.value;
         if (Controls.keys.left.pressed === Controls.keys.right.pressed) {
             if (updatedWay != this.wayX)
                 this.acceleration.currAccelerationX = 0;
             else
-                accIncrease = this.acceleration.acceleration.value * -Math.sign(this.acceleration.currAccelerationX);
+                accIncrease = this.props.acceleration.value * -Math.sign(this.acceleration.currAccelerationX);
         }
 
         accIncrease *= delta;
@@ -273,40 +274,40 @@ export class Bee {
         this.acceleration.currAccelerationX = totalAccCorrected;
 
         this.wayX = updatedWay;
-        let newPosX = this.currPos.x + totalAccCorrected;
-
-        if (newPosX < 0) {
-            newPosX = 0;
+        const result = Bee.calculateAxis(maxX, this.currPos.x, totalAccCorrected);
+        if (result.resetAcc)
             this.acceleration.currAccelerationX = 0;
-        } else if (newPosX > maxX) {
-            newPosX = maxX;
-            this.acceleration.currAccelerationX = 0;
-        }
-
-        return newPosX;
+        return result.newPos;
     }
 
     /** Calculates the next Y position of the bee. */
     private calculateNewY(delta: number): number {
         const maxY = document.body.clientHeight - this.element.offsetHeight;
 
-        let accIncrease = this.acceleration.acceleration.value * (Controls.keys.up.pressed ?  -1 : 1);
+        let accIncrease = this.props.acceleration.value * (Controls.keys.up.pressed ?  -1 : 1);
         accIncrease *= delta;
         const totalAcc = this.acceleration.currAccelerationY + accIncrease;
         const totalAccCorrected = this.correctAcceleration(totalAcc);
         this.acceleration.currAccelerationY = totalAccCorrected;
 
-        let newPosY = this.currPos.y + totalAccCorrected;
+        const result = Bee.calculateAxis(maxY, this.currPos.y, totalAccCorrected);
+        if (result.resetAcc)
+            this.acceleration.currAccelerationY = 0;
+        return result.newPos;
+    }
+    private static calculateAxis(max: number, currPos: number, totalAccCorrected: number): {newPos: number, resetAcc: boolean} {
+        const result = {newPos: 0, resetAcc: false};
+        result.newPos = currPos + totalAccCorrected;
 
-        if (newPosY < 0) {
-            newPosY = 0;
-            this.acceleration.currAccelerationY = 0;
-        } else if (newPosY > maxY) {
-            newPosY = maxY;
-            this.acceleration.currAccelerationY = 0;
+        if (result.newPos < 0) {
+            result.newPos = 0;
+            result.resetAcc = true;
+        } else if (result.newPos > max) {
+            result.newPos = max;
+            result.resetAcc = true;
         }
 
-        return newPosY;
+        return result;
     }
 
     /**

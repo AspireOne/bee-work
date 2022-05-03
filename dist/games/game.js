@@ -1,7 +1,8 @@
 import { Utils } from "../utils.js";
 export class Game {
-    constructor(onGameEnded) {
+    constructor(beeProps, onGameEnded) {
         this.onGameEnded = onGameEnded;
+        this.beeProps = beeProps;
         this.DOMElements = {
             achivement: document.getElementById("achivement"),
             achivementName: document.getElementById("achivement-name"),

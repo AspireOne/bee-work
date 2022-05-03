@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="module" src="../dist/global.js"></script>
+    <script type="module" src="../dist/sites/gameSite.js"></script>
+    <script type="module" src="../dist/sites/avoider.js"></script>
+    <script type="module" src="../dist/games/avoider/avoider.js"></script>
+    <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="../styles/game.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="../styles/avoider.css" type="text/css" media="all"/>
+</head>
+<body>
+<div id="game-text">
+    <h1>Follower</h1>
+    <p>Follow the bee with your cursor!</p>
+</div>
+<p id="counter"></p>
+
+<div id="menu" class="side-by-side">
+    <div id="portal-home" target="games.html" noposition class="side-by-side side-portal portal-right">
+        <div class="portal-inner-wrapper">
+            <p>Games</p>
+            <img src="../resources/portal.png" id="portal-home-img"/>
+        </div>
+    </div>
+
+    <div id="score-table" class="scroll">
+        <div class="side-by-side" id="score-table-selection">
+            <div id="score-table-local-butt" class="score-table-selection-option on">LOCAL</div>
+            <div id="score-table-online-butt" class="score-table-selection-option">ONLINE</div>
+        </div>
+        <div id="score-table-rows">
+            <!--<div class="score-table-row">
+                <div class="side-by-side">
+                    <p class="score-rank">#1</p>
+                    <div>
+                        <p class="score-name">Aspirateur</p>
+                        <p class="score-date">10.04.2022 16:24</p>
+                    </div>
+                    <div class="score-data">
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+
+    <div id="top-score-header">
+        <div id="scores-div" class="side-by-side">
+            <div>
+                <h1>Your best:</h1>
+                <h2>time: 151.51</h2>
+            </div>
+            <div>
+                <h1>Online best:</h1>
+                <h2>time: 151.51</h2>
+            </div>
+        </div>
+        <button title="Fly over me!" class="collide-button" id="play-button">Play</button>
+    </div>
+</div>
+
+<!-- Maybe move this to game. -->
+<div id="game-menu">
+    <div id="game-menu-buttons">
+        <button class="button game-menu-button" id="resume-button">Resume</button>
+        <button class="button game-menu-button" id="leave-button">Leave</button>
+    </div>
+</div>
+
+<div id="end-screen">
+    <h1>Game over</h1>
+    <div id="end-screen-buttons" class="side-by-side">
+        <button class="collide-button" id="main-menu-butt" title="Fly over me!">Go back to main menu</button>
+        <button class="collide-button" id="restart-butt" title="Fly over me!">Restart</button>
+    </div>
+    <h2>Score:</h2>
+    <div id="end-screen-game-data"></div>
+</div>
+
+
+<div id="achivement">
+    <h1 id="achivement-name"></h1>
+    <p id="achivement-description"></p>
+</div>
+<!-- This is game specific. -->
+<div id="game">
+    <div id="time">
+        passed: <span id="time-span"></span>
+    </div>
+</div>
+</body>
+</html>

@@ -1,9 +1,15 @@
 import {Utils} from "../utils.js";
+import {Bee} from "../bee.js";
+import {bee} from "../global.js";
 
 export type Achivement = {
     name: string;
     description: string;
     passed: boolean;
+}
+
+type BeePropsValues = {
+    [key: string]: number;
 }
 
 export abstract class Game {
@@ -12,6 +18,7 @@ export abstract class Game {
     public abstract pauseGame(): void;
     public abstract startGame(): void;
     public abstract running: boolean;
+    public readonly beeProps: BeePropsValues;
     protected readonly onGameEnded: (endScreenData: HTMLElement) => void;
 
     private DOMElements: {
@@ -20,8 +27,10 @@ export abstract class Game {
         achivementDescription: HTMLElement,
     };
 
-    protected constructor(onGameEnded: (endScreenData: HTMLElement) => void) {
+    protected constructor(beeProps: BeePropsValues, onGameEnded: (endScreenData: HTMLElement) => void) {
         this.onGameEnded = onGameEnded;
+        this.beeProps = beeProps;
+
         this.DOMElements = {
             achivement: document.getElementById("achivement") as HTMLElement,
             achivementName: document.getElementById("achivement-name") as HTMLElement,

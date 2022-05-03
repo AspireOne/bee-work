@@ -14,7 +14,7 @@ type Ball = {
     currPos: Point;
 };
 
-enum Side { LEFT, RIGHT, TOP, BOTTOM, NONE };
+enum Side { LEFT, RIGHT, TOP, BOTTOM, NONE }
 
 export module RandomBallGenerator {
     export type Props = {

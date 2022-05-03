@@ -137,7 +137,7 @@ export class Portals {
             }
             if (height < targetHeight - this.appearAnimation.step) {
                 portal.style.height = (height += this.appearAnimation.step) + "px";
-                portal.style.top = (portal.getBoundingClientRect().top - this.appearAnimation.step/2) + "px";
+                portal.style.top = (portal.getBoundingClientRect().top - this.appearAnimation.step / 2) + "px";
             }
 
             if (width >= targetWidth - (this.appearAnimation.step - 1) && height >= targetHeight - (this.appearAnimation.step - 1)) {
@@ -191,7 +191,7 @@ export class Portals {
                 props.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
             }
 
-            window.location.assign(props.target); //  TODO: window.location.replace(props.target);
+            window.location.assign(props.target.href); //  TODO: window.location.replace(props.target);
         }
         collisionChecker.add({element: props.collisionElement, onCollisionEnter: onCollision.bind(this)});
     }
