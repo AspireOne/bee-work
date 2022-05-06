@@ -86,10 +86,10 @@ export class Bee {
     };
     
     public pauseUpdates: boolean = false;
-    public _running: boolean = false;
+    private _running: boolean = false;
 
     public get running(): boolean {return this._running;}
-    private set running(value: boolean) {this._running = value;}
+    public set running(value: boolean) {this._running = value;}
     /** The base bee element. */
     public element: HTMLElement;
     private updatesStartTimestamp: number | undefined;

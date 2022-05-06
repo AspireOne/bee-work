@@ -121,7 +121,7 @@ body * {
 }
 
 #bee {
-    width: 3.5%;
+    width: 70px; /* 2.5 px */
     height: auto;
     position: absolute;
     visibility: hidden;

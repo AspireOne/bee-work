@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <script type="module" src="../dist/global.js"></script>
     <script type="module" src="../dist/sites/gameSite.js"></script>
-    <script type="module" src="../dist/sites/avoider.js"></script>
-    <script type="module" src="../dist/games/avoider/avoider.js"></script>
+    <script type="module" src="../dist/sites/follower.js"></script>
+    <script type="module" src="../dist/games/follower/follower.js"></script>
     <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
     <link rel="stylesheet" href="../styles/game.css" type="text/css" media="all"/>
-    <link rel="stylesheet" href="../styles/avoider.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="../styles/follower.css" type="text/css" media="all"/>
 </head>
 <body>
+<!--This is game specific-->
 <div id="game-text">
     <h1>Follower</h1>
     <p>Follow the bee with your cursor!</p>
@@ -86,7 +87,7 @@
 <!-- This is game specific. -->
 <div id="game">
     <div id="time">
-        passed: <span id="time-span"></span>
+        score: <span id="score-span"></span> acc: <span id="accuracy-span"></span>
     </div>
 </div>
 </body>

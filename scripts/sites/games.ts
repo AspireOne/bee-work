@@ -1,7 +1,11 @@
 import {modules, portals} from "../global.js";
 import {Portals} from "../portals.js";
+import {Types} from "../types";
+import {Utils} from "../utils";
 
 export module Games {
+    import Point = Types.Point;
+    import randomIntFromInterval = Utils.randomIntFromInterval;
     modules.push(run);
 
     function run() {
