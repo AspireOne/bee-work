@@ -59,62 +59,31 @@ class Avoider extends Game {
                 passed: false
             },
         };
-        this.lastPause = { start: 0, stop: 0 };
         this.updateTimeCounter = 0;
         this.stepCounter = 0;
-        this.pauseTime = 0;
-        this._running = false;
-        this._paused = false;
-        this._totalPassed = 0;
-        this._startTime = 0;
         this.DOMelements = {
             game: document.getElementById("game"),
             time: document.getElementById("time-span"),
         };
         this.randomBallGenerator = new RandomBallGenerator(this.DOMelements.game, this.initialProps, () => this.handleCollision());
     }
-    get running() { return this._running; }
-    set running(value) { this._running = value; }
-    get paused() { return this._paused; }
-    set paused(value) { this._paused = value; }
-    get totalPassed() { return this._totalPassed; }
-    set totalPassed(value) { this._totalPassed = value; }
-    get startTime() { return this._startTime; }
-    set startTime(value) { this._startTime = value; }
     startGame() {
-        if (this.running)
-            throw new Error("Game was attempted to be started but is already running.");
+        super.updateMethod = this.onUpdate;
         collisionChecker.delta = 50;
-        this.running = true;
-        this.startTime = performance.now();
-        requestAnimationFrame((timestamp) => {
-            this.updatesStartTimestamp = timestamp;
-            this.prevUpdateTimestamp = timestamp;
-            requestAnimationFrame(this.step.bind(this));
-        });
+        super.startGame();
     }
-    step(timestamp) {
-        const diffBetweenFrames = timestamp - this.prevUpdateTimestamp;
-        const delta = diffBetweenFrames / 1000;
-        if (!this.paused)
-            this.update(delta, diffBetweenFrames);
-        this.prevUpdateTimestamp = timestamp;
-        if (this.running)
-            requestAnimationFrame(this.step.bind(this));
+    stopGame() {
+        super.stopGame();
+        this.DOMelements.time.innerText = "";
+        collisionChecker.delta = CollisionChecker.defaultDelta;
+        this.randomBallGenerator.finish();
     }
-    update(delta, diffBetweenFrames) {
+    onUpdate(delta, diffBetweenFrames) {
         this.randomBallGenerator.update(delta, diffBetweenFrames);
         this.updateTimeCounter += diffBetweenFrames;
         this.stepCounter += diffBetweenFrames;
         if (this.updateTimeCounter >= 100) {
-            // Base time counting on performance.now(), not on javascript setinterval, because that's not precise.
-            if (this.lastPause.stop !== 0) {
-                const pause = this.lastPause.stop - this.lastPause.start;
-                this.pauseTime += pause;
-                this.lastPause = { start: 0, stop: 0 };
-            }
             this.updateTimeCounter = 0;
-            this.totalPassed = (performance.now() - this.startTime) - this.pauseTime;
             this.DOMelements.time.innerText = (this.totalPassed / 1000).toFixed(1) + "s";
         }
         if (this.stepCounter >= Avoider.stepFrequency) {
@@ -138,15 +107,6 @@ class Avoider extends Game {
                     super.showAchivement(value);
         }
     }
-    stopGame() {
-        if (!this.running)
-            return;
-        this.running = false;
-        this.paused = false;
-        this.DOMelements.time.innerText = "";
-        collisionChecker.delta = CollisionChecker.defaultDelta;
-        this.randomBallGenerator.finish();
-    }
     handleCollision() {
         this.stopGame();
         this.handleGameFinish();
@@ -154,22 +114,10 @@ class Avoider extends Game {
     handleGameFinish() {
         this.onGameEnded(htmlToElement("<p>You survived for " + (this.totalPassed / 1000).toFixed(1) + " seconds.</p>"));
     }
-    pauseGame() {
-        if (this.paused)
-            return;
-        this.paused = true;
-        this.lastPause.start += performance.now();
-    }
-    resumeGame() {
-        if (!this.paused)
-            return;
-        this.lastPause.stop += performance.now();
-        this.paused = false;
-    }
 }
 Avoider.beeProps = {
-    maxSpeed: 15,
-    acceleration: 100
+    maxSpeed: 11,
+    acceleration: 70
 };
 Avoider.stepFrequency = 1000;
 Avoider.propsStep = {

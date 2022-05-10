@@ -155,7 +155,8 @@
     gap: 2em;
 }
 
-#play-button {
+/* Seems like it does nothing. */
+/*#play-button {
     cursor: unset;
 }
 
@@ -165,6 +166,10 @@
 
 #play-button.collided {
     background-color: #657eff;
+}*/
+
+#play-button {
+    width: 19em;
 }
 
 #menu .collide-button {
@@ -175,8 +180,8 @@
     opacity: 0;
 
     /* TODO: Revert this. */
-    animation: 1s fade-in 4s forwards;
-    /*animation: 1s fade-in 0s forwards;*/
+    /*animation: 1s fade-in 4s forwards;*/
+    animation: 1s fade-in 0s forwards;
 }
 
 #game {

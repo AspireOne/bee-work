@@ -27,9 +27,9 @@ export declare class Bee {
     /** Properties of the bee. */
     readonly props: Props;
     pauseUpdates: boolean;
-    _running: boolean;
+    private _running;
     get running(): boolean;
-    private set running(value);
+    set running(value: boolean);
     /** The base bee element. */
     element: HTMLElement;
     private updatesStartTimestamp;

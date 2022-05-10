@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script type="module" src="../dist/global.js"></script>
     <script type="module" src="../dist/sites/gameSite.js"></script>
-    <script type="module" src="../dist/sites/follower.js"></script>
+    <!--<script type="module" src="../dist/sites/follower.js"></script>-->
     <script type="module" src="../dist/games/follower/follower.js"></script>
     <link rel="stylesheet" href="../styles/global/global.css" type="text/css" media="all"/>
     <link rel="stylesheet" href="../styles/game.css" type="text/css" media="all"/>
@@ -50,11 +50,11 @@
         <div id="scores-div" class="side-by-side">
             <div>
                 <h1>Your best:</h1>
-                <h2>time: 151.51</h2>
+                <h2>time: 50s | accuracy: 90%</h2>
             </div>
             <div>
                 <h1>Online best:</h1>
-                <h2>time: 151.51</h2>
+                <h2>time: 50s | accuracy: 90%</h2>
             </div>
         </div>
         <button title="Fly over me!" class="collide-button" id="play-button">Play</button>
@@ -87,7 +87,7 @@
 <!-- This is game specific. -->
 <div id="game">
     <div id="time">
-        score: <span id="score-span"></span> acc: <span id="accuracy-span"></span>
+        time: <span id="time-span"></span> acc: <span id="accuracy-span"></span>
     </div>
 </div>
 </body>
