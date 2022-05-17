@@ -5,3 +5,4 @@
 - Shapes (circle, square, your own - you will draw it and the bee will follow it). You could draw a name like that.
 
 - worms, kterým se musíš vyhýbat. taky mají ten circle efekt.
+-kuličky které tě budou pronásledovat a budou se spawnovat další

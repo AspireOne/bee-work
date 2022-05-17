@@ -28,9 +28,9 @@ export class Bee {
         currAccelerationX: 0,
         currAccelerationY: 0,
         acceleration: {
-            value: 34,
+            value: 29,
             values: {
-                default: 34,
+                default: 29,
                 min: 5,
                 max: 400
             }
@@ -75,9 +75,9 @@ export class Bee {
     /** Properties of the bee. */
     public readonly props: Props = {
         maxSpeed: {
-            value: 15,
+            value: 12,
             values: {
-                default: 15,
+                default: 12,
                 min: 3,
                 max: 70
             }

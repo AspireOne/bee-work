@@ -9,7 +9,7 @@
     display: flex; /* To align the items in the center of the container */
     justify-content: center; /* Align horizontally. */
     align-items: center; /* Align vertically. */
-    position: absolute; /* To position game cicles randomly on the screen without affecting the document flow. */
+    /*position: absolute; !* To position game cicles randomly on the screen without affecting the document flow. *!*/
 }
 
 .game-circle p {

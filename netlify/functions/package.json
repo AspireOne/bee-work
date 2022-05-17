@@ -1,0 +1,23 @@
+{
+  "name": "bee-work",
+  "version": "1.0.0",
+  "description": "bee-work functions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AspireOne/bee-work.git"
+  },
+  "author": "Matěj 'AspireOne' Pešl <matejpesl1@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AspireOne/bee-work/issues"
+  },
+  "homepage": "https://github.com/AspireOne/bee-work#readme",
+  "dependencies": {
+    "@netlify/functions": "^1.0.0",
+    "mongodb": "^4.6.0"
+  }
+}

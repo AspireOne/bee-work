@@ -148,6 +148,20 @@
     margin-top: 5em;
 }
 
+#menu-content {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#game-description {
+    margin-top: 5em;
+}
+
+#game-description {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #top-score-header .button {
     margin-top: 5em;
 }
@@ -175,8 +189,8 @@
     opacity: 0;
 
     /* TODO: Revert this. */
-    animation: 1s fade-in 4s forwards;
-    /*animation: 1s fade-in 0s forwards;*/
+    /*animation: 1s fade-in 4s forwards;*/
+    animation: 1s fade-in 0s forwards;
 }
 
 #game {
