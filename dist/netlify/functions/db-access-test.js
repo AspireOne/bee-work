@@ -8,18 +8,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { MongoClient, ServerApiVersion } from 'mongodb';
+const mongodbPassword = process.env.MONGODB_PASSWORD; // Works.
+const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
+    const movie = yield findMovie();
     return {
         statusCode: 200,
-        body: JSON.stringify({ message: "Hello World" }),
+        body: JSON.stringify({ message: "Hello World", movie: movie }),
     };
 });
-const uri = "mongodb+srv://Aspire:<password>@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-    const collection = client.db("test").collection("devices");
-    // perform actions on the collection object
-    client.close();
-});
+function findMovie() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let movie = null;
+        const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
+        try {
+            yield client.connect();
+            const database = client.db("sample_mflix");
+            const movies = database.collection("movies");
+            const query = { title: "The Room" };
+            movie = yield movies.findOne(query);
+            // since this method returns the matched document, not a cursor, print it directly
+        }
+        finally {
+            yield client.close();
+        }
+        return movie;
+    });
+}
 export { handler };
 //# sourceMappingURL=db-access-test.js.map

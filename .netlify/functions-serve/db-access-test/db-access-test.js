@@ -1,0 +1,1 @@
+module.exports = require('./src/netlify/functions/db-access-test.js')
