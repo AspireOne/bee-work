@@ -20,5 +20,5 @@ export declare class Pencil {
     private clearDesignOverlay;
     private placePointAndSmooth;
     private placePoint;
-    private getPointsBetween;
+    private static getPointsBetween;
 }

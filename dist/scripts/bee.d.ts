@@ -13,6 +13,7 @@ export declare module Bee {
     };
     type Props = {
         maxSpeed: ModifiableProp;
+        acceleration: ModifiableProp;
     };
 }
 export declare class Bee {
@@ -34,9 +35,9 @@ export declare class Bee {
     /** Properties of the bee. */
     readonly props: Props;
     pauseUpdates: boolean;
-    _running: boolean;
+    private _running;
     get running(): boolean;
-    private set running(value);
+    set running(value: boolean);
     /** The base bee element. */
     element: HTMLElement;
     private updatesStartTimestamp;
@@ -77,6 +78,7 @@ export declare class Bee {
     private calculateNewX;
     /** Calculates the next Y position of the bee. */
     private calculateNewY;
+    private static calculateAxis;
     /**
      * Corrects the acceleration to be within the max speed.
      * @param acceleration To know the orientation the bee is going.
