@@ -1,5 +1,8 @@
 /** Contains globally usable types. */
 export declare module Types {
+    type KeysMatching<T, V> = {
+        [K in keyof T]-?: T[K] extends V ? K : never;
+    }[keyof T];
     type Point = {
         x: number;
         y: number;

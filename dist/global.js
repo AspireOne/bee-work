@@ -31,8 +31,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     document.body.appendChild(beeElement);
     collisionChecker.startChecking();
     portals.registerSidePortals();
-    const pos = getBeeInitialPos(params);
-    bee.currPos = pos;
+    bee.currPos = getBeeInitialPos(params);
     bee.start();
     Utils.addValueToSliders();
     registerCollideButtons();

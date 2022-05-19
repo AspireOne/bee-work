@@ -3,9 +3,8 @@ import {Controls} from "./controls.js";
 import {Portals} from "./portals.js";
 import {Utils} from "./utils.js";
 import {Types} from "./types.js";
-import {VanishingCircle} from "./vanishingCircle.js";
-import Point = Types.Point;
 import {CollisionChecker} from "./collisionChecker.js";
+import Point = Types.Point;
 
 export const modules: (() => void)[] = [];
 export const controls = new Controls();
@@ -40,8 +39,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     collisionChecker.startChecking();
     portals.registerSidePortals();
 
-    const pos = getBeeInitialPos(params);
-    bee.currPos = pos;
+    bee.currPos = getBeeInitialPos(params);
     bee.start();
 
     Utils.addValueToSliders();

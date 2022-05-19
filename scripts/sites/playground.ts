@@ -206,7 +206,7 @@ export module Playground {
 
     function addSettings(settingsBee: HTMLDivElement, settingsCircle: HTMLDivElement) {
         addSetting(settingsBee, bee.props.maxSpeed, {name: "Speed", showValue: true});
-        addSetting(settingsBee, bee.acceleration.acceleration, {name: "Acceleration", showValue: true });
+        addSetting(settingsBee, bee.props.acceleration, {name: "Acceleration", showValue: true });
         addSetting(settingsCircle, bee.circleProps.durationNormal, {name: "Duration", showValue: true, unit: "ms"});
         addSetting(settingsCircle, bee.circleProps.durationShift, {name: "Duration Shift / Drawing", showValue: true, unit: "ms"});
         //addSetting(settingsCircle, bee.circleProps.frequency, {name: "Frequency", showValue: true, unit: "ms/circle"});
@@ -289,7 +289,7 @@ export module Playground {
                     autopilot.stop();
                     screenSaverPilot.start();
                     bee.props.maxSpeed.value += majaBeeSpeedDecrease;
-                    bee.acceleration.acceleration.value += screenSaverAccelerationIncrease;
+                    bee.props.acceleration.value += screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value -= screenSaverSpeedDecrease;
                     controls.ignoreUserInput = true;
                     pilotOrderText.innerText = "3/" + modes;
@@ -297,7 +297,7 @@ export module Playground {
                 case screenSaverOn:
                     screenSaverPilot.stop();
                     portals.setSidePortalsDisplay(true);
-                    bee.acceleration.acceleration.value -= screenSaverAccelerationIncrease;
+                    bee.props.acceleration.value -= screenSaverAccelerationIncrease;
                     bee.props.maxSpeed.value += screenSaverSpeedDecrease;
                     autopilotButtonTextSpan.innerHTML = autoPilotOff;
                     controls.ignoreUserInput = false;

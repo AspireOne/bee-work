@@ -138,6 +138,20 @@ export module GameSite {
         if (gameInstance)
             throw new Error("Game is already assigned.");
         getGameFunc = getGameFunction;
+        gameInstance = getGameFunc((endScreenData: HTMLElement) => onGameFinished(endScreenData));
+
+        modules.push(() => assignToBee());
+
+        const assignToBee = () => {
+            // Assign game-specific bee properties to the bee.
+            for (const key in gameInstance.beeProps) {
+                if ((bee.props as any)[key].value == null) {
+                    console.warn("Bee property '" + key + "', defined in gameInstance, doesnt exist on the bee.");
+                    continue;
+                }
+                (bee.props as any)[key].value = gameInstance.beeProps[key];
+            }
+        }
     }
 
     function startGame() {

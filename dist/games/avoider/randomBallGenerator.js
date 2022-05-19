@@ -10,7 +10,6 @@ var Side;
     Side[Side["BOTTOM"] = 3] = "BOTTOM";
     Side[Side["NONE"] = 4] = "NONE";
 })(Side || (Side = {}));
-;
 export class RandomBallGenerator {
     constructor(div, props, onCollision) {
         this.balls = [];

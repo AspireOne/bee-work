@@ -26,10 +26,8 @@ export class Pencil {
     public running: boolean = false;
     
     constructor(designOverlay: HTMLDivElement, circleProps: Bee.CircleProps, closeCallback?: () => void) {
-        if (Pencil.instanceCreated) {
+        if (Pencil.instanceCreated)
             throw new Error("Pencil can be created only once");
-            return;
-        }
         Pencil.instanceCreated = true;
 
         this.closeCallback = closeCallback;
@@ -102,7 +100,7 @@ export class Pencil {
     private placePointAndSmooth(e: MouseEvent) {
         const point = {x: e.clientX, y: e.clientY };
         const prevPoint = this.points[this.points.length - 1] ?? point;
-        const pointsBetween = this.getPointsBetween(point, prevPoint);
+        const pointsBetween = Pencil.getPointsBetween(point, prevPoint);
         pointsBetween.forEach(p => {
             this.points.push(p);
             this.placePoint(p);
@@ -122,7 +120,7 @@ export class Pencil {
         this.designOverlay.appendChild(pointElement);
     }
 
-    private getPointsBetween(a: Point, b: Point): Point[] {
+    private static getPointsBetween(a: Point, b: Point): Point[] {
         const points: Point[] = [];
         const dx = a.x - b.x;
         const dy = a.y - b.y;

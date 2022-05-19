@@ -15,10 +15,8 @@ export class Pencil {
         this.points = [];
         this.index = 0;
         this.running = false;
-        if (Pencil.instanceCreated) {
+        if (Pencil.instanceCreated)
             throw new Error("Pencil can be created only once");
-            return;
-        }
         Pencil.instanceCreated = true;
         this.closeCallback = closeCallback;
         this.circleProps = circleProps;
@@ -80,7 +78,7 @@ export class Pencil {
         var _a;
         const point = { x: e.clientX, y: e.clientY };
         const prevPoint = (_a = this.points[this.points.length - 1]) !== null && _a !== void 0 ? _a : point;
-        const pointsBetween = this.getPointsBetween(point, prevPoint);
+        const pointsBetween = Pencil.getPointsBetween(point, prevPoint);
         pointsBetween.forEach(p => {
             this.points.push(p);
             this.placePoint(p);
@@ -97,7 +95,7 @@ export class Pencil {
         });
         this.designOverlay.appendChild(pointElement);
     }
-    getPointsBetween(a, b) {
+    static getPointsBetween(a, b) {
         const points = [];
         const dx = a.x - b.x;
         const dy = a.y - b.y;
