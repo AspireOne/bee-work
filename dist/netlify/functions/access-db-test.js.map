@@ -1,1 +1,0 @@
-{"version":3,"file":"access-db-test.js","sourceRoot":"","sources":["../../../netlify/functions/access-db-test.ts"],"names":[],"mappings":";;;;;;;;;;AAAA,OAAO,CAAC,OAAO,GAAG,UAAgB,KAAK,EAAE,OAAO;;QAC5C,OAAO;YACH,UAAU,EAAE,GAAG;YACf,IAAI,EAAE,IAAI,CAAC,SAAS,CAAC,EAAE,OAAO,EAAE,aAAa,EAAE,CAAC;SACnD,CAAC;IACN,CAAC;CAAA,CAAA"}
