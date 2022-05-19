@@ -14,7 +14,6 @@ const handler: Handler = async (event, context) => {
 
 async function findMovie() {
     let movie = null;
-
     const client = new MongoClient(uri, { serverApi: ServerApiVersion.v1 });
     try {
         await client.connect();
