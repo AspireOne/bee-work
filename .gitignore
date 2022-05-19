@@ -1,2 +1,3 @@
 netlify.toml
 netlify/functions/node_modules
+dist
