@@ -26565,7 +26565,6 @@ var handler = async (event, context) => {
 };
 async function findMovie() {
   let movie = null;
-  setTimeout;
   const client = new import_mongodb.MongoClient(uri);
   try {
     await client.connect();

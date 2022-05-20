@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import {FindOptions, MongoClient, ServerApiVersion, WithId} from 'mongodb';
+import {FindOptions, MongoClient, MongoClientOptions, ServerApiVersion, WithId} from 'mongodb';
 
 const mongodbPassword = process.env.MONGODB_PASSWORD;
 const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
@@ -14,8 +14,8 @@ const handler: Handler = async (event, context) => {
 
 async function findMovie() {
     let movie = null;
-    setTimeout
     const client = new MongoClient(uri);
+
     try {
         await client.connect();
         const database = client.db("sample_mflix");
