@@ -26557,10 +26557,6 @@ var import_mongodb = __toModule(require_lib3());
 var mongodbPassword = process.env.MONGODB_PASSWORD;
 var uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
 var handler = async (event, context) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ message: "Hello World" })
-  };
   const movie = await findMovie();
   return {
     statusCode: 200,
