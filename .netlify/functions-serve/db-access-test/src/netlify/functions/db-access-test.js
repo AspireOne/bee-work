@@ -26565,7 +26565,8 @@ var handler = async (event, context) => {
 };
 async function findMovie() {
   let movie = null;
-  const client = new import_mongodb.MongoClient(uri, { serverApi: import_mongodb.ServerApiVersion.v1 });
+  setTimeout;
+  const client = new import_mongodb.MongoClient(uri);
   try {
     await client.connect();
     const database = client.db("sample_mflix");
