@@ -1,13 +1,13 @@
 import {Game} from "../game.js";
-import {GameSite} from "../../sites/gameSite";
+import {GameSite} from "../../sites/gameSite.js";
 
 class Follower extends Game {
     private static readonly beeProps = {
         maxSpeed: 11,
         acceleration: 70
     };
-    public Follower(onGameEnded: (endScreenData: HTMLElement) => void) {
-        super(Follower.beeProps, onGameEnded());
+    constructor(onGameEnded: (endScreenData: HTMLElement) => void) {
+        super(Follower.beeProps, onGameEnded);
     }
 
     pauseGame(): void {
