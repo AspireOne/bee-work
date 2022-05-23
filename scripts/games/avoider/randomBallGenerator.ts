@@ -1,5 +1,5 @@
 import {collisionChecker, modules} from "../../global.js";
-import {Utils} from "../../utils.js";
+import {Utils} from "../../utils/utils.js";
 import htmlToElement = Utils.htmlToElement;
 import {Types} from "../../types.js";
 import Point = Types.Point;

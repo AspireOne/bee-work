@@ -1,6 +1,6 @@
 import {Bee} from "../bee.js";
 import {Controls} from "../controls.js";
-import {Utils} from "../utils.js";
+import {Utils} from "../utils/utils.js";
 import {Types} from "../types.js";
 
 export class Autopilot {
@@ -31,7 +31,7 @@ export class Autopilot {
             return;
         this.running = true;
 
-        this.intervalId = setInterval(() => {
+        this.intervalId = window.window.setInterval(() => {
             this.updateX();
             this.updateY();
         }, Autopilot.delta);

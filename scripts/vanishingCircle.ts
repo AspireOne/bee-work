@@ -70,7 +70,7 @@ export class VanishingCircle {
             return;
 
         requestAnimationFrame((timestamp) => this.step(timestamp));
-        //this.intervalId = setInterval(() => this.update(this.delta), VanishingCircle.delta);
+        //this.intervalId = window.setInterval(() => this.update(this.delta), VanishingCircle.delta);
     }
 
     private static step(timestamp: number) {

@@ -1,7 +1,7 @@
 import { Bee } from "./bee.js";
 import { Controls } from "./controls.js";
 import { Portals } from "./portals.js";
-import { Utils } from "./utils.js";
+import { Utils } from "./utils/utils.js";
 import { CollisionChecker } from "./collisionChecker.js";
 export const modules = [];
 export const controls = new Controls();
@@ -47,7 +47,7 @@ function registerCollideButtons() {
             unremovable: true,
             onCollisionEnter: () => {
                 realButt.classList.add("over");
-                id = setTimeout(() => realButt.classList.remove("over"), 700);
+                id = window.setTimeout(() => realButt.classList.remove("over"), 700);
             },
             onCollisionLeave: () => {
                 realButt.classList.remove("over");

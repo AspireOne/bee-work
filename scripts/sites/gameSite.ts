@@ -1,5 +1,5 @@
 import {bee, collisionChecker, modules, portals} from "../global.js";
-import {Utils} from "../utils.js";
+import {Utils} from "../utils/utils.js";
 import {CollisionChecker} from "../collisionChecker.js";
 import {Game} from "../games/game.js";
 
@@ -101,7 +101,7 @@ export module GameSite {
             case Screen.END_SCREEN:
                 DOMelements.endScreen.screen.style.display = "initial";
                 DOMelements.endScreen.screen.style.animation = "fade-in 1s forwards";
-                setTimeout(() => activateEndScreenButtons(), 2000);
+                window.setTimeout(() => activateEndScreenButtons(), 2000);
                 break;
         }
 
@@ -186,7 +186,7 @@ export module GameSite {
         DOMelements.counter.style.display = "block";
         let num = 3;
         DOMelements.counter.innerText = num + "";
-        const id = setInterval(() => {
+        const id = window.setInterval(() => {
             if (num === 1) {
                 clearInterval(id);
                 DOMelements.counter.style.display = "none";
@@ -235,7 +235,7 @@ export module GameSite {
 
                 pressed = true;
                 startGame();
-                setTimeout(() => pressed = false, 3000);
+                window.setTimeout(() => pressed = false, 3000);
             },
         }
         collisionChecker.add(props);

@@ -14,7 +14,7 @@ export class Autopilot {
         if (this.running)
             return;
         this.running = true;
-        this.intervalId = setInterval(() => {
+        this.intervalId = window.window.setInterval(() => {
             this.updateX();
             this.updateY();
         }, Autopilot.delta);

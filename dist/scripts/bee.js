@@ -2,21 +2,11 @@ import { VanishingCircle } from "./vanishingCircle.js";
 import { Controls } from "./controls.js";
 import { Types } from "./types.js";
 var WayX = Types.WayX;
+import { PropUtils } from "./utils/propUtils.js";
 export class Bee {
     constructor(bee, controls) {
         this.currPos = { y: 0, x: 0 };
-        this.acceleration = {
-            currAccelerationX: 0,
-            currAccelerationY: 0,
-            acceleration: {
-                value: 29,
-                values: {
-                    default: 29,
-                    min: 5,
-                    max: 400
-                }
-            }
-        };
+        this.currAcceleration = { x: 0, y: 0 };
         /** Properties of the circle that bee creates. */
         this.circleProps = {
             durationNormal: {
@@ -71,6 +61,8 @@ export class Bee {
                 }
             }
         };
+        this.propsName = "bee-props";
+        this.circlePropsName = "bee-circleProps";
         this.pauseUpdates = false;
         this._running = false;
         this.wayX = WayX.NONE;
@@ -89,9 +81,9 @@ export class Bee {
             text.innerHTML = "Bzzzzz";
             text.style.left = bee.style.left;
             text.style.top = parseInt(bee.style.top) - 40 + "px";
-            setTimeout(() => text.innerHTML = "", 1500);
+            window.setTimeout(() => text.innerHTML = "", 1500);
         };
-        this.retrieveAndApplySavedProps();
+        this.loadAllProps();
     }
     get running() { return this._running; }
     set running(value) { this._running = value; }
@@ -123,54 +115,21 @@ export class Bee {
         VanishingCircle.stopLoop();
     }
     /** Resets all props to their default values. */
-    resetSettings() {
+    resetAllProps() {
         Object.entries(Object.assign(Object.assign({}, this.props), this.circleProps)).forEach(([key, prop]) => prop.value = prop.values.default);
-        this.props.acceleration.value = this.props.acceleration.values.default;
     }
     /** Saves the current props to localStorage. */
-    saveProps() {
-        const circleProps = this.createObjectWithValuesFromProps(this.circleProps);
-        const beeProps = this.createObjectWithValuesFromProps(this.props);
-        localStorage.setItem("bee-circleProps", JSON.stringify(circleProps));
-        localStorage.setItem("bee-props", JSON.stringify(beeProps));
-        localStorage.setItem("bee-acceleration", this.props.acceleration.value + "");
+    saveAllProps() {
+        PropUtils.saveProps(this.props, this.propsName);
+        PropUtils.saveProps(this.circleProps, this.circlePropsName);
     }
-    /** Creates an object with only the current values of the props.
-     * @param sourceProps The props to create the object from.
-     * @returns An object with the current values of the props.
-     */
-    createObjectWithValuesFromProps(sourceProps) {
-        const values = {};
-        Object.entries(sourceProps).forEach(([key, value]) => values[key] = value.value);
-        return values;
-    }
-    /** Applies the saved props to the current props.
-     * @param targetProps The props to apply the saved props to.
-     * @param savedProps The saved props to apply.
-     */
-    applySavedProps(targetProps, savedProps) {
-        Object.entries(savedProps).forEach(([key, value]) => {
-            if (targetProps[key])
-                targetProps[key].value = value;
-            else
-                console.warn("Could not apply saved prop: " + key);
-        });
-    }
-    /** Retrieves all saved props from localStorage and applies them to their respective props. */
-    retrieveAndApplySavedProps() {
-        let props = localStorage.getItem("bee-props");
-        if (props != null) {
-            const propsValues = JSON.parse(props);
-            this.applySavedProps(this.props, propsValues);
-        }
-        let circleProps = localStorage.getItem("bee-circleProps");
-        if (circleProps != null) {
-            const circlePropsValues = JSON.parse(circleProps);
-            this.applySavedProps(this.circleProps, circlePropsValues);
-        }
-        let acceleration = localStorage.getItem("bee-acceleration");
-        if (acceleration != null)
-            this.props.acceleration.value = parseFloat(acceleration);
+    loadAllProps() {
+        const savedBeeProps = PropUtils.getSavedProps(this.propsName);
+        const savedCircleProps = PropUtils.getSavedProps(this.circlePropsName);
+        if (savedBeeProps != null)
+            PropUtils.applySavedProps(this.props, savedBeeProps);
+        if (savedCircleProps != null)
+            PropUtils.applySavedProps(this.circleProps, savedCircleProps);
     }
     /** Updates the bee's position and orientation and places a next circle (if eligible). */
     frame(delta) {
@@ -204,8 +163,8 @@ export class Bee {
     /** Calculates the next X position of the bee. */
     calculateNewX(delta) {
         const maxX = document.body.clientWidth - this.element.offsetWidth;
-        const updatedWay = this.acceleration.currAccelerationX > 0 ? WayX.RIGHT
-            : this.acceleration.currAccelerationX < 0 ? WayX.LEFT : WayX.NONE;
+        const updatedWay = this.currAcceleration.x > 0 ? WayX.RIGHT
+            : this.currAcceleration.x < 0 ? WayX.LEFT : WayX.NONE;
         let accIncrease = 0;
         if (Controls.keys.left.pressed)
             accIncrease -= this.props.acceleration.value;
@@ -213,18 +172,18 @@ export class Bee {
             accIncrease += this.props.acceleration.value;
         if (Controls.keys.left.pressed === Controls.keys.right.pressed) {
             if (updatedWay != this.wayX)
-                this.acceleration.currAccelerationX = 0;
+                this.currAcceleration.x = 0;
             else
-                accIncrease = this.props.acceleration.value * -Math.sign(this.acceleration.currAccelerationX);
+                accIncrease = this.props.acceleration.value * -Math.sign(this.currAcceleration.x);
         }
         accIncrease *= delta;
-        const totalAcc = this.acceleration.currAccelerationX + accIncrease;
+        const totalAcc = this.currAcceleration.x + accIncrease;
         const totalAccCorrected = this.correctAcceleration(totalAcc);
-        this.acceleration.currAccelerationX = totalAccCorrected;
+        this.currAcceleration.x = totalAccCorrected;
         this.wayX = updatedWay;
         const result = Bee.calculateAxis(maxX, this.currPos.x, totalAccCorrected);
         if (result.resetAcc)
-            this.acceleration.currAccelerationX = 0;
+            this.currAcceleration.x = 0;
         return result.newPos;
     }
     /** Calculates the next Y position of the bee. */
@@ -232,12 +191,12 @@ export class Bee {
         const maxY = document.body.clientHeight - this.element.offsetHeight;
         let accIncrease = this.props.acceleration.value * (Controls.keys.up.pressed ? -1 : 1);
         accIncrease *= delta;
-        const totalAcc = this.acceleration.currAccelerationY + accIncrease;
+        const totalAcc = this.currAcceleration.y + accIncrease;
         const totalAccCorrected = this.correctAcceleration(totalAcc);
-        this.acceleration.currAccelerationY = totalAccCorrected;
+        this.currAcceleration.y = totalAccCorrected;
         const result = Bee.calculateAxis(maxY, this.currPos.y, totalAccCorrected);
         if (result.resetAcc)
-            this.acceleration.currAccelerationY = 0;
+            this.currAcceleration.y = 0;
         return result.newPos;
     }
     static calculateAxis(max, currPos, totalAccCorrected) {

@@ -18,6 +18,8 @@
   "homepage": "https://github.com/AspireOne/bee-work#readme",
   "dependencies": {
     "@netlify/functions": "^1.0.0",
-    "mongodb": "^4.6.0"
+    "@typegoose/typegoose": "^9.8.1",
+    "mongodb": "^4.6.0",
+    "mongoose": "^6.3.4"
   }
 }

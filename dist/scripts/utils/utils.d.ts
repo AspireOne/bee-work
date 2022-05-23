@@ -1,4 +1,4 @@
-import { Types } from "./types";
+import { Types } from "../types";
 export declare module Utils {
     import Point = Types.Point;
     const randomIntFromInterval: (min: number, max: number) => number;

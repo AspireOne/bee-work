@@ -1,5 +1,5 @@
 import { collisionChecker } from "../../global.js";
-import { Utils } from "../../utils.js";
+import { Utils } from "../../utils/utils.js";
 var htmlToElement = Utils.htmlToElement;
 var randomIntFromInterval = Utils.randomIntFromInterval;
 var Side;

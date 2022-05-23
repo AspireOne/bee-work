@@ -1,4 +1,4 @@
-import {Utils} from "./utils.js";
+import {Utils} from "./utils/utils.js";
 import collisionPortalProps = Portals.CollisionPortalProps;
 import {Controls} from "./controls.js";
 import {collisionChecker} from "./global.js";
@@ -51,7 +51,7 @@ export class Portals {
 
         Portals.drawPoint(portX, portY, canvas);
 
-        const timeoutId = setTimeout(() => {
+        const timeoutId = window.setTimeout(() => {
             this.removePortal(portal);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }, timeout);
@@ -88,14 +88,14 @@ export class Portals {
         bee.currPos = {x: portX, y: portY};
         const endPortal = this.createPortal();
         this.placePortal(endPortal, portX, portY);
-        setTimeout(() => this.removePortal(endPortal), this.appearAnimation.duration);
+        window.setTimeout(() => this.removePortal(endPortal), this.appearAnimation.duration);
     }
 
     public removePortal(portal: HTMLElement) {
         let width = portal.clientWidth;
         let height = portal.clientHeight;
 
-        const id = setInterval(() => {
+        const id = window.setInterval(() => {
             if (width > this.appearAnimation.step) {
                 portal.style.width = (width -= this.appearAnimation.step) + "px";
                 portal.style.left = (portal.getBoundingClientRect().left + this.appearAnimation.step / 2) + "px";
@@ -130,7 +130,7 @@ export class Portals {
         let width = 0;
         let height = 0;
 
-        const id = setInterval(() => {
+        const id = window.setInterval(() => {
             if (width < targetWidth - this.appearAnimation.step) {
                 portal.style.width = (width += this.appearAnimation.step) + "px";
                 portal.style.left = (portal.getBoundingClientRect().left - this.appearAnimation.step / 2) + "px";

@@ -1,6 +1,6 @@
 import {Controls} from "../controls.js";
 import {Bee} from "../bee.js";
-import {Utils} from "../utils.js";
+import {Utils} from "../utils/utils.js";
 
 export class ScreenSaverPilot {
     public running = false;
@@ -19,7 +19,7 @@ export class ScreenSaverPilot {
 
         this.running = true;
         // TODO: Switch for requestanimationframe.
-        this.id = setInterval(() => this.frame(), 17);
+        this.id = window.setInterval(() => this.frame(), 17);
     }
 
     public stop() {
@@ -45,7 +45,7 @@ export class ScreenSaverPilot {
         } else if (x >= maxX) {
             Controls.changePressState(Controls.keys.right.definition[0], false);
             Controls.changePressState(Controls.keys.left.definition[0], true);
-        } else if (this.bee.acceleration.currAccelerationX === 0) {
+        } else if (this.bee.currAcceleration.x === 0) {
             Controls.changePressState(Controls.keys.left.definition[0], true);
         }
 

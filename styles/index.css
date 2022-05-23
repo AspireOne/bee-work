@@ -1,0 +1,24 @@
+#login-button {
+    width: 10em;
+    position: absolute;
+    right: 0.5em;
+}
+
+#login-menu {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin:0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 50%;
+    border-radius: 1em;
+    background-color: rgba(49, 41, 43, 0.88);
+}
+
+#login-icon {
+    right: 0;
+    position: absolute;
+}

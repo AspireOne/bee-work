@@ -1,4 +1,4 @@
-import { Utils } from "./utils.js";
+import { Utils } from "./utils/utils.js";
 var htmlToElement = Utils.htmlToElement;
 import { VanishingCircle } from "./vanishingCircle.js";
 export class Pencil {

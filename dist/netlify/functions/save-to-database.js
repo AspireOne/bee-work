@@ -11,6 +11,10 @@ import { MongoClient } from 'mongodb';
 const mongodbPassword = process.env.MONGODB_PASSWORD;
 const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ message: "DO NOT USE THIS", event: event, context: context }),
+    };
     const movie = yield findMovie();
     return {
         statusCode: 200,
@@ -36,4 +40,4 @@ function findMovie() {
     });
 }
 export { handler };
-//# sourceMappingURL=db-access-test.js.map
+//# sourceMappingURL=save-to-database.js.map

@@ -1,7 +1,7 @@
 import {ScreenSaverPilot} from "../pilots/screenSaverPilot.js";
 import {Autopilot} from "../pilots/autopilot.js";
 import {bee, controls, modules, portals} from "../global.js";
-import {Utils} from "../utils.js";
+import {Utils} from "../utils/utils.js";
 import {Types} from "../types.js";
 import {Pencil} from "../pencil.js";
 import {Bee} from "../bee.js";
@@ -134,7 +134,7 @@ export module Playground {
 
     function startGeneratingPortals(canvas: HTMLCanvasElement) {
         portals.generateRandomPortal(portalGeneration.duration, canvas, bee);
-        setTimeout(
+        window.setTimeout(
             () => startGeneratingPortals(canvas),
             Utils.randomIntFromInterval(portalGeneration.spawnDelayRange.min, portalGeneration.spawnDelayRange.max));
     }
@@ -161,14 +161,14 @@ export module Playground {
 
         let timeoutSet = false;
         saveSettingsButt.addEventListener("click", (e) => {
-            bee.saveProps();
+            bee.saveAllProps();
             const prevText = settingsSaveButtonText.innerText;
             const newText = saveSettingsButt.classList.contains("saved") ? "Already Saved" : "Saved!";
             saveSettingsButt.classList.replace("unsaved", "saved");
             if (!timeoutSet) {
                 timeoutSet = true;
                 settingsSaveButtonText.innerText = newText;
-                setTimeout(() => {
+                window.setTimeout(() => {
                     settingsSaveButtonText.innerText = prevText;
                     timeoutSet = false;
                 }, 1000);
@@ -184,7 +184,7 @@ export module Playground {
         colorCycling.currColorValue = parseInt(hueSlide.value);
         cycleColorButt.classList.replace("off", "on");
 
-        colorCycling.intervalId = setInterval(() => {
+        colorCycling.intervalId = window.setInterval(() => {
             if (colorCycling.currColorValue >= 360)
                 colorCycling.cyclingUp = false;
             else if (colorCycling.currColorValue <= 0)

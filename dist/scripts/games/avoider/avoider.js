@@ -2,7 +2,7 @@ import { collisionChecker } from "../../global.js";
 import { GameSite } from "../../sites/gameSite.js";
 import { RandomBallGenerator } from "./randomBallGenerator.js";
 import { Game } from "../game.js";
-import { Utils } from "../../utils.js";
+import { Utils } from "../../utils/utils.js";
 var htmlToElement = Utils.htmlToElement;
 import { CollisionChecker } from "../../collisionChecker.js";
 // IDEAS:

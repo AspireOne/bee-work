@@ -1,4 +1,4 @@
-import { Utils } from "./utils.js";
+import { Utils } from "./utils/utils.js";
 export class CollisionChecker {
     constructor(bee) {
         this.objects = [];
@@ -21,7 +21,7 @@ export class CollisionChecker {
     startChecking() {
         if (this.id)
             return;
-        this.id = setInterval(() => {
+        this.id = window.setInterval(() => {
             this.objects.forEach(object => {
                 const rect = object.object.element.getBoundingClientRect();
                 object.state.lastCollision = false;

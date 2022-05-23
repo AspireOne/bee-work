@@ -1,6 +1,7 @@
-import {Utils} from "../utils.js";
+import {Utils} from "../utils/utils.js";
 import {Bee} from "../bee.js";
 import {bee} from "../global.js";
+import {Models} from "../database/models";
 
 export type Achivement = {
     name: string;
@@ -32,19 +33,19 @@ export abstract class Game {
 
     private _startTime: number = 0;
     public get startTime(): number { return this._startTime; }
-    private set startTime(value: number) { this._startTime = value; }
+    public set startTime(value: number) { this._startTime = value; }
 
     private _totalPassed: number = 0;
     public get totalPassed(): number { return this._totalPassed; }
-    private set totalPassed(value: number) { this._totalPassed = value; }
+    public set totalPassed(value: number) { this._totalPassed = value; }
 
     private _running: boolean = false;
     public get running(): boolean { return this._running; }
-    private set running(value: boolean) { this._running = value; }
+    public set running(value: boolean) { this._running = value; }
 
     private _paused: boolean = false;
     public get paused(): boolean { return this._paused; }
-    private set paused(value: boolean) { this._paused = value; }
+    public set paused(value: boolean) { this._paused = value; }
 
     protected constructor(beeProps: BeePropsValues, onGameEnded: (endScreenData: HTMLElement) => void) {
         this.onGameEnded = onGameEnded;

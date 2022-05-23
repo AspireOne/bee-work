@@ -18,22 +18,16 @@ export declare module Bee {
 }
 export declare class Bee {
     currPos: Types.Point;
-    readonly acceleration: {
-        currAccelerationX: number;
-        currAccelerationY: number;
-        acceleration: {
-            value: number;
-            values: {
-                default: number;
-                min: number;
-                max: number;
-            };
-        };
+    readonly currAcceleration: {
+        x: number;
+        y: number;
     };
     /** Properties of the circle that bee creates. */
     readonly circleProps: CircleProps;
     /** Properties of the bee. */
     readonly props: Props;
+    readonly propsName: string;
+    readonly circlePropsName: string;
     pauseUpdates: boolean;
     private _running;
     get running(): boolean;
@@ -53,23 +47,10 @@ export declare class Bee {
     /** Stops VanishingCircle's update loop and the bee's update loop. */
     stop(): void;
     /** Resets all props to their default values. */
-    resetSettings(): void;
+    resetAllProps(): void;
     /** Saves the current props to localStorage. */
-    saveProps(): void;
-    /** Creates an object with only the current values of the props.
-     * @param sourceProps The props to create the object from.
-     * @returns An object with the current values of the props.
-     */
-    private createObjectWithValuesFromProps;
-    /** Applies the saved props to the current props.
-     * @param targetProps The props to apply the saved props to.
-     * @param savedProps The saved props to apply.
-     */
-    applySavedProps(targetProps: {
-        [key: string]: Types.ModifiableProp;
-    }, savedProps: Types.SavedModifiableProp): void;
-    /** Retrieves all saved props from localStorage and applies them to their respective props. */
-    retrieveAndApplySavedProps(): void;
+    saveAllProps(): void;
+    loadAllProps(): void;
     /** Updates the bee's position and orientation and places a next circle (if eligible). */
     private frame;
     /** Flips the bee's rotation (left/right) based on the pressed keys. */

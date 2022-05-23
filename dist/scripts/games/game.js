@@ -1,4 +1,4 @@
-import { Utils } from "../utils.js";
+import { Utils } from "../utils/utils.js";
 export class Game {
     constructor(beeProps, onGameEnded) {
         this.pauseTime = 0;

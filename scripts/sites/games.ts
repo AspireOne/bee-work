@@ -1,7 +1,7 @@
 import {modules, portals} from "../global.js";
 import {Portals} from "../portals.js";
 import {Types} from "../types";
-import {Utils} from "../utils";
+import {Utils} from "../utils/utils";
 
 export module Games {
     import Point = Types.Point;

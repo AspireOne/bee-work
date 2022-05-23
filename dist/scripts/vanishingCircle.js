@@ -31,7 +31,7 @@ export class VanishingCircle {
         if (this.intervalId != null)
             return;
         requestAnimationFrame((timestamp) => this.step(timestamp));
-        //this.intervalId = setInterval(() => this.update(this.delta), VanishingCircle.delta);
+        //this.intervalId = window.setInterval(() => this.update(this.delta), VanishingCircle.delta);
     }
     static step(timestamp) {
         // TODO: Finish this.

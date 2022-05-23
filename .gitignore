@@ -1,10 +1,5 @@
 netlify.toml
 netlify/functions/node_modules
-<<<<<<< HEAD
-dist
 node_modules
 # Local Netlify folder
 .netlify
-=======
-node_modules
->>>>>>> 4b6fa2ccd8e84ccdaa6ed1e851c1d951fbc0441f

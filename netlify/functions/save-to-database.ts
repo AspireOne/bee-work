@@ -1,9 +1,14 @@
 import { Handler } from "@netlify/functions";
-import {FindOptions, MongoClient, MongoClientOptions, ServerApiVersion, WithId} from 'mongodb';
+import {MongoClient, WithId} from 'mongodb';
+import {Models} from "../../scripts/database/models";
 
 const mongodbPassword = process.env.MONGODB_PASSWORD;
 const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
 const handler: Handler = async (event, context) => {
+    return {
+        statusCode: 200,
+        body: JSON.stringify({message: "DO NOT USE THIS", event: event, context: context}),
+    }
     const movie = await findMovie();
 
     return {
