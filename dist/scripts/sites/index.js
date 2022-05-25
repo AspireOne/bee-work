@@ -9,17 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 document.addEventListener("DOMContentLoaded", _ => {
     const user = {
-        username: "Aspirateur",
+        username: "Aspirateuasdasdr",
         password: "1234",
-        email: "matejpesl@seznam.cz"
+        email: "matejpesl@seznamaasda.cz"
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const data = yield postData("http://localhost:8888/.netlify/functions/register-user", user)
+        const data = yield postData("/.netlify/functions/register-user", user)
             .catch(error => console.error("ERRORRAA: " + error))
             .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
         });
-        console.log(data);
     }))();
     const loginButt = document.getElementById("login-button");
     const loginMenu = document.getElementById("login-menu");

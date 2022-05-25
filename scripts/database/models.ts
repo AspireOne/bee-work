@@ -40,12 +40,6 @@ export module Models {
         });
 
         // 3. Create a Model.
-        export const Model = mongoose.model<Interface>('User', Schema, "users" ); // TOOO: remove the users.
-
-        /*const user = new User({
-            name: 'Bill',
-            email: 'bill@initech.com',
-            avatar: 'https://i.imgur.com/dM7Thhn.png'
-        });*/
+        export const Model = mongoose.model<Interface>('User', Schema);
     }
 }

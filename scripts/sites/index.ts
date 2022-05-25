@@ -2,17 +2,16 @@ import {Models} from "../database/models";
 
 document.addEventListener("DOMContentLoaded", _ => {
     const user: Models.User.Interface = {
-        username: "Aspirateur",
+        username: "Aspirateuasdasdr",
         password: "1234",
-        email: "matejpesl@seznam.cz"
+        email: "matejpesl@seznamaasda.cz"
     };
     (async () => {
-        const data = await postData("http://localhost:8888/.netlify/functions/register-user", user)
+        const data = await postData("/.netlify/functions/register-user", user)
             .catch(error => console.error("ERRORRAA: " + error))
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
             });
-        console.log(data);
     })();
 
     const loginButt = document.getElementById("login-button") as HTMLElement;
@@ -27,7 +26,6 @@ document.addEventListener("DOMContentLoaded", _ => {
             loginMenu.classList.add("hidden");
     });
 });
-
 
 async function postData(url: string, data: { [key: string]: any }) {
     // Default options are marked with *

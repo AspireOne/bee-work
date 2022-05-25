@@ -25,12 +25,7 @@ export var Models;
             circle_props: { type: Object, required: false, unique: false },
         });
         // 3. Create a Model.
-        User.Model = mongoose.model('User', User.Schema, "users"); // TOOO: remove the users.
-        /*const user = new User({
-            name: 'Bill',
-            email: 'bill@initech.com',
-            avatar: 'https://i.imgur.com/dM7Thhn.png'
-        });*/
+        User.Model = mongoose.model('User', User.Schema);
     })(User = Models.User || (Models.User = {}));
 })(Models || (Models = {}));
 //# sourceMappingURL=models.js.map
