@@ -7,6 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { Database } from "../database.js";
+import { errors } from "../../netlify/functions/register-exports.js";
 document.addEventListener("DOMContentLoaded", _ => {
     const user = {
         username: "Aspirateuasdasdr",
@@ -14,10 +16,17 @@ document.addEventListener("DOMContentLoaded", _ => {
         email: "matejpesl@seznamaasda.cz"
     };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const data = yield postData("/.netlify/functions/register-user", user)
-            .catch(error => console.error("ERRORRAA: " + error))
-            .then(data => {
-            console.log(data); // JSON data parsed by `data.json()` call
+        Database.post("register-user", user)
+            .then(obj => {
+            if (obj.status === 200)
+                console.log("status 200 " + obj);
+            else {
+                console.log("whoopsie, status code was not 200");
+                const error = Database.getError(obj.body, errors);
+            }
+        })
+            .catch(error => {
+            console.log("ERROR " + error);
         });
     }))();
     const loginButt = document.getElementById("login-button");
@@ -30,19 +39,4 @@ document.addEventListener("DOMContentLoaded", _ => {
             loginMenu.classList.add("hidden");
     });
 });
-function postData(url, data) {
-    return __awaiter(this, void 0, void 0, function* () {
-        // Default options are marked with *
-        const response = yield fetch(url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data) // body data type must match "Content-Type" header
-        });
-        return yield response.json(); // parses JSON response into native JavaScript objects
-    });
-}
-export {};
 //# sourceMappingURL=index.js.map

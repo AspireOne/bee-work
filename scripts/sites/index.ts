@@ -1,4 +1,6 @@
 import {Models} from "../database/models";
+import {Database} from "../database.js";
+import {errors, restrictions} from "../../netlify/functions/register-exports.js";
 
 document.addEventListener("DOMContentLoaded", _ => {
     const user: Models.User.Interface = {
@@ -6,12 +8,21 @@ document.addEventListener("DOMContentLoaded", _ => {
         password: "1234",
         email: "matejpesl@seznamaasda.cz"
     };
+
     (async () => {
-        const data = await postData("/.netlify/functions/register-user", user)
-            .catch(error => console.error("ERRORRAA: " + error))
-            .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
-            });
+        Database.post("register-user", user)
+            .then(obj => {
+                if (obj.status === 200)
+                    console.log("status 200 " + obj);
+                else
+                {
+                    console.log("whoopsie, status code was not 200");
+                    const error = Database.getError(obj.body, errors);
+                }
+            })
+            .catch(error => {
+                console.log("ERROR " + error);
+            })
     })();
 
     const loginButt = document.getElementById("login-button") as HTMLElement;
@@ -26,17 +37,3 @@ document.addEventListener("DOMContentLoaded", _ => {
             loginMenu.classList.add("hidden");
     });
 });
-
-async function postData(url: string, data: { [key: string]: any }) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data) // body data type must match "Content-Type" header
-    });
-
-    return await response.json(); // parses JSON response into native JavaScript objects
-}

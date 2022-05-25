@@ -1,4 +1,3 @@
-import { Handler } from "@netlify/functions";
 export declare const restrictions: {
     maxUsernameLength: number;
     maxPasswordLength: number;
@@ -46,5 +45,3 @@ export declare const errors: {
         message: string;
     };
 };
-declare const handler: Handler;
-export { handler };
