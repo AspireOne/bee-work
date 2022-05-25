@@ -1,55 +1,49 @@
 import { Handler } from "@netlify/functions";
-import {Collection, Db, MongoClient, WithId} from 'mongodb';
 import {Models} from "../../scripts/database/models";
 import mongoose from "mongoose";
 
 const mongodbPassword = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/?retryWrites=true&w=majority`;
-const client = new MongoClient(uri);
+const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
 
 const handler: Handler = async (event, context) => {
-    if (event.httpMethod !== "POST") {
-        return { statusCode: 405, body: "GET Not allowed" };
-    }
+    if (event.httpMethod !== "POST")
+        return getReturnForError(405, "GET Not Allowed");
 
-    const user: Models.User.IUser = JSON.parse(event.body ?? "{}");
-    let error = null;
-
-    error = checkRequiredAndReturnError(user);
+    const user: Models.User.Interface = JSON.parse(event.body ?? "{}");
+    let error = checkRequiredAndReturnError(user);
     if (error !== null)
-        return { statusCode: 400, body: error };
+        return getReturnForError(400, error);
 
-    await client.connect();
-    const database = client.db("bee-work");
-    const users = database.collection("users");
+    const UserModel = mongoose.model<Models.User.Interface>('User', Models.User.Schema);
+    await mongoose.connect(uri);
 
-    const usernameExists = await users.findOne({ username: user.username });
-    const emailExists = await users.findOne({ email: user });
+    let usernameExists = await UserModel.findOne({ "username": user.username});
+    let emailExists = await UserModel.findOne({ "email": user.email});
 
-    if (usernameExists !== null)
+    if (usernameExists)
         error = "Username already exists";
-    if (emailExists !== null)
+    else if (emailExists)
         error = "Email already exists";
 
     if (error !== null)
-        return { statusCode: 400, body: error };
+        return getReturnForError(400, error);
 
-    /*const model = new Models.User.User(user);
-    mongoose.connect();*/
+    const User = new UserModel(user);
+    const saveResult = await User.save();
+    if (!saveResult)
+        return getReturnForError(500, "Could not save user");
 
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Hello World" }),
-    };
-
-    await client.close();
-    return {
-        statusCode: 200,
-        body: JSON.stringify({ message: "Hello World", movie: null })
-    };
+    return getReturn(200, saveResult);
 };
 
-function checkRequiredAndReturnError(user: Models.User.IUser): string | null {
+function getReturnForError(statusCode: number, error: string) {
+    return {statusCode: statusCode, body: JSON.stringify({error: error})};
+}
+function getReturn(statusCode: number, body: object) {
+    return {statusCode: statusCode, body: JSON.stringify(body)};
+}
+
+function checkRequiredAndReturnError(user: Models.User.Interface): string | null {
     if (user.username == null)
         return "Username is missing";
     else if (user.password == null)

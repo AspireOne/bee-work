@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,15 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 document.addEventListener("DOMContentLoaded", _ => {
+    const user = {
+        username: "Aspirateur",
+        password: "1234",
+        email: "matejpesl@seznam.cz"
+    };
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        const data = yield postData("http://localhost:8888/.netlify/functions/register-user", { answer: "universe" })
+        const data = yield postData("http://localhost:8888/.netlify/functions/register-user", user)
             .catch(error => console.error("ERRORRAA: " + error))
             .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
         });
         console.log(data);
     }))();
-    console.log("bbb");
     const loginButt = document.getElementById("login-button");
     const loginMenu = document.getElementById("login-menu");
     loginButt.addEventListener("click", () => {
@@ -39,7 +42,8 @@ function postData(url, data) {
             },
             body: JSON.stringify(data) // body data type must match "Content-Type" header
         });
-        return response.json(); // parses JSON response into native JavaScript objects
+        return yield response.json(); // parses JSON response into native JavaScript objects
     });
 }
+export {};
 //# sourceMappingURL=index.js.map

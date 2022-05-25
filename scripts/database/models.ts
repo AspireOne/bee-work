@@ -22,7 +22,7 @@ export module Models {
         import ModifiableProp = Types.ModifiableProp;
         import SavedModifiableProp = Types.SavedModifiableProp;
 
-        export interface IUser {
+        export interface Interface {
             username: string;
             password: string;
             email: string;
@@ -31,7 +31,7 @@ export module Models {
         }
 
         // 2. Create a Schema corresponding to the document interface.
-        const userSchema = new mongoose.Schema<IUser>({
+        export const Schema = new mongoose.Schema<Interface>({
             username: {type: String, required: true, unique: true},
             email: {type: String, required: true, unique: true},
             password: {type: String, required: true, unique: false},
@@ -40,7 +40,7 @@ export module Models {
         });
 
         // 3. Create a Model.
-        export const User = mongoose.model<IUser>('User', userSchema);
+        export const Model = mongoose.model<Interface>('User', Schema, "users" ); // TOOO: remove the users.
 
         /*const user = new User({
             name: 'Bill',

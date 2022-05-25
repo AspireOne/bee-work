@@ -15,9 +15,9 @@ let document = await UserModel.create({ name: 'Kitty' });*/
 export var Models;
 (function (Models) {
     let User;
-    (function (User_1) {
+    (function (User) {
         // 2. Create a Schema corresponding to the document interface.
-        const userSchema = new mongoose.Schema({
+        User.Schema = new mongoose.Schema({
             username: { type: String, required: true, unique: true },
             email: { type: String, required: true, unique: true },
             password: { type: String, required: true, unique: false },
@@ -25,7 +25,7 @@ export var Models;
             circle_props: { type: Object, required: false, unique: false },
         });
         // 3. Create a Model.
-        User_1.User = mongoose.model('User', userSchema);
+        User.Model = mongoose.model('User', User.Schema, "users"); // TOOO: remove the users.
         /*const user = new User({
             name: 'Bill',
             email: 'bill@initech.com',
