@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", _ => {
         Database.post("login-user", user)
             .then(resp => {
                 if (resp.status === 200)
-                    console.log("status 200 " + resp.body);
+                    console.log("status 200 " + JSON.stringify(resp.body));
                 else
                 {
                     console.log("whoopsie, status code was not 200");

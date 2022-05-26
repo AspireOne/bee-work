@@ -44,4 +44,28 @@ export declare const errors: {
         code: number;
         message: string;
     };
+    noGet: {
+        code: number;
+        message: string;
+    };
+    noPost: {
+        code: number;
+        message: string;
+    };
+    unknownError: {
+        code: number;
+        message: string;
+    };
+    usernameOrEmailMissing: {
+        code: number;
+        message: string;
+    };
+    userNotExist: {
+        code: number;
+        message: string;
+    };
+    wrongPassword: {
+        code: number;
+        message: string;
+    };
 };
