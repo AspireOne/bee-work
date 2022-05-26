@@ -8,21 +8,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Database } from "../database.js";
-import { errors } from "../../netlify/functions/register-exports.js";
 document.addEventListener("DOMContentLoaded", _ => {
     const user = {
-        username: "Aspirateuasdasdr",
+        username: "alala",
         password: "1234",
-        email: "matejpesl@seznamaasda.cz"
+        email: "alala@seznam.cz"
     };
+    /*    (async () => {
+            Database.post("register-user", user)
+                .then(resp => {
+                    if (resp.status === 200)
+                        console.log("status 200 " + resp.body);
+                    else
+                    {
+                        console.log("whoopsie, status code was not 200");
+                        const error = Database.getError(resp.body.code);
+                        console.log(error);
+                    }
+                })
+                .catch(error => {
+                    console.log("ERROR " + error);
+                })
+        })();*/
     (() => __awaiter(void 0, void 0, void 0, function* () {
-        Database.post("register-user", user)
-            .then(obj => {
-            if (obj.status === 200)
-                console.log("status 200 " + obj);
+        Database.post("login-user", user)
+            .then(resp => {
+            if (resp.status === 200)
+                console.log("status 200 " + resp.body);
             else {
                 console.log("whoopsie, status code was not 200");
-                const error = Database.getError(obj.body, errors);
+                const error = Database.getError(resp.body.code);
+                console.log(error);
             }
         })
             .catch(error => {

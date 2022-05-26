@@ -10,12 +10,11 @@ const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/
 
 const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST")
-        return getReturnForError(405, Database.globalErrors.noGet);
+        return getReturnForError(405, errors.noGet);
 
     const user: Models.User.Interface = JSON.parse(event.body ?? "{}");
 
-    let error = checkHasRequiredAndReturnError(user);
-    error ??= checkDataValidityAndReturnError(user);
+    let error = checkHasRequiredAndReturnError(user) ?? checkDataValidityAndReturnError(user);
 
     if (error !== null)
         return getReturnForError(400, error);
@@ -38,26 +37,19 @@ const handler: Handler = async (event, context) => {
     return getReturn(200, saveResult);
 };
 
-const getReturnForError = (statusCode: number, error: Database.Error | Database.GlobalError) => {
-    let obj = {
-        code: error.code,
-        type: (<Database.GlobalError>error).type === undefined
-            ? Database.errorType.specific
-            : Database.errorType.global
-    };
-
-    return getReturn(statusCode, obj);
+const getReturnForError = (statusCode: number, error: Database.Error) => {
+    return getReturn(statusCode, {code: error.code});
 }
 
 const getReturn = (statusCode: number, body: object) => ({statusCode: statusCode, body: JSON.stringify(body)});
 
 async function checkUniqueAndReturnError(user: Models.User.Interface, userModel: mongoose.Model<Models.User.Interface>): Promise<Database.Error | null> {
-    let usernameExists = await userModel.findOne({ "username": user.username});
-    let emailExists = await userModel.findOne({ "email": user.email});
-
+    const usernameExists = await userModel.findOne({ "username": user.username});
     if (usernameExists)
         return errors.usernameAlreadyExists;
-    else if (emailExists)
+
+    const emailExists = await userModel.findOne({ "email": user.email});
+    if (emailExists)
         return errors.emailAlreadyExists;
 
     return null;

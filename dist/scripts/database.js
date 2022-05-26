@@ -7,34 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { errors } from "../netlify/functions/register-exports.js";
 export var Database;
 (function (Database) {
-    Database.errorType = { specific: "specific", global: "global" };
-    Database.globalErrors = {
-        noGet: {
-            code: 1,
-            message: "GET Not Allowed",
-            type: "global",
-        },
-        noPost: {
-            code: 2,
-            message: "POST Not Allowed",
-            type: "global",
-        },
-        unknownError: {
-            code: 3,
-            message: "Unknown error occured",
-            type: "global"
-        }
-    };
-    function kokot() { }
-    Database.kokot = kokot;
-    function getError(error, specificErrorsArray) {
-        const obj = Object.entries(isGlobalError(error) ? Database.globalErrors : specificErrorsArray).find(([key, err]) => err.code === error.code);
-        return obj === undefined ? Database.globalErrors.unknownError : obj[1];
+    function getError(code) {
+        const obj = Object.entries(errors).find(([key, err]) => code === err.code);
+        return obj === undefined ? errors.unknownError : obj[1];
     }
     Database.getError = getError;
-    const isGlobalError = (obj) => obj.type === Database.errorType.global;
     function post(endpoint, data) {
         return __awaiter(this, void 0, void 0, function* () {
             return fetch(`/.netlify/functions/${endpoint}`, {

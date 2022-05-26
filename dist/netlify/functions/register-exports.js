@@ -45,6 +45,30 @@ export const errors = {
     couldNotSaveUser: {
         code: 10,
         message: "Could not save user"
+    },
+    noGet: {
+        code: 11,
+        message: "GET Not Allowed",
+    },
+    noPost: {
+        code: 12,
+        message: "POST Not Allowed",
+    },
+    unknownError: {
+        code: 13,
+        message: "Unknown error occured",
+    },
+    usernameOrEmailMissing: {
+        code: 14,
+        message: "Username or email is missing"
+    },
+    userNotExist: {
+        code: 15,
+        message: "User does not exist"
+    },
+    wrongPassword: {
+        code: 16,
+        message: "Password is incorrect"
     }
 };
 //# sourceMappingURL=register-exports.js.map

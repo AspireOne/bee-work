@@ -8,19 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Models } from "../../scripts/database/models";
-import { Database } from "../../scripts/database";
 import { mongoose } from "@typegoose/typegoose";
 import { errors, restrictions } from "./register-exports";
 const bcrypt = require('bcrypt');
 const mongodbPassword = process.env.MONGODB_PASSWORD;
 const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     if (event.httpMethod !== "POST")
-        return getReturnForError(405, Database.globalErrors.noGet);
+        return getReturnForError(405, errors.noGet);
     const user = JSON.parse((_a = event.body) !== null && _a !== void 0 ? _a : "{}");
-    let error = checkHasRequiredAndReturnError(user);
-    error !== null && error !== void 0 ? error : (error = checkDataValidityAndReturnError(user));
+    let error = (_b = checkHasRequiredAndReturnError(user)) !== null && _b !== void 0 ? _b : checkDataValidityAndReturnError(user);
     if (error !== null)
         return getReturnForError(400, error);
     const UserModel = mongoose.model('User', Models.User.Schema);
@@ -37,22 +35,16 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     return getReturn(200, saveResult);
 });
 const getReturnForError = (statusCode, error) => {
-    let obj = {
-        code: error.code,
-        type: error.type === undefined
-            ? Database.errorType.specific
-            : Database.errorType.global
-    };
-    return getReturn(statusCode, obj);
+    return getReturn(statusCode, { code: error.code });
 };
 const getReturn = (statusCode, body) => ({ statusCode: statusCode, body: JSON.stringify(body) });
 function checkUniqueAndReturnError(user, userModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        let usernameExists = yield userModel.findOne({ "username": user.username });
-        let emailExists = yield userModel.findOne({ "email": user.email });
+        const usernameExists = yield userModel.findOne({ "username": user.username });
         if (usernameExists)
             return errors.usernameAlreadyExists;
-        else if (emailExists)
+        const emailExists = yield userModel.findOne({ "email": user.email });
+        if (emailExists)
             return errors.emailAlreadyExists;
         return null;
     });

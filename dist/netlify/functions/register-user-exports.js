@@ -1,12 +1,10 @@
 // We have to declare the variables outside the real function like dumbasses, because otherwise it throws typeerror on
 // mongoose import when accessing the server function from website code.
-
 export const restrictions = {
     maxUsernameLength: 32,
     maxPasswordLength: 64,
     maxEmailLength: 64,
-}
-
+};
 export const errors = {
     usernameAlreadyExists: {
         code: 1,
@@ -47,31 +45,6 @@ export const errors = {
     couldNotSaveUser: {
         code: 10,
         message: "Could not save user"
-    },
-
-    noGet: {
-        code: 11,
-        message: "GET Not Allowed",
-    },
-    noPost: {
-        code: 12,
-        message: "POST Not Allowed",
-    },
-    unknownError: {
-        code: 13,
-        message: "Unknown error occured",
-    },
-
-    usernameOrEmailMissing: {
-        code: 14,
-        message: "Username or email is missing"
-    },
-    userNotExist: {
-        code: 15,
-        message: "User does not exist"
-    },
-    wrongPassword: {
-        code: 16,
-        message: "Password is incorrect"
     }
-}
+};
+//# sourceMappingURL=register-user-exports.js.map
