@@ -1,19 +1,17 @@
-"use strict";
-exports.__esModule = true;
-exports.Types = void 0;
 /** Contains globally usable types. */
-var Types;
+export var Types;
 (function (Types) {
-    var WayX;
+    let WayX;
     (function (WayX) {
         WayX[WayX["LEFT"] = 0] = "LEFT";
         WayX[WayX["RIGHT"] = 1] = "RIGHT";
         WayX[WayX["NONE"] = 2] = "NONE";
     })(WayX = Types.WayX || (Types.WayX = {}));
-    var WayY;
+    let WayY;
     (function (WayY) {
         WayY[WayY["UP"] = 0] = "UP";
         WayY[WayY["DOWN"] = 1] = "DOWN";
         WayY[WayY["NONE"] = 2] = "NONE";
     })(WayY = Types.WayY || (Types.WayY = {}));
-})(Types = exports.Types || (exports.Types = {}));
+})(Types || (Types = {}));
+//# sourceMappingURL=types.js.map

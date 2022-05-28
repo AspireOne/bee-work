@@ -3,7 +3,7 @@ import {Controls} from "./controls.js";
 import CircleProps = Bee.CircleProps;
 import Props = Bee.Props;
 import {Utils} from "./utils/utils.js";
-import {Types} from "./types.js";
+import {Types} from "./utils/types.js";
 import WayX = Types.WayX;
 import {PropUtils} from "./utils/propUtils.js";
 

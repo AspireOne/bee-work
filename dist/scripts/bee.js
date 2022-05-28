@@ -1,6 +1,6 @@
 import { VanishingCircle } from "./vanishingCircle.js";
 import { Controls } from "./controls.js";
-import { Types } from "./types.js";
+import { Types } from "./utils/types.js";
 var WayX = Types.WayX;
 import { PropUtils } from "./utils/propUtils.js";
 export class Bee {

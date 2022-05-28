@@ -1,12 +1,11 @@
 import {Models} from "../database/models";
-import {Database} from "../database.js";
-import {errors, restrictions} from "../../netlify/functions/register-exports.js";
+import {Database} from "../database/database.js";
 
 document.addEventListener("DOMContentLoaded", _ => {
     const user: Models.User.Interface = {
-        username: "alala",
-        password: "1234",
-        email: "alala@seznam.cz"
+        username: "natálie",
+        password: "goddamn",
+        email: "natalie@seznam.cz"
     };
 
 
@@ -14,7 +13,7 @@ document.addEventListener("DOMContentLoaded", _ => {
         Database.post("register-user", user)
             .then(resp => {
                 if (resp.status === 200)
-                    console.log("status 200 " + resp.body);
+                    console.log("status 200 " + JSON.stringify(resp.body));
                 else
                 {
                     console.log("whoopsie, status code was not 200");

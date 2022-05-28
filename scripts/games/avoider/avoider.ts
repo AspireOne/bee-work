@@ -7,7 +7,7 @@ import htmlToElement = Utils.htmlToElement;
 import collides = Utils.collides;
 import {CollisionChecker} from "../../collisionChecker.js";
 import {Bee} from "../../bee.js";
-import {Types} from "../../types";
+import {Types} from "../../utils/types";
 import KeysMatching = Types.KeysMatching;
 
 type TimeAchivement = Achivement & { timePointSecs: number; }

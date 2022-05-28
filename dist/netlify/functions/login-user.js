@@ -8,11 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Models } from "../../scripts/database/models";
+import { Database } from "../../scripts/database/database";
 import { mongoose } from "@typegoose/typegoose";
-import { errors } from "./register-exports";
-const bcrypt = require('bcrypt');
-const mongodbPassword = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
+var errors = Database.errors;
+import { getDbUri, getReturn, getReturnForError } from "../utils";
+const bcrypt = require('bcryptjs');
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     if (event.httpMethod !== "POST")
@@ -22,30 +22,28 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     if (error !== null)
         return getReturnForError(400, error);
     const UserModel = mongoose.model('User', Models.User.Schema);
-    yield mongoose.connect(uri);
-    const userFromDb = yield getUserFromDb(user, UserModel);
+    try {
+        yield mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD));
+    }
+    catch (error) {
+        return getReturnForError(500, errors.couldNotConnectDb, error.toString());
+    }
+    // This would be in a separate functions, but webstorm hangs in infinite analysis cycle if it is.
+    //const userFromDb = await getUserFromDb(user, UserModel);
+    let userFromDb;
+    try {
+        userFromDb = yield UserModel.findOne({ "username": user.username });
+    }
+    catch (error) {
+        return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
+    }
+    mongoose.disconnect();
     if (userFromDb == null || userFromDb.username != user.username || userFromDb.email != user.email)
         return getReturnForError(400, errors.userNotExist);
-    // Not saving salt because bcrypt already saves it combined with the hash.
-    // TODO: This doesnt work.
     if (bcrypt.compareSync(user.password, userFromDb.password))
-        getReturn(200, userFromDb);
+        return getReturn(200, userFromDb);
     return getReturnForError(400, errors.wrongPassword);
 });
-function getUserFromDb(user, userModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const findByUsername = yield userModel.findOne({ "username": user.username });
-        if (findByUsername)
-            return findByUsername;
-        const findByEmail = yield userModel.findOne({ "email": user.email });
-        if (findByEmail)
-            return findByEmail;
-        return null;
-    });
-}
-// TODO: Make this shared.
-const getReturnForError = (statusCode, error) => ({ statusCode: statusCode, body: JSON.stringify({ code: error.code }) });
-const getReturn = (statusCode, body) => ({ statusCode: statusCode, body: JSON.stringify(body) });
 function checkHasRequiredAndReturnError(user) {
     if (user.password == null)
         return errors.passwordIsMissing;

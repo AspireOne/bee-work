@@ -1,28 +1,37 @@
 import { Handler } from "@netlify/functions";
 import {Models} from "../../scripts/database/models";
-import {Database} from "../../scripts/database";
+import {Database} from "../../scripts/database/database";
 import {mongoose} from "@typegoose/typegoose";
-import {errors, restrictions} from "./register-exports";
-const bcrypt = require('bcrypt');
+import errors = Database.errors;
+import restrictions = Database.restrictions;
+import {getDbUri, getReturn, getReturnForError} from "../utils";
+const bcrypt = require('bcryptjs');
 
-const mongodbPassword = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
 
 const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST")
         return getReturnForError(405, errors.noGet);
 
     const user: Models.User.Interface = JSON.parse(event.body ?? "{}");
-
     let error = checkHasRequiredAndReturnError(user) ?? checkDataValidityAndReturnError(user);
 
     if (error !== null)
         return getReturnForError(400, error);
 
     const UserModel = mongoose.model<Models.User.Interface>('User', Models.User.Schema);
-    await mongoose.connect(uri);
 
-    error = await checkUniqueAndReturnError(user, UserModel);
+    try {
+        await mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD as string));
+    } catch (error: any) {
+        return getReturnForError(500, errors.couldNotConnectDb, error.toString());
+    }
+
+    try {
+        error = await checkUniqueAndReturnError(user, UserModel);
+    } catch (error: any) {
+        return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
+    }
+
     if (error !== null)
         return getReturnForError(400, error);
 
@@ -37,18 +46,12 @@ const handler: Handler = async (event, context) => {
     return getReturn(200, saveResult);
 };
 
-const getReturnForError = (statusCode: number, error: Database.Error) => {
-    return getReturn(statusCode, {code: error.code});
-}
-
-const getReturn = (statusCode: number, body: object) => ({statusCode: statusCode, body: JSON.stringify(body)});
-
 async function checkUniqueAndReturnError(user: Models.User.Interface, userModel: mongoose.Model<Models.User.Interface>): Promise<Database.Error | null> {
-    const usernameExists = await userModel.findOne({ "username": user.username});
+    const usernameExists = await userModel.findOne({ "username": user.username });
     if (usernameExists)
         return errors.usernameAlreadyExists;
 
-    const emailExists = await userModel.findOne({ "email": user.email});
+    const emailExists = await userModel.findOne({ "email": user.email });
     if (emailExists)
         return errors.emailAlreadyExists;
 

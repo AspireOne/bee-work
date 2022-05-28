@@ -8,11 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Models } from "../../scripts/database/models";
+import { Database } from "../../scripts/database/database";
 import { mongoose } from "@typegoose/typegoose";
-import { errors, restrictions } from "./register-exports";
-const bcrypt = require('bcrypt');
-const mongodbPassword = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
+var errors = Database.errors;
+var restrictions = Database.restrictions;
+import { getDbUri, getReturn, getReturnForError } from "../utils";
+const bcrypt = require('bcryptjs');
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     if (event.httpMethod !== "POST")
@@ -22,8 +23,18 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     if (error !== null)
         return getReturnForError(400, error);
     const UserModel = mongoose.model('User', Models.User.Schema);
-    yield mongoose.connect(uri);
-    error = yield checkUniqueAndReturnError(user, UserModel);
+    try {
+        yield mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD));
+    }
+    catch (error) {
+        return getReturnForError(500, errors.couldNotConnectDb, error.toString());
+    }
+    try {
+        error = yield checkUniqueAndReturnError(user, UserModel);
+    }
+    catch (error) {
+        return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
+    }
     if (error !== null)
         return getReturnForError(400, error);
     // Not saving salt because bcrypt already saves it combined with the hash.
@@ -34,10 +45,6 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
         return getReturnForError(500, errors.couldNotSaveUser);
     return getReturn(200, saveResult);
 });
-const getReturnForError = (statusCode, error) => {
-    return getReturn(statusCode, { code: error.code });
-};
-const getReturn = (statusCode, body) => ({ statusCode: statusCode, body: JSON.stringify(body) });
 function checkUniqueAndReturnError(user, userModel) {
     return __awaiter(this, void 0, void 0, function* () {
         const usernameExists = yield userModel.findOne({ "username": user.username });

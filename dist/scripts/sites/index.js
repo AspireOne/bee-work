@@ -7,18 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Database } from "../database.js";
+import { Database } from "../database/database.js";
 document.addEventListener("DOMContentLoaded", _ => {
     const user = {
-        username: "alala",
-        password: "1234",
-        email: "alala@seznam.cz"
+        username: "natálie",
+        password: "goddamn",
+        email: "natalie@seznam.cz"
     };
     /*    (async () => {
             Database.post("register-user", user)
                 .then(resp => {
                     if (resp.status === 200)
-                        console.log("status 200 " + resp.body);
+                        console.log("status 200 " + JSON.stringify(resp.body));
                     else
                     {
                         console.log("whoopsie, status code was not 200");

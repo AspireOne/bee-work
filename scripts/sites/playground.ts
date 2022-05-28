@@ -2,7 +2,7 @@ import {ScreenSaverPilot} from "../pilots/screenSaverPilot.js";
 import {Autopilot} from "../pilots/autopilot.js";
 import {bee, controls, modules, portals} from "../global.js";
 import {Utils} from "../utils/utils.js";
-import {Types} from "../types.js";
+import {Types} from "../utils/types.js";
 import {Pencil} from "../pencil.js";
 import {Bee} from "../bee.js";
 

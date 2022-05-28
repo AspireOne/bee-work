@@ -1,6 +1,6 @@
 import {Utils} from "./utils/utils.js";
 import htmlToElement = Utils.htmlToElement;
-import {Types} from "./types.js";
+import {Types} from "./utils/types.js";
 import Point = Types.Point;
 import {VanishingCircle} from "./vanishingCircle.js";
 import ModifiableProp = Types.ModifiableProp;

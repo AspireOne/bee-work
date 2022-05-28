@@ -1,6 +1,6 @@
 import {modules, portals} from "../global.js";
 import {Portals} from "../portals.js";
-import {Types} from "../types";
+import {Types} from "../utils/types";
 import {Utils} from "../utils/utils";
 
 export module Games {

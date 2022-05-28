@@ -1,4 +1,4 @@
-import {Types} from "../types";
+import {Types} from "./types";
 
 export module Utils {
     import Point = Types.Point;

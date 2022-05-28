@@ -1,12 +1,10 @@
 import { Handler } from "@netlify/functions";
 import {Models} from "../../scripts/database/models";
-import {Database} from "../../scripts/database";
+import {Database} from "../../scripts/database/database";
 import {mongoose} from "@typegoose/typegoose";
-import {errors, restrictions} from "./register-exports";
-const bcrypt = require('bcrypt');
-
-const mongodbPassword = process.env.MONGODB_PASSWORD;
-const uri = `mongodb+srv://Aspire:${mongodbPassword}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
+import errors = Database.errors;
+import {getDbUri, getReturn, getReturnForError} from "../utils";
+const bcrypt = require('bcryptjs');
 
 const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST")
@@ -19,35 +17,31 @@ const handler: Handler = async (event, context) => {
         return getReturnForError(400, error);
 
     const UserModel = mongoose.model<Models.User.Interface>('User', Models.User.Schema);
-    await mongoose.connect(uri);
+    try {
+        await mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD as string));
+    } catch (error: any) {
+        return getReturnForError(500, errors.couldNotConnectDb, error.toString());
+    }
 
-    const userFromDb = await getUserFromDb(user, UserModel);
+    // This would be in a separate functions, but webstorm hangs in infinite analysis cycle if it is.
+    //const userFromDb = await getUserFromDb(user, UserModel);
+    let userFromDb;
+    try {
+        userFromDb = await UserModel.findOne({ "username": user.username });
+    } catch (error: any) {
+        return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
+    }
+
+    mongoose.disconnect();
+
     if (userFromDb == null || userFromDb.username != user.username || userFromDb.email != user.email)
         return getReturnForError(400, errors.userNotExist);
 
-    // Not saving salt because bcrypt already saves it combined with the hash.
-    // TODO: This doesnt work.
     if (bcrypt.compareSync(user.password, userFromDb.password))
-        getReturn(200, userFromDb);
+        return getReturn(200, userFromDb);
 
     return getReturnForError(400, errors.wrongPassword);
 };
-
-async function getUserFromDb(user: Models.User.Interface, userModel: mongoose.Model<Models.User.Interface>) {
-    const findByUsername = await userModel.findOne({ "username": user.username});
-    if (findByUsername)
-        return findByUsername;
-
-    const findByEmail = await userModel.findOne({ "email": user.email});
-    if (findByEmail)
-        return findByEmail;
-
-    return null;
-}
-
-// TODO: Make this shared.
-const getReturnForError = (statusCode: number, error: Database.Error) => ({statusCode: statusCode, body: JSON.stringify({code: error.code})})
-const getReturn = (statusCode: number, body: object) => ({statusCode: statusCode, body: JSON.stringify(body)});
 
 function checkHasRequiredAndReturnError(user: Models.User.Interface): Database.Error | null {
     if (user.password == null)

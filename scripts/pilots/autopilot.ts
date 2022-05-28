@@ -1,7 +1,7 @@
 import {Bee} from "../bee.js";
 import {Controls} from "../controls.js";
 import {Utils} from "../utils/utils.js";
-import {Types} from "../types.js";
+import {Types} from "../utils/types.js";
 
 export class Autopilot {
     private static readonly delta = 50;

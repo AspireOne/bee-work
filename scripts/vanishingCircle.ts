@@ -1,5 +1,5 @@
 import Props = VanishingCircle.Props;
-import {Types} from "./types.js";
+import {Types} from "./utils/types.js";
 
 /** A module containing the props that are passed to VanishingCircle. */
 export module VanishingCircle {

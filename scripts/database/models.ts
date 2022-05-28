@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {Types} from "../types.js";
+import {Types} from "../utils/types.js";
 
 // Note: when defining arrays, type has to be defined. Example:
 // @prop({ type: () => Job })
