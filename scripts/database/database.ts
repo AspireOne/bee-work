@@ -1,3 +1,5 @@
+import {Models} from "./models";
+
 export module Database {
     export const restrictions = {
         maxUsernameLength: 32,
@@ -87,6 +89,10 @@ export module Database {
         missingDbPassword: {
             code: 20,
             message: "Missing database password"
+        },
+        fetchFailed: {
+            code: 21,
+            message: "Fetch failed"
         }
     }
 
@@ -97,11 +103,26 @@ export module Database {
         return obj === undefined ? errors.unknownError : obj[1];
     }
 
-    export async function post(endpoint: string, data: object) {
+    export async function post<T>(endpoint: string, data: object): Promise<T> {
         return fetch(`/.netlify/functions/${endpoint}`, {
             method: 'POST',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
             body: JSON.stringify(data) // body data type must match "Content-Type" header.
-        }).then(response => response.json().then(data => ({body: data, status: response.status})) );
+        })
+            .then(response => response.json().then(data => ({body: data, status: response.status})))
+            .then(resp => {
+                if (resp.status === 200)
+                    return resp.body as T;
+
+                const error = Database.getError(resp.body.code);
+                throw(error);
+            })
+            .catch(error => {
+                if (error.code != null)
+                    throw error;
+
+                console.log("Fetch error: " + error);
+                throw errors.fetchFailed;
+            });
     }
 }
