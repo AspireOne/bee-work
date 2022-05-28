@@ -94,6 +94,10 @@ export var Database;
         missingDbPassword: {
             code: 20,
             message: "Missing database password"
+        },
+        fetchFailed: {
+            code: 21,
+            message: "Fetch failed"
         }
     };
     function getError(code) {
@@ -107,7 +111,20 @@ export var Database;
                 method: 'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
                 body: JSON.stringify(data) // body data type must match "Content-Type" header.
-            }).then(response => response.json().then(data => ({ body: data, status: response.status })));
+            })
+                .then(response => response.json().then(data => ({ body: data, status: response.status })))
+                .then(resp => {
+                if (resp.status === 200)
+                    return resp.body;
+                const error = Database.getError(resp.body.code);
+                throw (error);
+            })
+                .catch(error => {
+                if (error.code != null)
+                    throw error;
+                console.log("Fetch error: " + error);
+                throw Database.errors.fetchFailed;
+            });
         });
     }
     Database.post = post;

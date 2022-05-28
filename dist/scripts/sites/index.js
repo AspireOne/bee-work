@@ -1,58 +1,37 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-import { Database } from "../database/database.js";
 document.addEventListener("DOMContentLoaded", _ => {
     const user = {
         username: "natálie",
-        password: "goddamn",
+        password: "goddamnd",
         email: "natalie@seznam.cz"
     };
-    /*    (async () => {
-            Database.post("register-user", user)
-                .then(resp => {
-                    if (resp.status === 200)
-                        console.log("status 200 " + JSON.stringify(resp.body));
-                    else
-                    {
-                        console.log("whoopsie, status code was not 200");
-                        const error = Database.getError(resp.body.code);
-                        console.log(error);
-                    }
-                })
-                .catch(error => {
-                    console.log("ERROR " + error);
-                })
-        })();*/
-    (() => __awaiter(void 0, void 0, void 0, function* () {
-        Database.post("login-user", user)
-            .then(resp => {
-            if (resp.status === 200)
-                console.log("status 200 " + JSON.stringify(resp.body));
-            else {
-                console.log("whoopsie, status code was not 200");
-                const error = Database.getError(resp.body.code);
-                console.log(error);
-            }
-        })
+    /*    Database.post<Models.User.Interface>("login-user", user)
+            .then(user => {
+                console.log("Successfully logged in: " + JSON.stringify(user));
+            })
             .catch(error => {
-            console.log("ERROR " + error);
-        });
-    }))();
-    const loginButt = document.getElementById("login-button");
+                console.log("Error logging in: " + JSON.stringify(error));
+            })
+    */
+    const registerScreen = document.getElementById("register-screen");
+    const loginScreen = document.getElementById("login-screen");
+    const loggedInScreen = document.getElementById("logged-in-screen");
     const loginMenu = document.getElementById("login-menu");
-    loginButt.addEventListener("click", () => {
-        loginMenu.classList.toggle("hidden");
-    });
+    const loginMenuCloseButt = document.getElementById("login-menu-close-button");
+    const loginOverlay = document.getElementById("login-overlay");
+    const accountButt = document.getElementById("account-button");
+    accountButt.addEventListener("click", (e) => loginOverlay.classList.remove("hidden"));
+    loginMenuCloseButt.addEventListener("click", (e) => loginOverlay.classList.add("hidden"));
+    registerScreen.getElementsByClassName("or-button")[0].addEventListener("click", (e) => switchLoginScreen(loginScreen));
+    loginScreen.getElementsByClassName("or-button")[0].addEventListener("click", (e) => switchLoginScreen(registerScreen));
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !loginMenu.classList.contains("hidden"))
-            loginMenu.classList.add("hidden");
+        if (e.key === "Escape" && !loginOverlay.classList.contains("hidden"))
+            loginOverlay.classList.add("hidden");
     });
 });
+function switchLoginScreen(newScreen) {
+    Array.from(document.getElementsByClassName("login-menu-screen"))
+        .forEach((el) => el.classList.add("hidden"));
+    newScreen.classList.remove("hidden");
+}
+export {};
 //# sourceMappingURL=index.js.map

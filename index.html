@@ -13,15 +13,64 @@
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 </head>
 <body>
-<button id="login-button" class="button">
-    Profile <!--<ion-icon id="login-icon" name="log-in-outline"></ion-icon>-->
+<button id="account-button" class="button">
+    Account <!--<ion-icon id="login-icon" name="log-in-outline"></ion-icon>-->
 </button>
 
-<div class="fullscreen-overlay"></div>
-<div id="login-menu">
-    <textarea></textarea>
-    <textarea></textarea>
+<div class="fullscreen-overlay hidden" id="login-overlay">
+    <div id="login-menu">
+        <ion-icon name="close-outline" id="login-menu-close-button"></ion-icon>
+            <div id="login-screen" class="login-menu-screen hidden">
+                <p class="login-menu-screen-title">Login</p>
+
+                <div class="form-field" field-type="username">
+                    <label for="login-username">Username:</label>
+                    <input type="text" id="login-username" name="login-username">
+                    <p class="field-error"></p>
+                </div>
+
+                <div class="form-field" field-type="password">
+                    <label for="login-password">Password:</label>
+                    <input type="password" id="login-password" name="login-password">
+
+                    <button class="button login-button">Login</button>
+                    <button class="button or-button">Or register</button>
+                    <p class="field-error"></p>
+                </div>
+            </div>
+
+        <div id="register-screen" class="login-menu-screen">
+            <p class="login-menu-screen-title">Registration</p>
+
+            <div class="form-field" field-type="username">
+                <label for="register-username">Username:</label>
+                <input type="text" id="register-username" name="register-username">
+                <p class="field-error"></p>
+            </div>
+
+            <div class="form-field" field-type="email">
+                <label for="register-email">E-Mail:</label>
+                <input type="email" id="register-email" name="register-email">
+                <p class="field-error"></p>
+            </div>
+
+            <div class="form-field" field-type="password">
+                <label for="register-password">Password:</label>
+                <input type="password" id="register-password" name="register-password">
+                <p class="field-error"></p>
+            </div>
+
+            <button class="button login-button">Register</button>
+            <button class="button or-button">Or login</button>
+        </div>
+
+        <div id="logged-in-screen" class="login-menu-screen hidden">
+            <h1>Welcome, <span id="username">aspire</span>!</h1>
+            <button class="button" id="log-out-button">Log out</button>
+        </div>
+    </div>
 </div>
+
 
 <div id="portal-playground" target="sites/playground.html" class="side-by-side side-portal portal-left">
     <div class="portal-inner-wrapper">
