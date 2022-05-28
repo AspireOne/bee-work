@@ -107,6 +107,10 @@ input.error {
     right: 0.5em;
 }
 
+#global-error-field {
+    text-align: center;
+}
+
 #login-icon {
     right: 0;
     position: absolute;

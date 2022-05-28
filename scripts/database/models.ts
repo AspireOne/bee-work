@@ -23,18 +23,20 @@ export module Models {
         import SavedModifiableProp = Types.SavedModifiableProp;
 
         export interface Interface {
-            username: string;
-            password: string;
-            email: string;
+            username?: string;
+            password?: string;
+            hashed_password?: string;
+            email?: string;
             bee_props?: {[key: string]: SavedModifiableProp};
             circle_props?: {[key: string]: SavedModifiableProp};
+            _id?: string;
         }
 
         // 2. Create a Schema corresponding to the document interface.
         export const Schema = new mongoose.Schema<Interface>({
             username: {type: String, required: true, unique: true},
             email: {type: String, required: true, unique: true},
-            password: {type: String, required: true, unique: false},
+            hashed_password: {type: String, required: true, unique: false},
             bee_props: {type: Object, required: false, unique: false},
             circle_props: {type: Object, required: false, unique: false},
         });

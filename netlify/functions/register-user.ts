@@ -16,7 +16,7 @@ const handler: Handler = async (event, context) => {
         return getReturnForError(500, errors.missingDbPassword);
 
     const user: Models.User.Interface = JSON.parse(event.body ?? "{}");
-    let error = checkHasRequiredAndReturnError(user) ?? checkDataValidityAndReturnError(user);
+    let error = Database.checkDataExistenceAndReturnError(user) ?? Database.checkDataValidityAndReturnError(user);
 
     if (error !== null)
         return getReturnForError(400, error);
@@ -39,7 +39,8 @@ const handler: Handler = async (event, context) => {
         return getReturnForError(400, error);
 
     // Not saving salt because bcrypt already saves it combined with the hash.
-    user.password = bcrypt.hashSync(user.password, 10);
+    user.hashed_password = bcrypt.hashSync(user.password, 10);
+    user.password = undefined;
 
     const User = new UserModel(user);
     const saveResult = await User.save();
@@ -60,32 +61,5 @@ async function checkUniqueAndReturnError(user: Models.User.Interface, userModel:
 
     return null;
 }
-
-function checkDataValidityAndReturnError(user: Models.User.Interface): Database.Error | null {
-    if (user.email.length > restrictions.maxEmailLength)
-        return errors.emailTooLong;
-    if (user.username.length > restrictions.maxUsernameLength)
-        return errors.usernameTooLong;
-    if (user.password.length > restrictions.maxPasswordLength)
-        return errors.passwordTooLong;
-    if (!isEmailValid(user.email))
-        return errors.emailNotValid;
-    return null;
-}
-
-function checkHasRequiredAndReturnError(user: Models.User.Interface): Database.Error | null {
-    if (user.username == null)
-        return errors.usernameIsMissing;
-    else if (user.password == null)
-        return errors.passwordIsMissing;
-    else if (user.email == null)
-        return errors.emailIsMissing;
-    return null;
-}
-
-const isEmailValid = (email: string): boolean => {
-    const matches = email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    return matches !== null && matches.length > 0;
-};
 
 export { handler };

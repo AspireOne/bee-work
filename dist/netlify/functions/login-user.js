@@ -30,27 +30,43 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     catch (error) {
         return getReturnForError(500, errors.couldNotConnectDb, error.toString());
     }
-    // This would be in a separate functions, but webstorm hangs in infinite analysis cycle if it is.
-    //const userFromDb = await getUserFromDb(user, UserModel);
     let userFromDb;
     try {
-        userFromDb = yield UserModel.findOne({ "username": user.username });
+        userFromDb = (yield findUser(user, UserModel));
     }
     catch (error) {
         return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
     }
     mongoose.disconnect();
-    if (userFromDb == null || userFromDb.username != user.username || userFromDb.email != user.email)
+    if (userFromDb == null || (user.username && userFromDb.username != user.username) || (user.email && userFromDb.email != user.email))
         return getReturnForError(400, errors.userNotExist);
-    if (bcrypt.compareSync(user.password, userFromDb.password))
+    if (user.password != null && bcrypt.compareSync(user.password, userFromDb.hashed_password))
+        return getReturn(200, userFromDb);
+    if (user.hashed_password != null && user.hashed_password === userFromDb.hashed_password)
         return getReturn(200, userFromDb);
     return getReturnForError(400, errors.wrongPassword);
 });
+function findUser(user, userModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let userFromDb = null;
+        if (user.username != null)
+            userFromDb = yield userModel.findOne({ "username": user.username });
+        if (userFromDb != null)
+            return userFromDb;
+        if (user.email != null)
+            userFromDb = yield userModel.findOne({ "email": user.email });
+        if (userFromDb != null)
+            return userFromDb;
+        if (user._id != null)
+            userFromDb = yield userModel.findById(user._id);
+        return userFromDb;
+    });
+}
 function checkHasRequiredAndReturnError(user) {
-    if (user.password == null)
+    if (user.password == null && user.hashed_password == null)
         return errors.passwordIsMissing;
-    if (user.username == null && user.email == null)
-        return errors.usernameOrEmailMissing;
+    if (user.username == null && user.email == null && user._id == null)
+        return user.username == null ? errors.usernameIsMissing : errors.emailIsMissing;
     return null;
 }
 export { handler };

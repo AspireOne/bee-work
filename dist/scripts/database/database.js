@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 export var Database;
 (function (Database) {
     Database.restrictions = {
-        maxUsernameLength: 32,
-        maxPasswordLength: 64,
-        maxEmailLength: 64,
+        usernameLength: { min: 3, max: 32 },
+        passwordLength: { min: 4, max: 64 },
+        emailLength: { min: 6, max: 64 },
     };
     Database.errors = {
         usernameAlreadyExists: {
@@ -67,10 +67,6 @@ export var Database;
             code: 13,
             message: "Unknown error occured",
         },
-        usernameOrEmailMissing: {
-            code: 14,
-            message: "Username or email is missing"
-        },
         userNotExist: {
             code: 15,
             message: "User does not exist"
@@ -98,6 +94,18 @@ export var Database;
         fetchFailed: {
             code: 21,
             message: "Fetch failed"
+        },
+        usernameTooShort: {
+            code: 22,
+            message: "Username is too short"
+        },
+        passwordTooShort: {
+            code: 23,
+            message: "Password is too short"
+        },
+        emailTooShort: {
+            code: 24,
+            message: "Email is too short"
         }
     };
     function getError(code) {
@@ -128,5 +136,44 @@ export var Database;
         });
     }
     Database.post = post;
+    // Checks strictly validity, not existence.
+    function checkDataValidityAndReturnError(user) {
+        if (user.username != null) {
+            if (user.username.length > Database.restrictions.usernameLength.max)
+                return Database.errors.usernameTooLong;
+            if (user.username.length < Database.restrictions.usernameLength.min)
+                return Database.errors.usernameTooShort;
+        }
+        if (user.email != null) {
+            if (user.email.length > Database.restrictions.emailLength.max)
+                return Database.errors.emailTooLong;
+            if (user.email.length < Database.restrictions.emailLength.min)
+                return Database.errors.emailTooShort;
+            if (!isEmailValid(user.email))
+                return Database.errors.emailNotValid;
+        }
+        if (user.password != null) {
+            if (user.password.length > Database.restrictions.passwordLength.max)
+                return Database.errors.passwordTooLong;
+            if (user.password.length < Database.restrictions.passwordLength.min)
+                return Database.errors.passwordTooShort;
+        }
+        return null;
+    }
+    Database.checkDataValidityAndReturnError = checkDataValidityAndReturnError;
+    function checkDataExistenceAndReturnError(user, username = true, password = true, email = true) {
+        if (username && !user.username)
+            return Database.errors.usernameIsMissing;
+        if (email && !user.email)
+            return Database.errors.emailIsMissing;
+        if (password && !user.password)
+            return Database.errors.passwordIsMissing;
+        return null;
+    }
+    Database.checkDataExistenceAndReturnError = checkDataExistenceAndReturnError;
+    const isEmailValid = (email) => {
+        const matches = email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        return matches !== null && matches.length > 0;
+    };
 })(Database || (Database = {}));
 //# sourceMappingURL=database.js.map

@@ -20,7 +20,7 @@ export var Models;
         User.Schema = new mongoose.Schema({
             username: { type: String, required: true, unique: true },
             email: { type: String, required: true, unique: true },
-            password: { type: String, required: true, unique: false },
+            hashed_password: { type: String, required: true, unique: false },
             bee_props: { type: Object, required: false, unique: false },
             circle_props: { type: Object, required: false, unique: false },
         });

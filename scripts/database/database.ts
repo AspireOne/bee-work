@@ -2,9 +2,9 @@ import {Models} from "./models";
 
 export module Database {
     export const restrictions = {
-        maxUsernameLength: 32,
-        maxPasswordLength: 64,
-        maxEmailLength: 64,
+        usernameLength: {min: 3, max: 32},
+        passwordLength: {min: 4, max: 64},
+        emailLength: {min: 6, max: 64},
     }
 
     export const errors = {
@@ -61,11 +61,6 @@ export module Database {
             code: 13,
             message: "Unknown error occured",
         },
-
-        usernameOrEmailMissing: {
-            code: 14,
-            message: "Username or email is missing"
-        },
         userNotExist: {
             code: 15,
             message: "User does not exist"
@@ -93,6 +88,18 @@ export module Database {
         fetchFailed: {
             code: 21,
             message: "Fetch failed"
+        },
+        usernameTooShort: {
+            code: 22,
+            message: "Username is too short"
+        },
+        passwordTooShort: {
+            code: 23,
+            message: "Password is too short"
+        },
+        emailTooShort: {
+            code: 24,
+            message: "Email is too short"
         }
     }
 
@@ -125,4 +132,51 @@ export module Database {
                 throw errors.fetchFailed;
             });
     }
+
+    // Checks strictly validity, not existence.
+    export function checkDataValidityAndReturnError(user: Models.User.Interface): Database.Error | null {
+        if (user.username != null) {
+            if (user.username.length > restrictions.usernameLength.max)
+                return errors.usernameTooLong;
+            if (user.username.length < restrictions.usernameLength.min)
+                return errors.usernameTooShort;
+        }
+
+        if (user.email != null) {
+            if (user.email.length > restrictions.emailLength.max)
+                return errors.emailTooLong;
+            if (user.email.length < restrictions.emailLength.min)
+                return errors.emailTooShort;
+
+            if (!isEmailValid(user.email))
+                return errors.emailNotValid;
+        }
+
+        if (user.password != null) {
+            if (user.password.length > restrictions.passwordLength.max)
+                return errors.passwordTooLong;
+            if (user.password.length < restrictions.passwordLength.min)
+                return errors.passwordTooShort;
+        }
+
+        return null;
+    }
+
+    export function checkDataExistenceAndReturnError(user: Models.User.Interface, username = true, password = true, email = true): Error | null {
+        if (username && !user.username)
+            return errors.usernameIsMissing;
+
+        if (email && !user.email)
+            return errors.emailIsMissing;
+
+        if (password && !user.password)
+            return errors.passwordIsMissing;
+
+        return null;
+    }
+
+    const isEmailValid = (email: string): boolean => {
+        const matches = email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+        return matches !== null && matches.length > 0;
+    };
 }

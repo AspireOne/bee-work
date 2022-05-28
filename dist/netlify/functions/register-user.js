@@ -11,7 +11,6 @@ import { Models } from "../../scripts/database/models";
 import { Database } from "../../scripts/database/database";
 import { mongoose } from "@typegoose/typegoose";
 var errors = Database.errors;
-var restrictions = Database.restrictions;
 import { getDbUri, getReturn, getReturnForError } from "../utils";
 const bcrypt = require('bcryptjs');
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,7 +20,7 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     if (process.env.MONGODB_PASSWORD == null)
         return getReturnForError(500, errors.missingDbPassword);
     const user = JSON.parse((_a = event.body) !== null && _a !== void 0 ? _a : "{}");
-    let error = (_b = checkHasRequiredAndReturnError(user)) !== null && _b !== void 0 ? _b : checkDataValidityAndReturnError(user);
+    let error = (_b = Database.checkDataExistenceAndReturnError(user)) !== null && _b !== void 0 ? _b : Database.checkDataValidityAndReturnError(user);
     if (error !== null)
         return getReturnForError(400, error);
     const UserModel = mongoose.model('User', Models.User.Schema);
@@ -40,7 +39,8 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     if (error !== null)
         return getReturnForError(400, error);
     // Not saving salt because bcrypt already saves it combined with the hash.
-    user.password = bcrypt.hashSync(user.password, 10);
+    user.hashed_password = bcrypt.hashSync(user.password, 10);
+    user.password = undefined;
     const User = new UserModel(user);
     const saveResult = yield User.save();
     if (!saveResult)
@@ -58,29 +58,5 @@ function checkUniqueAndReturnError(user, userModel) {
         return null;
     });
 }
-function checkDataValidityAndReturnError(user) {
-    if (user.email.length > restrictions.maxEmailLength)
-        return errors.emailTooLong;
-    if (user.username.length > restrictions.maxUsernameLength)
-        return errors.usernameTooLong;
-    if (user.password.length > restrictions.maxPasswordLength)
-        return errors.passwordTooLong;
-    if (!isEmailValid(user.email))
-        return errors.emailNotValid;
-    return null;
-}
-function checkHasRequiredAndReturnError(user) {
-    if (user.username == null)
-        return errors.usernameIsMissing;
-    else if (user.password == null)
-        return errors.passwordIsMissing;
-    else if (user.email == null)
-        return errors.emailIsMissing;
-    return null;
-}
-const isEmailValid = (email) => {
-    const matches = email.toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-    return matches !== null && matches.length > 0;
-};
 export { handler };
 //# sourceMappingURL=register-user.js.map

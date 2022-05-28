@@ -3,12 +3,16 @@ import { Controls } from "./controls.js";
 import { Portals } from "./portals.js";
 import { Utils } from "./utils/utils.js";
 import { CollisionChecker } from "./collisionChecker.js";
+import { Database } from "./database/database.js";
 export const modules = [];
 export const controls = new Controls();
+export let user = null;
 export let collisionChecker;
 export let portals;
 export let bee;
-const collisionButtMinEnterTime = 350;
+let userSet = false;
+const userLoadedCallbacks = [];
+const userNotLoadedCallbacks = [];
 const beeElementHTML = `
         <div>
             <p id="bee-text"></p>
@@ -21,6 +25,21 @@ handleUrlParams(params);
 history.pushState("", document.title, window.location.pathname);
 //document.addEventListener('contextmenu', event => event.preventDefault());
 document.addEventListener("DOMContentLoaded", _ => {
+    const userFromLocalStorageStr = localStorage.getItem("user");
+    console.log(userFromLocalStorageStr);
+    if (userFromLocalStorageStr === null)
+        setUser(null);
+    else {
+        const userFromLocalStorage = JSON.parse(userFromLocalStorageStr);
+        Database.post("login-user", userFromLocalStorage)
+            .then(userFromDb => {
+            console.log("Loaded user from database.");
+            setUser(userFromDb);
+        }).catch(err => {
+            console.error("Could not load user from database. Error: " + err);
+            setUser(null);
+        });
+    }
     // Initialization.
     document.body.appendChild(Utils.htmlToElement(beeElementHTML));
     const beeElement = document.getElementById("bee");
@@ -38,6 +57,28 @@ document.addEventListener("DOMContentLoaded", _ => {
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });
+export function setUser(newUser) {
+    user = newUser;
+    userSet = true;
+    if (newUser === null) {
+        localStorage.removeItem("user");
+        userNotLoadedCallbacks.forEach(callback => callback());
+    }
+    else {
+        localStorage.setItem("user", JSON.stringify(newUser));
+        userLoadedCallbacks.forEach(callback => callback(newUser));
+    }
+}
+export function onUserLoaded(callback) {
+    userLoadedCallbacks.push(callback);
+    if (user != null)
+        callback(user);
+}
+export function onUserNotLoaded(callback) {
+    userNotLoadedCallbacks.push(callback);
+    if (user == null && userSet)
+        callback();
+}
 function registerCollideButtons() {
     for (let butt of document.getElementsByClassName("collide-button")) {
         const realButt = butt;

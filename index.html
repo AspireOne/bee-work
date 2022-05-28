@@ -25,18 +25,18 @@
 
                 <div class="form-field" field-type="username">
                     <label for="login-username">Username:</label>
-                    <input type="text" id="login-username" name="login-username">
+                    <input type="username" id="login-username" name="login-username">
                     <p class="field-error"></p>
                 </div>
 
                 <div class="form-field" field-type="password">
                     <label for="login-password">Password:</label>
                     <input type="password" id="login-password" name="login-password">
-
-                    <button class="button login-button">Login</button>
-                    <button class="button or-button">Or register</button>
                     <p class="field-error"></p>
                 </div>
+
+                <button class="button login-button">Login</button>
+                <button class="button or-button">Or register</button>
             </div>
 
         <div id="register-screen" class="login-menu-screen">
@@ -44,7 +44,7 @@
 
             <div class="form-field" field-type="username">
                 <label for="register-username">Username:</label>
-                <input type="text" id="register-username" name="register-username">
+                <input type="username" id="register-username" name="register-username">
                 <p class="field-error"></p>
             </div>
 
@@ -65,9 +65,10 @@
         </div>
 
         <div id="logged-in-screen" class="login-menu-screen hidden">
-            <h1>Welcome, <span id="username">aspire</span>!</h1>
+            <h1>Welcome, <span id="username"></span>!</h1>
             <button class="button" id="log-out-button">Log out</button>
         </div>
+        <p class="field-error" id="global-error-field"></p>
     </div>
 </div>
 
