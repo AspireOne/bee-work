@@ -4,11 +4,15 @@ import {Database} from "../../scripts/database/database";
 import {mongoose} from "@typegoose/typegoose";
 import errors = Database.errors;
 import {getDbUri, getReturn, getReturnForError} from "../utils";
+import getError = Database.getError;
 const bcrypt = require('bcryptjs');
 
 const handler: Handler = async (event, context) => {
     if (event.httpMethod !== "POST")
         return getReturnForError(405, errors.noGet);
+
+    if (process.env.MONGODB_PASSWORD == null)
+        return getReturnForError(500, errors.missingDbPassword);
 
     const user: Models.User.Interface = JSON.parse(event.body ?? "{}");
     let error = checkHasRequiredAndReturnError(user);

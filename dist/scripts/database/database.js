@@ -90,6 +90,10 @@ export var Database;
         couldNotRetrieveDocument: {
             code: 19,
             message: "Could not retrieve document"
+        },
+        missingDbPassword: {
+            code: 20,
+            message: "Missing database password"
         }
     };
     function getError(code) {

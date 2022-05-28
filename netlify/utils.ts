@@ -1,4 +1,6 @@
 import {Database} from "../scripts/database/database";
+import {mongoose} from "@typegoose/typegoose";
+import {Models} from "../scripts/database/models";
 
 export function getReturnForError(statusCode: number, error: Database.Error, errorMessage: string = "") {
     return {

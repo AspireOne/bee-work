@@ -83,6 +83,10 @@ export module Database {
         couldNotRetrieveDocument: {
             code: 19,
             message: "Could not retrieve document"
+        },
+        missingDbPassword: {
+            code: 20,
+            message: "Missing database password"
         }
     }
 

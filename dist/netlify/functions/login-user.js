@@ -17,6 +17,8 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     var _a;
     if (event.httpMethod !== "POST")
         return getReturnForError(405, errors.noGet);
+    if (process.env.MONGODB_PASSWORD == null)
+        return getReturnForError(500, errors.missingDbPassword);
     const user = JSON.parse((_a = event.body) !== null && _a !== void 0 ? _a : "{}");
     let error = checkHasRequiredAndReturnError(user);
     if (error !== null)
