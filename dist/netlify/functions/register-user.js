@@ -11,7 +11,7 @@ import { Models } from "../../scripts/database/models";
 import { Database } from "../../scripts/database/database";
 import { mongoose } from "@typegoose/typegoose";
 var errors = Database.errors;
-import { getDbUri, getReturn, getReturnForError } from "../utils";
+import { checkUniqueAndReturnError, getDbUri, getReturn, getReturnForError } from "../utils";
 const bcrypt = require('bcryptjs');
 const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
@@ -47,16 +47,5 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
         return getReturnForError(500, errors.couldNotSaveUser);
     return getReturn(200, saveResult);
 });
-function checkUniqueAndReturnError(user, userModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const usernameExists = yield userModel.findOne({ "username": user.username });
-        if (usernameExists)
-            return errors.usernameAlreadyExists;
-        const emailExists = yield userModel.findOne({ "email": user.email });
-        if (emailExists)
-            return errors.emailAlreadyExists;
-        return null;
-    });
-}
 export { handler };
 //# sourceMappingURL=register-user.js.map

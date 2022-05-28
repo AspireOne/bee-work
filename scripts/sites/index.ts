@@ -2,7 +2,7 @@ import {Models} from "../database/models";
 import {Database} from "../database/database.js";
 import errors = Database.errors;
 import restrictions = Database.restrictions;
-import {controls, onUserLoaded, onUserNotLoaded, setUser} from "../global.js";
+import {bee, controls, onUserLoaded, onUserNotLoaded, setUser, user} from "../global.js";
 
 document.addEventListener("DOMContentLoaded", _ => {
     const registerScreen = document.getElementById("register-screen") as HTMLDivElement;
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     onUserNotLoaded(() => {
         console.log("on user not loaded executed.");
         switchLoginScreen(loginScreen);
+        changeLoginOverlayState(loginOverlay, true);
     });
 
     accountButt.addEventListener("click", (e) => changeLoginOverlayState(loginOverlay, true));

@@ -106,6 +106,18 @@ export var Database;
         emailTooShort: {
             code: 24,
             message: "Email is too short"
+        },
+        couldNotUpdateUser: {
+            code: 25,
+            message: "Could not update user"
+        },
+        userIdMissing: {
+            code: 26,
+            message: "User ID is missing"
+        },
+        noDataToUpdate: {
+            code: 27,
+            message: "No data to update"
         }
     };
     function getError(code) {
@@ -130,7 +142,8 @@ export var Database;
                 .catch(error => {
                 if (error.code != null)
                     throw error;
-                console.log("Fetch error: " + error);
+                console.log("Fetch error: ");
+                console.log(error);
                 throw Database.errors.fetchFailed;
             });
         });

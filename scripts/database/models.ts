@@ -27,8 +27,8 @@ export module Models {
             password?: string;
             hashed_password?: string;
             email?: string;
-            bee_props?: {[key: string]: SavedModifiableProp};
-            circle_props?: {[key: string]: SavedModifiableProp};
+            bee_props?: Types.SavedModifiableProp;
+            circle_props?: Types.SavedModifiableProp;
             _id?: string;
         }
 

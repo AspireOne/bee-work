@@ -32,5 +32,6 @@ export var PropUtils;
         Object.entries(sourceProps).forEach(([key, value]) => values[key] = value.value);
         return values;
     }
+    PropUtils.convertPropsToSaveProps = convertPropsToSaveProps;
 })(PropUtils || (PropUtils = {}));
 //# sourceMappingURL=propUtils.js.map

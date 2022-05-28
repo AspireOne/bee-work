@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", _ => {
             console.log("Loaded user from database.");
             setUser(userFromDb);
         }).catch(err => {
-            console.error("Could not load user from database. Error: " + err);
+            console.error("Could not load user from database. Error: " + JSON.stringify(err));
             setUser(null);
         });
     }

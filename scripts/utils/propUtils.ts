@@ -29,7 +29,7 @@ export module PropUtils {
      * @param sourceProps The props to create the object from.
      * @returns An object with the current values of the props.
      */
-    function convertPropsToSaveProps(sourceProps: {[key: string]: Types.ModifiableProp}): Types.SavedModifiableProp {
+    export function convertPropsToSaveProps(sourceProps: {[key: string]: Types.ModifiableProp}): Types.SavedModifiableProp {
         const values: Types.SavedModifiableProp = {};
         Object.entries(sourceProps).forEach(([key, value]) => values[key] = value.value);
         return values;

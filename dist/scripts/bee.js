@@ -3,6 +3,8 @@ import { Controls } from "./controls.js";
 import { Types } from "./utils/types.js";
 var WayX = Types.WayX;
 import { PropUtils } from "./utils/propUtils.js";
+import { onUserLoaded, user } from "./global.js";
+import { Database } from "./database/database.js";
 export class Bee {
     constructor(bee, controls) {
         this.currPos = { y: 0, x: 0 };
@@ -83,7 +85,8 @@ export class Bee {
             text.style.top = parseInt(bee.style.top) - 40 + "px";
             window.setTimeout(() => text.innerHTML = "", 1500);
         };
-        this.loadAllProps();
+        this.loadAllProps(false);
+        onUserLoaded((user) => this.loadAllProps(true));
     }
     get running() { return this._running; }
     set running(value) { this._running = value; }
@@ -120,12 +123,21 @@ export class Bee {
     }
     /** Saves the current props to localStorage. */
     saveAllProps() {
+        if (user == null)
+            return;
         PropUtils.saveProps(this.props, this.propsName);
         PropUtils.saveProps(this.circleProps, this.circlePropsName);
+        user.bee_props = PropUtils.convertPropsToSaveProps(this.props);
+        user.circle_props = PropUtils.convertPropsToSaveProps(this.circleProps);
+        Database.post("update-user", user)
+            .then(user => console.log(JSON.stringify(user)))
+            .catch(error => console.log(JSON.stringify(error)));
     }
-    loadAllProps() {
-        const savedBeeProps = PropUtils.getSavedProps(this.propsName);
-        const savedCircleProps = PropUtils.getSavedProps(this.circlePropsName);
+    loadAllProps(fromDb) {
+        if (fromDb && user == null)
+            return;
+        const savedBeeProps = fromDb ? user === null || user === void 0 ? void 0 : user.bee_props : PropUtils.getSavedProps(this.propsName);
+        const savedCircleProps = fromDb ? user === null || user === void 0 ? void 0 : user.circle_props : PropUtils.getSavedProps(this.circlePropsName);
         if (savedBeeProps != null)
             PropUtils.applySavedProps(this.props, savedBeeProps);
         if (savedCircleProps != null)

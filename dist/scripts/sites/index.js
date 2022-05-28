@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     onUserNotLoaded(() => {
         console.log("on user not loaded executed.");
         switchLoginScreen(loginScreen);
+        changeLoginOverlayState(loginOverlay, true);
     });
     accountButt.addEventListener("click", (e) => changeLoginOverlayState(loginOverlay, true));
     loginMenuCloseButt.addEventListener("click", (e) => changeLoginOverlayState(loginOverlay, false));

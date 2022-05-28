@@ -48,7 +48,6 @@ export module Database {
             code: 10,
             message: "Could not save user"
         },
-
         noGet: {
             code: 11,
             message: "GET Not Allowed",
@@ -100,6 +99,18 @@ export module Database {
         emailTooShort: {
             code: 24,
             message: "Email is too short"
+        },
+        couldNotUpdateUser: {
+            code: 25,
+            message: "Could not update user"
+        },
+        userIdMissing: {
+            code: 26,
+            message: "User ID is missing"
+        },
+        noDataToUpdate: {
+            code: 27,
+            message: "No data to update"
         }
     }
 
@@ -128,7 +139,8 @@ export module Database {
                 if (error.code != null)
                     throw error;
 
-                console.log("Fetch error: " + error);
+                console.log("Fetch error: ");
+                console.log(error);
                 throw errors.fetchFailed;
             });
     }

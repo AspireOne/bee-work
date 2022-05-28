@@ -6,6 +6,9 @@ import {Utils} from "./utils/utils.js";
 import {Types} from "./utils/types.js";
 import WayX = Types.WayX;
 import {PropUtils} from "./utils/propUtils.js";
+import {onUserLoaded, user} from "./global.js";
+import {Database} from "./database/database.js";
+import {Models} from "./database/models";
 
 /** Contains Bee-specific Types. */
 export module Bee {
@@ -117,7 +120,9 @@ export class Bee {
             text.style.top = parseInt(bee.style.top) - 40 + "px";
             window.setTimeout(() => text.innerHTML = "", 1500);
         }
-        this.loadAllProps();
+
+        this.loadAllProps(false);
+        onUserLoaded((user) => this.loadAllProps(true));
     }
 
     /** Runs VanishingCircle's update loop and the bee's update loop. */
@@ -160,13 +165,25 @@ export class Bee {
 
     /** Saves the current props to localStorage. */
     public saveAllProps() {
+        if (user == null)
+            return;
+
         PropUtils.saveProps(this.props, this.propsName);
         PropUtils.saveProps(this.circleProps, this.circlePropsName);
+        user.bee_props = PropUtils.convertPropsToSaveProps(this.props);
+        user.circle_props = PropUtils.convertPropsToSaveProps(this.circleProps);
+
+        Database.post<Models.User.Interface>("update-user", user)
+            .then(user => console.log(JSON.stringify(user)))
+            .catch(error => console.log(JSON.stringify(error)))
     }
 
-    public loadAllProps() {
-        const savedBeeProps = PropUtils.getSavedProps(this.propsName);
-        const savedCircleProps = PropUtils.getSavedProps(this.circlePropsName);
+    public loadAllProps(fromDb: boolean) {
+        if (fromDb && user == null)
+            return;
+
+        const savedBeeProps = fromDb ? user?.bee_props : PropUtils.getSavedProps(this.propsName);
+        const savedCircleProps = fromDb ? user?.circle_props : PropUtils.getSavedProps(this.circlePropsName);
 
         if (savedBeeProps != null)
             PropUtils.applySavedProps(this.props, savedBeeProps);

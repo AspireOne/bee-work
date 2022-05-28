@@ -3,7 +3,7 @@ import {Models} from "../../scripts/database/models";
 import {Database} from "../../scripts/database/database";
 import {mongoose} from "@typegoose/typegoose";
 import errors = Database.errors;
-import {getDbUri, getReturn, getReturnForError} from "../utils";
+import {findUser, getDbUri, getReturn, getReturnForError} from "../utils";
 import getError = Database.getError;
 import User = Models.User;
 const bcrypt = require('bcryptjs');
@@ -31,7 +31,7 @@ const handler: Handler = async (event, context) => {
 
     let userFromDb;
     try {
-        userFromDb = await findUser(user, UserModel) as User.Interface | null;
+        userFromDb = await findUser(user, UserModel);
     } catch (error: any) {
         return getReturnForError(500, errors.couldNotRetrieveDocument, error.toString());
     }
@@ -48,26 +48,6 @@ const handler: Handler = async (event, context) => {
 
     return getReturnForError(400, errors.wrongPassword);
 };
-
-async function findUser(user: Models.User.Interface, userModel: mongoose.Model<User.Interface>) {
-    let userFromDb = null;
-    if (user.username != null)
-        userFromDb = await userModel.findOne({ "username": user.username });
-
-    if (userFromDb != null)
-        return userFromDb;
-
-    if (user.email != null)
-        userFromDb = await userModel.findOne({ "email": user.email });
-
-    if (userFromDb != null)
-        return userFromDb;
-
-    if (user._id != null)
-        userFromDb = await userModel.findById(user._id);
-
-    return userFromDb;
-}
 
 function checkHasRequiredAndReturnError(user: Models.User.Interface): Database.Error | null {
     if (user.password == null && user.hashed_password == null)
