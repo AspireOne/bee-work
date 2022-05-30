@@ -20,6 +20,7 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
         return getReturnForError(500, errors.missingDbPassword);
     const score = JSON.parse((_a = event.body) !== null && _a !== void 0 ? _a : "{}");
     const ScoreModel = mongoose.model('Score', Models.Score.Schema);
+    const UserModel = mongoose.model('User', Models.User.Schema);
     try {
         yield mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD));
     }
