@@ -57,12 +57,13 @@ document.addEventListener("DOMContentLoaded", _ => {
     // Invoke all modules waiting for main to be ready.
     modules.forEach(module => module());
 });
-export function setUser(newUser) {
+export function setUser(newUser, remove = false) {
     user = newUser;
     userSet = true;
     if (newUser === null) {
-        localStorage.removeItem("user");
         userNotLoadedCallbacks.forEach(callback => callback());
+        if (remove)
+            localStorage.removeItem("user");
     }
     else {
         localStorage.setItem("user", JSON.stringify(newUser));

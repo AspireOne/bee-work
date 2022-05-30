@@ -69,13 +69,14 @@ document.addEventListener("DOMContentLoaded", _ => {
     modules.forEach(module => module());
 });
 
-export function setUser(newUser: Models.User.Interface | null) {
+export function setUser(newUser: Models.User.Interface | null, remove: boolean = false) {
     user = newUser;
     userSet = true;
 
     if (newUser === null) {
-        localStorage.removeItem("user");
         userNotLoadedCallbacks.forEach(callback => callback());
+        if (remove)
+            localStorage.removeItem("user");
     } else {
         localStorage.setItem("user", JSON.stringify(newUser));
         userLoadedCallbacks.forEach(callback => callback(newUser));

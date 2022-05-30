@@ -9,12 +9,11 @@
     display: flex; /* To align the items in the center of the container */
     justify-content: center; /* Align horizontally. */
     align-items: center; /* Align vertically. */
-    /*position: absolute; !* To position game cicles randomly on the screen without affecting the document flow. *!*/
+    margin-left: 50%;
+    margin-top: 20%;
+    position: absolute;
 }
 
-#follower-circle {
-    left: 80%;
-}
 .game-circle p {
     font-size: 1.5em;
     font-weight: bold;

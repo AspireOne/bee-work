@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", _ => {
     registerLoginButton(registerScreen, true, "register-user", (user) => setUser(user));
     registerLoginButton(loginScreen, false, "login-user", (user) => setUser(user));
 
-    (document.getElementById("log-out-button") as HTMLElement).addEventListener("click", (e) => setUser(null));
+    (document.getElementById("log-out-button") as HTMLElement).addEventListener("click", (e) => setUser(null, true));
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && !loginOverlay.classList.contains("hidden"))
