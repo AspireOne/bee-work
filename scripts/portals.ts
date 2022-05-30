@@ -191,7 +191,7 @@ export class Portals {
                 props.target.searchParams.append("floss", Controls.keys.floss.pressed + "");
             }
 
-            window.location.assign(props.target.href); //  TODO: window.location.replace(props.target);
+            window.location.replace(props.target);
         }
         collisionChecker.add({element: props.collisionElement, onCollisionEnter: onCollision.bind(this)});
     }

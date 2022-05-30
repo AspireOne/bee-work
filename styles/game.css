@@ -194,9 +194,7 @@
 #menu {
     opacity: 0;
 
-    /* TODO: Revert this. */
-    /*animation: 1s fade-in 4s forwards;*/
-    animation: 1s fade-in 0s forwards;
+    animation: 1s fade-in 4s forwards;
 }
 
 #game {
