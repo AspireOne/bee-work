@@ -53,4 +53,4 @@ export async function checkUniqueAndReturnError(user: Models.User.Interface, use
     return null;
 }
 
-export const getDbUri = (password: string) => `mongodb+srv://Aspire:${password}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
+export const getDbUri = (password: string, db: string = "bee-work") => `mongodb+srv://Aspire:${password}@cluster0.2j2lg.mongodb.net/${db}`; //?retryWrites=true&w=majority

@@ -1,6 +1,6 @@
 import { Utils } from "../utils/utils.js";
 export class Game {
-    constructor(beeProps, onGameEnded) {
+    constructor(beeProps, gameName, onGameEnded) {
         this.pauseTime = 0;
         this.lastPause = { start: 0, stop: 0 };
         this._startTime = 0;
@@ -9,6 +9,7 @@ export class Game {
         this._paused = false;
         this.onGameEnded = onGameEnded;
         this.beeProps = beeProps;
+        this.gameName = gameName;
         this.DOMElements = {
             achivement: document.getElementById("achivement"),
             achivementName: document.getElementById("achivement-name"),

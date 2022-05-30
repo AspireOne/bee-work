@@ -18,6 +18,7 @@ type UpdateMethod = (delta: number, diffBetweenFrames: number) => void;
 export abstract class Game {
     public readonly beeProps: BeePropsValues;
     protected readonly onGameEnded: (endScreenData: HTMLElement) => void;
+    public readonly gameName: string;
     protected updateMethod: UpdateMethod | undefined;
     protected pauseTime = 0;
 
@@ -47,9 +48,10 @@ export abstract class Game {
     public get paused(): boolean { return this._paused; }
     public set paused(value: boolean) { this._paused = value; }
 
-    protected constructor(beeProps: BeePropsValues, onGameEnded: (endScreenData: HTMLElement) => void) {
+    protected constructor(beeProps: BeePropsValues, gameName: string, onGameEnded: (endScreenData: HTMLElement) => void) {
         this.onGameEnded = onGameEnded;
         this.beeProps = beeProps;
+        this.gameName = gameName;
 
         this.DOMElements = {
             achivement: document.getElementById("achivement") as HTMLElement,

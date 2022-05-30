@@ -23,9 +23,19 @@ export var Models;
             hashed_password: { type: String, required: true, unique: false },
             bee_props: { type: Object, required: false, unique: false },
             circle_props: { type: Object, required: false, unique: false },
+            scores: [{ type: mongoose.Schema.Types.ObjectId, ref: "Score" }]
         });
         // 3. Create a Model.
-        User.Model = mongoose.model('User', User.Schema);
+        //export const Model = mongoose.model<Interface>('User', Schema);
     })(User = Models.User || (Models.User = {}));
+    let Score;
+    (function (Score) {
+        Score.Schema = new mongoose.Schema({
+            time: { type: String, required: true, unique: false },
+            time_achieved_unix: { type: Number, required: true, unique: false },
+            game: { type: String, required: true, unique: false },
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        });
+    })(Score = Models.Score || (Models.Score = {}));
 })(Models || (Models = {}));
 //# sourceMappingURL=models.js.map

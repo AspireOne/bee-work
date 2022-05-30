@@ -21,6 +21,18 @@ document.addEventListener("DOMContentLoaded", _ => {
     onUserLoaded((user) => {
         document.getElementById("username").innerText = user.username;
         switchLoginScreen(loggedInScreen);
+        const score = {
+            user: user === null || user === void 0 ? void 0 : user._id,
+            game: "Avoider",
+            time: 1000,
+            time_achieved_unix: Date.now()
+        };
+        /*Database.request<Models.Score.Interface>("add-score", score)
+            .then(score => console.log(score))
+            .catch(error => console.log(error));*/
+        Database.request("get-scores", { game: "Avoider" })
+            .then(scores => console.log(scores))
+            .catch(error => console.log(error));
     });
     onUserNotLoaded(() => {
         console.log("on user not loaded executed.");
@@ -56,7 +68,7 @@ function registerLoginButton(screen, checkMail, endpoint, callback) {
             showError(error, screen);
             return;
         }
-        yield Database.post(endpoint, user)
+        yield Database.request(endpoint, user)
             .then(user => callback(user))
             .catch(error => showError(error, screen));
     }));

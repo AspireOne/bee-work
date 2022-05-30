@@ -129,7 +129,7 @@ export class Bee {
         PropUtils.saveProps(this.circleProps, this.circlePropsName);
         user.bee_props = PropUtils.convertPropsToSaveProps(this.props);
         user.circle_props = PropUtils.convertPropsToSaveProps(this.circleProps);
-        Database.post("update-user", user)
+        Database.request("update-user", user)
             .then(user => console.log(JSON.stringify(user)))
             .catch(error => console.log(JSON.stringify(error)));
     }

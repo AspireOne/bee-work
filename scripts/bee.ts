@@ -173,7 +173,7 @@ export class Bee {
         user.bee_props = PropUtils.convertPropsToSaveProps(this.props);
         user.circle_props = PropUtils.convertPropsToSaveProps(this.circleProps);
 
-        Database.post<Models.User.Interface>("update-user", user)
+        Database.request<Models.User.Interface>("update-user", user)
             .then(user => console.log(JSON.stringify(user)))
             .catch(error => console.log(JSON.stringify(error)))
     }

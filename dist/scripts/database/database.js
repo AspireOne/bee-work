@@ -118,6 +118,22 @@ export var Database;
         noDataToUpdate: {
             code: 27,
             message: "No data to update"
+        },
+        scoreTimeMissing: {
+            code: 28,
+            message: "Score time is missing"
+        },
+        scoreAchievedTimeMissing: {
+            code: 29,
+            message: "Score achieved time is missing"
+        },
+        couldNotAddScore: {
+            code: 30,
+            message: "Could not add score"
+        },
+        couldNotGetScores: {
+            code: 31,
+            message: "Could not get scores"
         }
     };
     function getError(code) {
@@ -125,12 +141,12 @@ export var Database;
         return obj === undefined ? Database.errors.unknownError : obj[1];
     }
     Database.getError = getError;
-    function post(endpoint, data) {
+    function request(endpoint, data) {
         return __awaiter(this, void 0, void 0, function* () {
             return fetch(`/.netlify/functions/${endpoint}`, {
-                method: 'POST',
+                method: data ? 'POST' : 'GET',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify(data) // body data type must match "Content-Type" header.
+                body: data ? JSON.stringify(data) : undefined // body data type must match "Content-Type" header.
             })
                 .then(response => response.json().then(data => ({ body: data, status: response.status })))
                 .then(resp => {
@@ -148,7 +164,7 @@ export var Database;
             });
         });
     }
-    Database.post = post;
+    Database.request = request;
     // Checks strictly validity, not existence.
     function checkDataValidityAndReturnError(user) {
         if (user.username != null) {

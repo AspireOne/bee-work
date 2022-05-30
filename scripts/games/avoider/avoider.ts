@@ -9,6 +9,7 @@ import {CollisionChecker} from "../../collisionChecker.js";
 import {Bee} from "../../bee.js";
 import {Types} from "../../utils/types";
 import KeysMatching = Types.KeysMatching;
+import EndScreenCallback = GameSite.EndScreenCallback;
 
 type TimeAchivement = Achivement & { timePointSecs: number; }
 
@@ -105,7 +106,7 @@ class Avoider extends Game {
     private stepCounter = 0;
 
     constructor(onGameEnded: (endScreenData: HTMLElement) => void) {
-        super(Avoider.beeProps, onGameEnded);
+        super(Avoider.beeProps, "Avoider", onGameEnded);
 
         this.DOMelements = {
             game: document.getElementById("game") as HTMLDivElement,
@@ -173,4 +174,4 @@ class Avoider extends Game {
         this.onGameEnded(htmlToElement("<p>You survived for " + (this.totalPassed / 1000).toFixed(1) + " seconds.</p>"));
     }
 }
-GameSite.addGame((endCallback: (endScreenData: HTMLElement) => void) => new Avoider(endCallback));
+GameSite.addGame((endCallback: EndScreenCallback) => new Avoider(endCallback));

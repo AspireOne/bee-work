@@ -1,13 +1,18 @@
-import {bee, collisionChecker, modules, portals} from "../global.js";
+import {bee, collisionChecker, modules, portals, user} from "../global.js";
 import {Utils} from "../utils/utils.js";
 import {CollisionChecker} from "../collisionChecker.js";
 import {Game} from "../games/game.js";
+import {Database} from "../database/database.js";
+import {Models} from "../database/models.js";
 
 /** Manages things shared across games (menus etc.). Manages switches between menu - game - game menu - end menu */
 export module GameSite {
+    export type EndScreenCallback = (endScreenData: HTMLElement) => void;
     type Score = {
         name: string;
         timestamp: number;
+        rank: number;
+        time: number;
     }
 
     let DOMelements: {
@@ -30,17 +35,28 @@ export module GameSite {
         scoreTable: {
             onlineButt: HTMLElement;
             localButt: HTMLElement;
+            rows: HTMLElement;
         }
     };
 
     enum Screen { MENU, GAME, GAME_MENU, END_SCREEN }
 
     let currentScreen: Screen = Screen.MENU;
+    let scores: Models.Score.Interface[] = [];
     let gameInstance: Game;
-    let getGameFunc: (endCallback: (endScreenData: HTMLElement) => void) => Game;
+    let getGameFunc: (endCallback: EndScreenCallback) => Game;
     modules.push(run);
 
     function run() {
+        Database.request<Models.Score.Interface[]>("get-scores", {game: gameInstance.gameName})
+            .then(dbScores => {
+                scores = dbScores;
+                updateScoreTable();
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
         DOMelements = {
             counter: document.getElementById("counter") as HTMLElement,
             game: document.getElementById("game") as HTMLDivElement,
@@ -61,6 +77,7 @@ export module GameSite {
             scoreTable: {
                 onlineButt: document.getElementById("score-table-online-butt") as HTMLElement,
                 localButt: document.getElementById("score-table-local-butt") as HTMLElement,
+                rows: document.getElementById("score-table-rows") as HTMLElement,
             }
         }
         
@@ -134,7 +151,7 @@ export module GameSite {
     }
 
     /** A global function so that the Game can add itself to the site's game script. */
-    export function addGame(getGameFunction: (endCallback: (endScreenData: HTMLElement) => void) => Game) {
+    export function addGame(getGameFunction: (endCallback: EndScreenCallback) => Game) {
         if (gameInstance)
             throw new Error("Game is already assigned.");
         getGameFunc = getGameFunction;
@@ -176,6 +193,17 @@ export module GameSite {
     }
 
     function onGameFinished(endScreenData: HTMLElement) {
+        const score: Models.Score.Interface = {
+            user: user?._id,
+            game: gameInstance.gameName,
+            time: gameInstance.totalPassed,
+            time_achieved_unix: Date.now()
+        }
+
+        Database.request<Models.Score.Interface>("add-score", score)
+            .then(score => console.log(score))
+            .catch(error => console.log(error));
+
         changeScreen(Screen.END_SCREEN);
         DOMelements.endScreen.gameData.innerHTML = "";
         DOMelements.endScreen.gameData.appendChild(endScreenData);
@@ -241,19 +269,35 @@ export module GameSite {
         collisionChecker.add(props);
     }
 
-    export function getScoreTableRow(score: Score, rank: number, scoreDataHTML: string): HTMLElement {
+    function updateScoreTable() {
+        DOMelements.scoreTable.rows.innerHTML = "";
+
+        scores.sort((a, b) => b.time! - a.time!).forEach((score, i) => {
+            const user = score.user as Models.User.Interface;
+            const prettyScore: Score = {
+                name: user.username!,
+                timestamp: score.time_achieved_unix!,
+                rank: i + 1,
+                time: score.time!
+            }
+
+            DOMelements.scoreTable.rows.appendChild(getScoreTableRow(prettyScore));
+        })
+    }
+
+    export function getScoreTableRow(score: Score): HTMLElement {
         const datetime = new Date(score.timestamp);
         const datetimeString = `${datetime.getDate()}.${datetime.getMonth() + 1}.${datetime.getFullYear()} ${datetime.getHours()}:${datetime.getMinutes()}`;
         const html = `
     <div class="score-table-row">
         <div class="side-by-side">
-            <p class="score-rank${rank === 1 ? " first" : ""}">#${rank}</p>
+            <p class="score-rank${score.rank === 1 ? " first" : ""}">#${score.rank}</p>
             <div>
                 <p class="score-name">${score.name}</p>
                 <p class="score-date">${datetimeString}</p>
             </div>
             <div class="score-data">
-                ${scoreDataHTML}
+                time: ${(score.time/1000).toFixed(1)}s
             </div>
         </div>
     </div>

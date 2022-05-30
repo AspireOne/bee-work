@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", _ => {
         setUser(null);
     else {
         const userFromLocalStorage = JSON.parse(userFromLocalStorageStr) as Models.User.Interface;
-        Database.post<Models.User.Interface>("login-user", userFromLocalStorage)
+        Database.request<Models.User.Interface>("login-user", userFromLocalStorage)
             .then(userFromDb => {
             console.log("Loaded user from database.");
             setUser(userFromDb);

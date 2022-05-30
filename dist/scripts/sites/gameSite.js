@@ -1,5 +1,6 @@
-import { bee, collisionChecker, modules, portals } from "../global.js";
+import { bee, collisionChecker, modules, portals, user } from "../global.js";
 import { Utils } from "../utils/utils.js";
+import { Database } from "../database/database.js";
 /** Manages things shared across games (menus etc.). Manages switches between menu - game - game menu - end menu */
 export var GameSite;
 (function (GameSite) {
@@ -12,10 +13,19 @@ export var GameSite;
         Screen[Screen["END_SCREEN"] = 3] = "END_SCREEN";
     })(Screen || (Screen = {}));
     let currentScreen = Screen.MENU;
+    let scores = [];
     let gameInstance;
     let getGameFunc;
     modules.push(run);
     function run() {
+        Database.request("get-scores", { game: gameInstance.gameName })
+            .then(dbScores => {
+            scores = dbScores;
+            updateScoreTable();
+        })
+            .catch(error => {
+            console.error(error);
+        });
         DOMelements = {
             counter: document.getElementById("counter"),
             game: document.getElementById("game"),
@@ -36,6 +46,7 @@ export var GameSite;
             scoreTable: {
                 onlineButt: document.getElementById("score-table-online-butt"),
                 localButt: document.getElementById("score-table-local-butt"),
+                rows: document.getElementById("score-table-rows"),
             }
         };
         initializeMainMenu();
@@ -134,6 +145,15 @@ export var GameSite;
         gameInstance.pauseGame();
     }
     function onGameFinished(endScreenData) {
+        const score = {
+            user: user === null || user === void 0 ? void 0 : user._id,
+            game: gameInstance.gameName,
+            time: gameInstance.totalPassed,
+            time_achieved_unix: Date.now()
+        };
+        Database.request("add-score", score)
+            .then(score => console.log(score))
+            .catch(error => console.log(error));
         changeScreen(Screen.END_SCREEN);
         DOMelements.endScreen.gameData.innerHTML = "";
         DOMelements.endScreen.gameData.appendChild(endScreenData);
@@ -191,19 +211,32 @@ export var GameSite;
         };
         collisionChecker.add(props);
     }
-    function getScoreTableRow(score, rank, scoreDataHTML) {
+    function updateScoreTable() {
+        DOMelements.scoreTable.rows.innerHTML = "";
+        scores.sort((a, b) => b.time - a.time).forEach((score, i) => {
+            const user = score.user;
+            const prettyScore = {
+                name: user.username,
+                timestamp: score.time_achieved_unix,
+                rank: i + 1,
+                time: score.time
+            };
+            DOMelements.scoreTable.rows.appendChild(getScoreTableRow(prettyScore));
+        });
+    }
+    function getScoreTableRow(score) {
         const datetime = new Date(score.timestamp);
         const datetimeString = `${datetime.getDate()}.${datetime.getMonth() + 1}.${datetime.getFullYear()} ${datetime.getHours()}:${datetime.getMinutes()}`;
         const html = `
     <div class="score-table-row">
         <div class="side-by-side">
-            <p class="score-rank${rank === 1 ? " first" : ""}">#${rank}</p>
+            <p class="score-rank${score.rank === 1 ? " first" : ""}">#${score.rank}</p>
             <div>
                 <p class="score-name">${score.name}</p>
                 <p class="score-date">${datetimeString}</p>
             </div>
             <div class="score-data">
-                ${scoreDataHTML}
+                time: ${(score.time / 1000).toFixed(1)}s
             </div>
         </div>
     </div>

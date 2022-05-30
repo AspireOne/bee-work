@@ -52,5 +52,5 @@ export function checkUniqueAndReturnError(user, userModel) {
         return null;
     });
 }
-export const getDbUri = (password) => `mongodb+srv://Aspire:${password}@cluster0.2j2lg.mongodb.net/bee-work`; //?retryWrites=true&w=majority
+export const getDbUri = (password, db = "bee-work") => `mongodb+srv://Aspire:${password}@cluster0.2j2lg.mongodb.net/${db}`; //?retryWrites=true&w=majority
 //# sourceMappingURL=utils.js.map

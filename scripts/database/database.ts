@@ -111,6 +111,22 @@ export module Database {
         noDataToUpdate: {
             code: 27,
             message: "No data to update"
+        },
+        scoreTimeMissing: {
+            code: 28,
+            message: "Score time is missing"
+        },
+        scoreAchievedTimeMissing: {
+            code: 29,
+            message: "Score achieved time is missing"
+        },
+        couldNotAddScore: {
+            code: 30,
+            message: "Could not add score"
+        },
+        couldNotGetScores: {
+            code: 31,
+            message: "Could not get scores"
         }
     }
 
@@ -121,11 +137,11 @@ export module Database {
         return obj === undefined ? errors.unknownError : obj[1];
     }
 
-    export async function post<T>(endpoint: string, data: object): Promise<T> {
+    export async function request<T>(endpoint: string, data?: object) {
         return fetch(`/.netlify/functions/${endpoint}`, {
-            method: 'POST',
+            method: data ? 'POST' : 'GET',
             headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify(data) // body data type must match "Content-Type" header.
+            body: data ? JSON.stringify(data) : undefined // body data type must match "Content-Type" header.
         })
             .then(response => response.json().then(data => ({body: data, status: response.status})))
             .then(resp => {

@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", _ => {
         setUser(null);
     else {
         const userFromLocalStorage = JSON.parse(userFromLocalStorageStr);
-        Database.post("login-user", userFromLocalStorage)
+        Database.request("login-user", userFromLocalStorage)
             .then(userFromDb => {
             console.log("Loaded user from database.");
             setUser(userFromDb);

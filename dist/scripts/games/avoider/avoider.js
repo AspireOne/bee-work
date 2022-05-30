@@ -10,7 +10,7 @@ import { CollisionChecker } from "../../collisionChecker.js";
 /** There are flies coming from all sides, and your duty is to not touch them. They're getting gradually more frequent and faster. */
 class Avoider extends Game {
     constructor(onGameEnded) {
-        super(Avoider.beeProps, onGameEnded);
+        super(Avoider.beeProps, "Avoider", onGameEnded);
         this.initialProps = {
             generationFrequency: 315,
             speed: 62,

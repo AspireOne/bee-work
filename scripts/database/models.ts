@@ -23,13 +23,14 @@ export module Models {
         import SavedModifiableProp = Types.SavedModifiableProp;
 
         export interface Interface {
+            _id?: string;
             username?: string;
             password?: string;
             hashed_password?: string;
             email?: string;
             bee_props?: Types.SavedModifiableProp;
             circle_props?: Types.SavedModifiableProp;
-            _id?: string;
+            scores?: string | Models.Score.Interface[];
         }
 
         // 2. Create a Schema corresponding to the document interface.
@@ -39,9 +40,26 @@ export module Models {
             hashed_password: {type: String, required: true, unique: false},
             bee_props: {type: Object, required: false, unique: false},
             circle_props: {type: Object, required: false, unique: false},
+            scores: [{type: mongoose.Schema.Types.ObjectId, ref: "Score"}]
         });
 
         // 3. Create a Model.
-        export const Model = mongoose.model<Interface>('User', Schema);
+        //export const Model = mongoose.model<Interface>('User', Schema);
+    }
+
+    export module Score {
+        export interface Interface {
+            time?: number;
+            time_achieved_unix?: number;
+            game?: string;
+            user?: string | Models.User.Interface;
+        }
+        
+        export const Schema = new mongoose.Schema<Interface>({
+            time: {type: String, required: true, unique: false},
+            time_achieved_unix: {type: Number, required: true, unique: false},
+            game: {type: String, required: true, unique: false},
+            user: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+        });
     }
 }
