@@ -138,6 +138,7 @@
 
 .score-data {
     margin-left: auto;
+    text-align: center;
     /* This is game-specific, so the game itself will make it fit. */
 }
 

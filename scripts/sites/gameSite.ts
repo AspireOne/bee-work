@@ -1,4 +1,4 @@
-import {bee, collisionChecker, modules, portals, user} from "../global.js";
+import {bee, collisionChecker, modules, onUserLoaded, portals, user} from "../global.js";
 import {Utils} from "../utils/utils.js";
 import {CollisionChecker} from "../collisionChecker.js";
 import {Game} from "../games/game.js";
@@ -20,6 +20,7 @@ export module GameSite {
         game: HTMLDivElement;
         menu: HTMLElement;
         playButt: HTMLElement;
+        bestPlay: HTMLElement;
         endScreen: {
             screen: HTMLElement,
             gameData: HTMLElement,
@@ -51,6 +52,7 @@ export module GameSite {
         Database.request<Models.Score.Interface[]>("get-scores", {game: gameInstance.gameName})
             .then(dbScores => {
                 scores = dbScores;
+                onUserLoaded(() => setBest());
                 updateScoreTable();
             })
             .catch(error => {
@@ -61,6 +63,7 @@ export module GameSite {
             counter: document.getElementById("counter") as HTMLElement,
             game: document.getElementById("game") as HTMLDivElement,
             menu: document.getElementById("menu") as HTMLElement,
+            bestPlay: document.getElementById("best-play") as HTMLSpanElement,
             endScreen: {
                 screen: document.getElementById("end-screen") as HTMLElement,
                 gameData: document.getElementById("end-screen-game-data") as HTMLElement,
@@ -95,6 +98,41 @@ export module GameSite {
 
         DOMelements.gameMenu.resumeButt.addEventListener("click", () => resumeGame());
         DOMelements.gameMenu.leaveButt.addEventListener("click", () => leaveGame());
+    }
+
+    function addNewScore(score: Models.Score.Interface) {
+        Database.request<Models.Score.Interface>("add-score", score)
+        /*.then(score => console.log(score))
+        .catch(error => console.log(error));*/
+
+        let best: Models.Score.Interface | null = null;
+
+        for (let i = 0; i < scores.length; ++i) {
+            if ((scores[i].user as Models.User.Interface)._id != user?._id)
+                continue;
+
+            best = scores[i];
+            if (score.time! > scores[i].time!) {
+                scores.splice(i, 1);
+                scores.push(score);
+                best = score;
+            }
+            break;
+        }
+
+        if (!best)
+            scores.push(score);
+
+        console.log(scores);
+
+        updateScoreTable();
+        setBest();
+    }
+
+    function setBest() {
+        const best = scores.find(score => (score.user as Models.User.Interface)._id == user?._id)?.time;
+        if (best)
+            (document.getElementById("best-play") as HTMLSpanElement).innerText = (best / 1000).toFixed(1) + "s";
     }
 
     function changeScreen(screen: Screen) {
@@ -194,15 +232,13 @@ export module GameSite {
 
     function onGameFinished(endScreenData: HTMLElement) {
         const score: Models.Score.Interface = {
-            user: user?._id,
+            user: user!,
             game: gameInstance.gameName,
-            time: gameInstance.totalPassed,
+            time: Math.round(gameInstance.totalPassed * 100) / 100,
             time_achieved_unix: Date.now()
         }
 
-        Database.request<Models.Score.Interface>("add-score", score)
-            .then(score => console.log(score))
-            .catch(error => console.log(error));
+        addNewScore(score);
 
         changeScreen(Screen.END_SCREEN);
         DOMelements.endScreen.gameData.innerHTML = "";
@@ -244,14 +280,14 @@ export module GameSite {
     /** Sets up event handlers for events of elements in the menu. */
     function initializeMainMenu() {
         // Set up score table's "Online" and "Local" buttons.
-        DOMelements.scoreTable.onlineButt.addEventListener("mousedown", () => {
+/*        DOMelements.scoreTable.onlineButt.addEventListener("mousedown", () => {
             DOMelements.scoreTable.localButt.classList.remove("on");
             DOMelements.scoreTable.onlineButt.classList.add("on");
-        });
-        DOMelements.scoreTable.localButt.addEventListener("mousedown", () => {
+        });*/
+        /*DOMelements.scoreTable.localButt.addEventListener("mousedown", () => {
             DOMelements.scoreTable.onlineButt.classList.remove("on");
             DOMelements.scoreTable.localButt.classList.add("on");
-        });
+        });*/
 
         // Set up play button.
         let pressed: boolean = false;

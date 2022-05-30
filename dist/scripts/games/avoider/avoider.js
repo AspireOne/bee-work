@@ -116,8 +116,8 @@ class Avoider extends Game {
     }
 }
 Avoider.beeProps = {
-    maxSpeed: 11,
-    acceleration: 70
+/*maxSpeed: 11,
+acceleration: 70*/
 };
 Avoider.stepFrequency = 1000;
 Avoider.propsStep = {

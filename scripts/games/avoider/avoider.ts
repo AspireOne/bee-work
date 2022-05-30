@@ -31,8 +31,8 @@ type TimeAchivements = {
 /** There are flies coming from all sides, and your duty is to not touch them. They're getting gradually more frequent and faster. */
 class Avoider extends Game {
     private static readonly beeProps = {
-        maxSpeed: 11,
-        acceleration: 70
+        /*maxSpeed: 11,
+        acceleration: 70*/
     };
     private static readonly stepFrequency = 1000;
     private static readonly propsStep = {

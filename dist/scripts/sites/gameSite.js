@@ -1,4 +1,4 @@
-import { bee, collisionChecker, modules, portals, user } from "../global.js";
+import { bee, collisionChecker, modules, onUserLoaded, portals, user } from "../global.js";
 import { Utils } from "../utils/utils.js";
 import { Database } from "../database/database.js";
 /** Manages things shared across games (menus etc.). Manages switches between menu - game - game menu - end menu */
@@ -21,6 +21,7 @@ export var GameSite;
         Database.request("get-scores", { game: gameInstance.gameName })
             .then(dbScores => {
             scores = dbScores;
+            onUserLoaded(() => setBest());
             updateScoreTable();
         })
             .catch(error => {
@@ -30,6 +31,7 @@ export var GameSite;
             counter: document.getElementById("counter"),
             game: document.getElementById("game"),
             menu: document.getElementById("menu"),
+            bestPlay: document.getElementById("best-play"),
             endScreen: {
                 screen: document.getElementById("end-screen"),
                 gameData: document.getElementById("end-screen-game-data"),
@@ -60,6 +62,34 @@ export var GameSite;
         });
         DOMelements.gameMenu.resumeButt.addEventListener("click", () => resumeGame());
         DOMelements.gameMenu.leaveButt.addEventListener("click", () => leaveGame());
+    }
+    function addNewScore(score) {
+        Database.request("add-score", score);
+        /*.then(score => console.log(score))
+        .catch(error => console.log(error));*/
+        let best = null;
+        for (let i = 0; i < scores.length; ++i) {
+            if (scores[i].user._id != (user === null || user === void 0 ? void 0 : user._id))
+                continue;
+            best = scores[i];
+            if (score.time > scores[i].time) {
+                scores.splice(i, 1);
+                scores.push(score);
+                best = score;
+            }
+            break;
+        }
+        if (!best)
+            scores.push(score);
+        console.log(scores);
+        updateScoreTable();
+        setBest();
+    }
+    function setBest() {
+        var _a;
+        const best = (_a = scores.find(score => score.user._id == (user === null || user === void 0 ? void 0 : user._id))) === null || _a === void 0 ? void 0 : _a.time;
+        if (best)
+            document.getElementById("best-play").innerText = (best / 1000).toFixed(1) + "s";
     }
     function changeScreen(screen) {
         if (screen === currentScreen)
@@ -146,14 +176,12 @@ export var GameSite;
     }
     function onGameFinished(endScreenData) {
         const score = {
-            user: user === null || user === void 0 ? void 0 : user._id,
+            user: user,
             game: gameInstance.gameName,
-            time: gameInstance.totalPassed,
+            time: Math.round(gameInstance.totalPassed * 100) / 100,
             time_achieved_unix: Date.now()
         };
-        Database.request("add-score", score)
-            .then(score => console.log(score))
-            .catch(error => console.log(error));
+        addNewScore(score);
         changeScreen(Screen.END_SCREEN);
         DOMelements.endScreen.gameData.innerHTML = "";
         DOMelements.endScreen.gameData.appendChild(endScreenData);
@@ -189,14 +217,14 @@ export var GameSite;
     /** Sets up event handlers for events of elements in the menu. */
     function initializeMainMenu() {
         // Set up score table's "Online" and "Local" buttons.
-        DOMelements.scoreTable.onlineButt.addEventListener("mousedown", () => {
-            DOMelements.scoreTable.localButt.classList.remove("on");
-            DOMelements.scoreTable.onlineButt.classList.add("on");
-        });
-        DOMelements.scoreTable.localButt.addEventListener("mousedown", () => {
+        /*        DOMelements.scoreTable.onlineButt.addEventListener("mousedown", () => {
+                    DOMelements.scoreTable.localButt.classList.remove("on");
+                    DOMelements.scoreTable.onlineButt.classList.add("on");
+                });*/
+        /*DOMelements.scoreTable.localButt.addEventListener("mousedown", () => {
             DOMelements.scoreTable.onlineButt.classList.remove("on");
             DOMelements.scoreTable.localButt.classList.add("on");
-        });
+        });*/
         // Set up play button.
         let pressed = false;
         const props = {
