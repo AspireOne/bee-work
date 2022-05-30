@@ -13,7 +13,6 @@ const handler: Handler = async (event, context) => {
 
     const score: Models.Score.Interface = JSON.parse(event.body ?? "{}");
     const ScoreModel = mongoose.model<Models.Score.Interface>('Score', Models.Score.Schema);
-    const UserModel = mongoose.model<Models.User.Interface>('User', Models.User.Schema);
 
     try {
         await mongoose.connect(getDbUri(process.env.MONGODB_PASSWORD as string));

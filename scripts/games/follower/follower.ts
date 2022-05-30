@@ -1,3 +1,4 @@
+/*
 import {Game} from "../game.js";
 import {GameSite} from "../../sites/gameSite.js";
 
@@ -23,4 +24,4 @@ class Follower extends Game {
     stopGame(): void {
     }
 }
-GameSite.addGame((endCallback: (endScreenData: HTMLElement) => void) => new Follower(endCallback));
+GameSite.addGame((endCallback: (endScreenData: HTMLElement) => void) => new Follower(endCallback));*/

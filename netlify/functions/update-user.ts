@@ -45,15 +45,12 @@ const handler: Handler = async (event, context) => {
     if (!authenticated)
         return getReturnForError(400, errors.wrongPassword);
 
-    // TODO: Remove properties that are the same in userFromDb and user.
     Object.keys(user).forEach(function(key, index) {
         const value = (user as any)[key];
 
         if (value == (userFromDb as any)[key] || value == null || value === "" ||  key === "hashed_password")
             delete (user as any)[key];
     });
-
-    console.log("only unique: " + JSON.stringify(user));
 
     if (Object.keys(user).length === 0)
         return getReturnForError(400, errors.noDataToUpdate);
@@ -71,17 +68,6 @@ const handler: Handler = async (event, context) => {
 
     return getReturn(200, newUserFromDb);
 };
-
-/*function filterValues(user: Models.User.Interface): Models.User.Interface {
-    const ret = {};
-    Object.keys(user)
-        .filter((key) => {
-            const value = (user as any)[key];
-            return value != null && value !== "" && key !== "hashed_password";
-        })
-        .forEach((key) => (ret as any)[key] = (user as any)[key]);
-    return ret;
-}*/
 
 function checkHasRequiredAndReturnError(user: Models.User.Interface): Database.Error | null {
     if (user.password == null && user.hashed_password == null)

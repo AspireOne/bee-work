@@ -46,13 +46,11 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
         authenticated = true;
     if (!authenticated)
         return getReturnForError(400, errors.wrongPassword);
-    // TODO: Remove properties that are the same in userFromDb and user.
     Object.keys(user).forEach(function (key, index) {
         const value = user[key];
         if (value == userFromDb[key] || value == null || value === "" || key === "hashed_password")
             delete user[key];
     });
-    console.log("only unique: " + JSON.stringify(user));
     if (Object.keys(user).length === 0)
         return getReturnForError(400, errors.noDataToUpdate);
     error = yield checkUniqueAndReturnError(user, UserModel);
@@ -67,16 +65,6 @@ const handler = (event, context) => __awaiter(void 0, void 0, void 0, function* 
     }
     return getReturn(200, newUserFromDb);
 });
-/*function filterValues(user: Models.User.Interface): Models.User.Interface {
-    const ret = {};
-    Object.keys(user)
-        .filter((key) => {
-            const value = (user as any)[key];
-            return value != null && value !== "" && key !== "hashed_password";
-        })
-        .forEach((key) => (ret as any)[key] = (user as any)[key]);
-    return ret;
-}*/
 function checkHasRequiredAndReturnError(user) {
     if (user.password == null && user.hashed_password == null)
         return errors.passwordIsMissing;

@@ -1,21 +1,29 @@
-import { Game } from "../game.js";
-import { GameSite } from "../../sites/gameSite.js";
+"use strict";
+/*
+import {Game} from "../game.js";
+import {GameSite} from "../../sites/gameSite.js";
+
 class Follower extends Game {
-    constructor(onGameEnded) {
+    private static readonly beeProps = {
+        maxSpeed: 11,
+        acceleration: 70
+    };
+    constructor(onGameEnded: (endScreenData: HTMLElement) => void) {
         super(Follower.beeProps, onGameEnded);
     }
-    pauseGame() {
+
+    pauseGame(): void {
+
     }
-    resumeGame() {
+
+    resumeGame(): void {
     }
-    startGame() {
+
+    startGame(): void {
     }
-    stopGame() {
+
+    stopGame(): void {
     }
 }
-Follower.beeProps = {
-    maxSpeed: 11,
-    acceleration: 70
-};
-GameSite.addGame((endCallback) => new Follower(endCallback));
+GameSite.addGame((endCallback: (endScreenData: HTMLElement) => void) => new Follower(endCallback));*/
 //# sourceMappingURL=follower.js.map

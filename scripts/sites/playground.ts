@@ -266,12 +266,11 @@ export module Playground {
             const autoPilotOff = "Autopilot OFF";
             const majaBeeOn = "Včelka mája ON";
             const screenSaverOn = "Screen Saver ON";
-            // TODO: Make this non-retarded.
+
             const screenSaverAccelerationIncrease = 100;
             const screenSaverSpeedDecrease = 3;
             const majaBeeSpeedDecrease = 1;
             const modes = 3;
-            // TODO: FIx autopilot.
 
             autopilotButtonTextSpan.innerHTML = autopilotButtonTextSpan.innerHTML.trim();
             switch (autopilotButtonTextSpan.innerHTML) {
