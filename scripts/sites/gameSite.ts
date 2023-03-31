@@ -108,7 +108,7 @@ export module GameSite {
         let best: Models.Score.Interface | null = null;
 
         for (let i = 0; i < scores.length; ++i) {
-            if ((scores[i].user as Models.User.Interface)._id != user?._id)
+            if ((scores[i].user as Models.User.Interface)?._id != user?._id)
                 continue;
 
             best = scores[i];
@@ -311,7 +311,7 @@ export module GameSite {
         scores.sort((a, b) => b.time! - a.time!).forEach((score, i) => {
             const user = score.user as Models.User.Interface;
             const prettyScore: Score = {
-                name: user.username!,
+                name: user.username ?? "Anonymous",
                 timestamp: score.time_achieved_unix!,
                 rank: i + 1,
                 time: score.time!
