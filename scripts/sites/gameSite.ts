@@ -101,6 +101,12 @@ export module GameSite {
     }
 
     function addNewScore(score: Models.Score.Interface) {
+        try {
+            setBest();
+        } catch (e) {
+            console.error(e);
+        }
+        return;
         Database.request<Models.Score.Interface>("add-score", score)
         /*.then(score => console.log(score))
         .catch(error => console.log(error));*/
