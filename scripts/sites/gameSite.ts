@@ -101,6 +101,12 @@ export module GameSite {
     }
 
     function addNewScore(score: Models.Score.Interface) {
+        try {
+            setBest();
+        } catch (e) {
+            console.log(e);
+        }
+        return;
         Database.request<Models.Score.Interface>("add-score", score)
         /*.then(score => console.log(score))
         .catch(error => console.log(error));*/
@@ -108,7 +114,7 @@ export module GameSite {
         let best: Models.Score.Interface | null = null;
 
         for (let i = 0; i < scores.length; ++i) {
-            if ((scores[i].user as Models.User.Interface)?._id != user?._id)
+            if ((scores[i].user as Models.User.Interface)._id != user?._id)
                 continue;
 
             best = scores[i];
@@ -126,7 +132,6 @@ export module GameSite {
         console.log(scores);
 
         updateScoreTable();
-        setBest();
     }
 
     function setBest() {
@@ -311,7 +316,11 @@ export module GameSite {
         scores.sort((a, b) => b.time! - a.time!).forEach((score, i) => {
             const user = score.user as Models.User.Interface;
             const prettyScore: Score = {
+<<<<<<< HEAD
                 name: user?.username ?? "Anonymous",
+=======
+                name: user.username!,
+>>>>>>> parent of 24ab7b7 (fix some stuff)
                 timestamp: score.time_achieved_unix!,
                 rank: i + 1,
                 time: score.time!

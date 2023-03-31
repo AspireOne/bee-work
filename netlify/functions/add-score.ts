@@ -9,7 +9,6 @@ import User = Models.User;
 //const bcrypt = require('bcryptjs');
 
 const handler: Handler = async (event, context) => {
-    return;
     if (event.httpMethod !== "POST") return getReturnForError(405, errors.noGet);
     if (process.env.MONGODB_PASSWORD == null) return getReturnForError(500, errors.missingDbPassword);
 
