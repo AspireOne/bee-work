@@ -107,32 +107,6 @@ export module GameSite {
             console.error(e);
         }
         return;
-        Database.request<Models.Score.Interface>("add-score", score)
-        /*.then(score => console.log(score))
-        .catch(error => console.log(error));*/
-
-        let best: Models.Score.Interface | null = null;
-
-        for (let i = 0; i < scores.length; ++i) {
-            if ((scores[i].user as Models.User.Interface)._id != user?._id)
-                continue;
-
-            best = scores[i];
-            if (score.time! > scores[i].time!) {
-                scores.splice(i, 1);
-                scores.push(score);
-                best = score;
-            }
-            break;
-        }
-
-        if (!best)
-            scores.push(score);
-
-        console.log(scores);
-
-        updateScoreTable();
-        setBest();
     }
 
     function setBest() {
@@ -237,15 +211,6 @@ export module GameSite {
     }
 
     function onGameFinished(endScreenData: HTMLElement) {
-        const score: Models.Score.Interface = {
-            user: user!,
-            game: gameInstance.gameName,
-            time: Math.round(gameInstance.totalPassed * 100) / 100,
-            time_achieved_unix: Date.now()
-        }
-
-        addNewScore(score);
-
         changeScreen(Screen.END_SCREEN);
         DOMelements.endScreen.gameData.innerHTML = "";
         DOMelements.endScreen.gameData.appendChild(endScreenData);
@@ -317,10 +282,10 @@ export module GameSite {
         scores.sort((a, b) => b.time! - a.time!).forEach((score, i) => {
             const user = score.user as Models.User.Interface;
             const prettyScore: Score = {
-                name: user.username!,
-                timestamp: score.time_achieved_unix!,
+                name: user?.username ?? "",
+                timestamp: score?.time_achieved_unix ?? 0,
                 rank: i + 1,
-                time: score.time!
+                time: score?.time ?? 1000000
             }
 
             DOMelements.scoreTable.rows.appendChild(getScoreTableRow(prettyScore));
