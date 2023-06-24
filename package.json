@@ -22,6 +22,6 @@
     "bcryptjs": "^2.4.3",
     "mongodb": "^4.6.0",
     "mongoose": "^6.3.4",
-    "netlify-cli": "^10.3.3"
+    "netlify-cli": "^15.6.0"
   }
 }
