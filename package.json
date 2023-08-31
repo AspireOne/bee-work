@@ -20,7 +20,7 @@
     "@netlify/functions": "^1.0.0",
     "@typegoose/typegoose": "^9.8.1",
     "bcryptjs": "^2.4.3",
-    "mongodb": "^4.6.0",
+    "mongodb": "^4.17.0",
     "mongoose": "^6.3.4",
     "netlify-cli": "^10.3.3"
   }
